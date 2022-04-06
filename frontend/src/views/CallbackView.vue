@@ -40,12 +40,9 @@ export default {
             this.id = user.id
             this.display_name = user.display_name
             this.email = user.email
-            this.avatar = user.images[0].url
-
-            if (!this.avatar || this.avatar == '' || !this.display_name) {
-                this.logout()
-                this.$router.push('/login')
-            }
+            this.avatar =
+                user.images[0]?.url ||
+                'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8MXx8fGVufDB8fHx8&w=1000&q=80'
 
             this.$socket.client.emit('login', {
                 id: this.id,
