@@ -1,3 +1,5 @@
+import { Song } from './song.js'
+
 export const roomStatus = {
 	0: 'lobby',
 	1: 'playing',
@@ -13,8 +15,39 @@ export class Room {
 		this.settings = {
 			nrOfSongs: 0,
 			showCorrectGuesses: true,
+			timeRange: 'short_term',
 		}
 		this.host = host
+		this.songs = []
+		this.currentQuestion = 0
+	}
+
+	compileSongList() {
+		let songs = []
+		// For all users in a room
+		for (let u of this.users) {
+			// Check all their songs
+			for (let s of u.songs) {
+				// If a user song is already in the list of songs
+				let song = songs.find((song) => song.id === s.id)
+				if (song) {
+					// Add the user to that song
+					song.users.push(u)
+				} else {
+					// Create the song and add the user to it
+					let song = new Song(
+						s.id,
+						s.name,
+						s.artists[0].name,
+						s.album.images[0].url
+					)
+					song.users.push(u)
+					songs.push(song)
+				}
+			}
+		}
+		this.songs = [...songs]
+		return songs
 	}
 
 	addUserToRoom(user, socket) {
@@ -51,6 +84,13 @@ export class Room {
 				u.socketid = socket.id
 				socket.join(this.code)
 			}
+		}
+	}
+
+	nextQuestion() {
+		this.currentQuestion++
+		if (this.currentQuestion >= this.songs.length) {
+			this.status = roomStatus[2]
 		}
 	}
 

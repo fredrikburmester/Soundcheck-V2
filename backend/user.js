@@ -5,5 +5,6 @@ export class User {
 		this.name = name
 		this.host = false
 		this.img = img
+		this.songs = []
 	}
 }

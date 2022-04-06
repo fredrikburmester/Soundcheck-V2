@@ -8,6 +8,7 @@ import { Server } from 'socket.io'
 
 import { Room, roomStatus } from './room.js'
 import { User } from './user.js'
+import { Song } from './song.js'
 
 const app = express()
 const httpServer = createServer()
@@ -49,8 +50,7 @@ io.on('connection', (socket) => {
 
 	socket.on(
 		'createRoom',
-		({ userId, roomCode, nrOfSongs, showCorrectGuesses }) => {
-			console.log(`User ${userId} created room ${roomCode}`)
+		({ userId, roomCode, nrOfSongs, showCorrectGuesses, timeRange }) => {
 			if (
 				roomCode !== undefined &&
 				nrOfSongs !== undefined &&
@@ -90,6 +90,9 @@ io.on('connection', (socket) => {
 				} else {
 					// create new room
 					let room = new Room(roomCode, user)
+					room.settings.timeRange = timeRange
+					room.settings.nrOfSongs = nrOfSongs
+					room.settings.showCorrectGuesses = showCorrectGuesses
 
 					// add room to rooms
 					ROOMS.push(room)
@@ -114,10 +117,6 @@ io.on('connection', (socket) => {
 
 	socket.on('login', ({ id, img, name }) => {
 		console.log('User logged in: ', id, img, name)
-
-		for (let u of USERS) {
-			console.log(u.id, u.socketid)
-		}
 
 		// Check if user is alredy logged in
 		let user = USERS.find((user) => user.id === id)
@@ -153,11 +152,6 @@ io.on('connection', (socket) => {
 		console.log(`[${roomCode}] ${userId} want's to join the room`)
 
 		let user = USERS.find((user) => user.id === userId)
-		console.log('User', user)
-		for (let u in USERS) {
-			console.log(u)
-		}
-
 		let room = ROOMS.find((room) => room.code === roomCode)
 
 		if (!user) {
@@ -178,7 +172,7 @@ io.on('connection', (socket) => {
 			return
 		}
 
-		if (room.status === roomStatus[1]) {
+		if (room.status === roomStatus[1] && user.room != room.code) {
 			console.log('[REDIRECT] Game has already started')
 			socket.emit('error', {
 				status: 303,
@@ -214,6 +208,11 @@ io.on('connection', (socket) => {
 
 		// Update everyone in the room that a new user has joined
 		broadcastRoomUpdates(room)
+
+		callback({
+			status: 200,
+			room: room,
+		})
 	})
 
 	socket.on('leaveRoom', ({ userId, roomCode }) => {
@@ -256,7 +255,7 @@ io.on('connection', (socket) => {
 				response_type: 'code',
 				client_id: client_id,
 				redirect_uri: redirect_uri,
-				scope: 'user-top-read user-read-email user-read-private user-library-read',
+				scope: 'user-top-read user-read-email user-read-private user-library-read user-modify-playback-state user-read-playback-state user-read-currently-playing streaming app-remote-control',
 			})
 		socket.emit('login', auth_url)
 	})
@@ -301,12 +300,39 @@ io.on('connection', (socket) => {
 		socket.emit('refreshToken', result)
 	})
 
+	socket.on('startGame', ({ roomCode }) => {
+		console.log(`[${roomCode}] Starting game`)
+		let room = ROOMS.find((room) => room.code === roomCode)
+		room.compileSongList()
+		room.status = roomStatus[1]
+
+		broadcastRoomUpdates(room)
+
+		// io.to(roomCode).emit('startGame', room)
+	})
+
+	socket.on('topSongs', ({ userId, songs }) => {
+		console.log(`[${userId}] Top songs`, songs.length)
+		let user = USERS.find((user) => user.id === userId)
+		let room = ROOMS.find((room) => room.code === user.room)
+		user.songs = songs
+
+		broadcastRoomUpdates(room)
+	})
+
+	socket.on('nextQuestion', ({ roomCode }) => {
+		console.log(`[${roomCode}] Next question`)
+		let room = ROOMS.find((room) => room.code === roomCode)
+		room.nextQuestion()
+		broadcastRoomUpdates(room)
+	})
+
 	socket.on('login-step-2', async (code) => {
 		const client_id = process.env.CLIENT_ID
 		const redirect_uri = process.env.CALLBACK_URL
 		const client_secret = process.env.CLIENT_SECRET
 		const scope =
-			'user-top-read user-read-email user-read-private user-library-read'
+			'user-top-read user-read-email user-read-private user-library-read user-modify-playback-state user-read-playback-state user-read-currently-playing streaming app-remote-control'
 
 		if (code === null) {
 			socket.emit('error', {
