@@ -46,16 +46,22 @@ export const useUserStore = defineStore({
             localStorage.setItem('email', '')
             localStorage.setItem('avatar', '')
         },
-        async getTopSongs(time_range) {
-            if (this.top_songs[time_range]) {
-                return this.top_songs[time_range]
-            }
-
+        async getTopSongs(time_range, limit) {
+            console.log(time_range, limit)
             if (!time_range) {
                 time_range = 'medium_term'
             }
 
-            const url = `https://api.spotify.com/v1/me/top/tracks?time_range=${time_range}`
+            if (!limit) {
+                limit = 25
+            }
+
+            if (this.top_songs[time_range]) {
+                // get only limit about from array
+                return this.top_songs[time_range].slice(0, limit)
+            }
+
+            const url = `https://api.spotify.com/v1/me/top/tracks?time_range=${time_range}&limit=${limit}`
             await fetch(url, {
                 headers: {
                     Accept: 'application/json',
