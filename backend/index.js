@@ -292,9 +292,9 @@ io.on('connection', (socket) => {
 	})
 
 	socket.on('login-step-2', async (code) => {
-		const client_id = CLIENT_ID
-		const redirect_uri = CALLBACK_URL
-		const client_secret = CLIENT_SECRET
+		const client_id = process.env.CLIENT_ID
+		const redirect_uri = process.env.CALLBACK_URL
+		const client_secret = process.env.CLIENT_SECRET
 		const scope =
 			'user-top-read user-read-email user-read-private user-library-read'
 
