@@ -85,7 +85,7 @@ io.on('connection', (socket) => {
 					}
 				} else {
 					// create new room
-					let room = new Room(roomCode, '')
+					let room = new Room(roomCode, user)
 
 					// add room to rooms
 					ROOMS.push(room)

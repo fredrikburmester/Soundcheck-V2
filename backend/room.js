@@ -5,7 +5,7 @@ export const roomStatus = {
 }
 
 export class Room {
-	constructor(code) {
+	constructor(code, host) {
 		this.code = code
 		this.name = ''
 		this.users = []
@@ -14,6 +14,7 @@ export class Room {
 			nrOfSongs: 0,
 			showCorrectGuesses: true,
 		}
+		this.host = host
 	}
 
 	addUserToRoom(user, socket) {
