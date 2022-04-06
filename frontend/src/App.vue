@@ -46,7 +46,7 @@ export default {
 
 <template>
     <NavBar />
-    <div class="pt-12 h-full">
+    <div class="flex flex-col pt-16 items-center h-full">
         <RouterView />
     </div>
 </template>

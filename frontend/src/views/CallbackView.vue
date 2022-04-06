@@ -1,7 +1,6 @@
 <template>
-    <div class="">
-        Loading...
-        <br />
+    <div class="w-screen h-full pb-20 flex place-content-center items-center">
+        <div class="radial-progress animate-spin" style="--value: 70"></div>
     </div>
 </template>
 

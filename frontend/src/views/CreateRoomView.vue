@@ -1,7 +1,7 @@
 <template>
-    <div class="hero min-h-8/10 p-4">
+    <div class="hero min-h-8/10">
         <div class="hero-content flex-col items-center lg:flex-row-reverse">
-            <div class="text-left">
+            <div class="text-left lg:ml-24">
                 <h1 class="text-5xl font-bold">Create game room</h1>
                 <p class="py-6">
                     Create a game room and invite your friends to join!
@@ -13,9 +13,9 @@
                     Choose the number of top songs should be picked from each player and select if you want to see the correct answer after each question.
                 </p>
             </div>
-            <div class="card flex-shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
+            <div class="card flex-shrink-0 w-full max-w-sm shadow-xl bg-base-100">
                 <div class="card-body">
-                    <div class="form-control">
+                    <div class="form-control mb-4">
                         <div class="form-control w-full max-w-xs mb-4">
                             <label class="label">
                                 <span class="label-text text-opacity-50">Nr. of songs/player</span>
@@ -30,6 +30,16 @@
                                 <span>4</span>
                                 <span>5</span>
                             </div>
+                        </div>
+                    </div>
+                    <div class="form-control mb-4">
+                        <label class="label">
+                            <span class="label-text text-opacity-50">Time range</span>
+                        </label>
+                        <div class="tabs tabs-boxed flex flex-row justify-center">
+                            <a class="tab" @click="changeTimeRange($event, 'short_term')">Month</a>
+                            <a class="tab tab-active" @click="changeTimeRange($event, 'medium_term')">Half Year</a>
+                            <a class="tab" @click="changeTimeRange($event, 'long_term')">Over a year</a>
                         </div>
                     </div>
                     <div class="form-control mb-4">
@@ -73,6 +83,7 @@ export default {
         const nrOfSongs = ref(2)
         const showCorrectGuesses = ref(false)
         const generateRoomCodeActive = ref(true)
+        const time_range = ref('medium_term')
 
         // generate random 4 letter room code
         const generateRoomCode = () => {
@@ -101,6 +112,7 @@ export default {
             generateRoomCodeActive,
             generateRoomCode,
             updateRoomCode,
+            time_range,
         }
     },
     computed: {
@@ -121,7 +133,15 @@ export default {
                 roomCode: this.roomCode,
                 nrOfSongs: this.nrOfSongs,
                 showCorrectGuesses: this.showCorrectGuesses,
+                timeRange: this.time_range,
             })
+        },
+        changeTimeRange(e, time_range) {
+            Array.from(document.getElementsByClassName('tab')).forEach((element) => {
+                element.classList.remove('tab-active')
+            })
+            e.target.classList.toggle('tab-active')
+            this.time_range = time_range
         },
     },
 }

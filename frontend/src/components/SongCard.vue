@@ -1,13 +1,15 @@
 <template>
     <Transition appear name="fade" mode="out-in">
-        <div v-show="loaded" class="card max-w-96 bg-base-100 shadow-xl image-full h-36">
+        <div v-show="loaded" class="card max-w-lg bg-base-100 shadow-xl image-full h-36">
             <figure>
                 <img :src="img" alt="album cover" @load="loaded = true" />
             </figure>
-            <div class="card-body flex flex-row h-36 items-center justify-items-start">
-                <p class="text-3xl opacity-50">#{{ index + 1 }}</p>
-                <h2 class="card-title text-right">{{ title }}</h2>
-                <!-- <p>{{ artist }}</p> -->
+            <div class="card-body flex flex-row h-36 items-center">
+                <p v-if="index" class="text-3xl opacity-50">#{{ index + 1 }}</p>
+                <div class="text-right flex flex-col items-end">
+                    <h2 class="card-title">{{ title }}</h2>
+                    <p>{{ artist }}</p>
+                </div>
             </div>
         </div>
     </Transition>
@@ -17,7 +19,7 @@ export default {
     props: {
         index: {
             type: Number,
-            required: true,
+            required: false,
         },
         img: {
             type: String,
