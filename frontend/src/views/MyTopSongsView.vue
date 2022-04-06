@@ -4,10 +4,17 @@
         <p class="">Choose the time range at the bottom.</p>
     </div>
     <div class="pb-24">
-        <div class="flex flex-col p-8 items-center w-screen">
+        <div v-if="songs[time_range] > 0" class="flex flex-col p-8 items-center w-screen">
             <div v-for="(song, index) in songs[time_range]" :key="song.id">
                 <SongCard :img="song.album.images[0].url" :index="index" :title="song.name" :artist="song.artist" class="mb-8"></SongCard>
             </div>
+        </div>
+        <div v-else class="flex flex-col p-8 items-center w-screen">
+            <p>
+                You have no songs for this period.
+                <br />
+                Try another period at the bottom.
+            </p>
         </div>
     </div>
     <div class="tabs tabs-boxed z-100 bg-primary">
@@ -62,7 +69,7 @@ export default {
 <style scoped>
 .tabs {
     position: fixed;
-    bottom: 70px;
+    bottom: 30px;
     left: 50%;
     transform: translateX(-50%);
     width: 278px;
