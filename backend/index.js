@@ -18,7 +18,12 @@ const io = new Server(httpServer, {
 	},
 })
 
-const PORT = 5000
+const PORT = process.env.PORT
+
+console.log(`PORT: ${process.env.PORT}`)
+console.log(`Callback URL: ${process.env.CALLBACK_URL}`)
+console.log(`CLIENT_ID: ${process.env.CLIENT_ID}`)
+console.log(`CLIENT_SECRET: ${process.env.CLIENT_SECRET}`)
 
 app.use(cors())
 
@@ -232,8 +237,8 @@ io.on('connection', (socket) => {
 	})
 
 	socket.on('login-step-1', () => {
-		const client_id = process.CLIENT_ID
-		const redirect_uri = process.CALLBACK_URL
+		const client_id = process.env.CLIENT_ID
+		const redirect_uri = process.env.CALLBACK_URL
 
 		const auth_url =
 			'https://accounts.spotify.com/authorize?' +
@@ -247,8 +252,8 @@ io.on('connection', (socket) => {
 	})
 
 	socket.on('refresh-token', async (refresh_token) => {
-		const client_id = process.CLIENT_ID
-		const client_secret = process.CLIENT_SECRET
+		const client_id = process.env.CLIENT_ID
+		const client_secret = process.env.CLIENT_SECRET
 		if (
 			refresh_token == null ||
 			refresh_token == '' ||
