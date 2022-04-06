@@ -3,8 +3,8 @@
         <h1 class="text-3xl">Your top songs</h1>
         <p class="">Choose the time range at the bottom.</p>
     </div>
-    <div class="pb-24">
-        <div v-if="songs[time_range] > 0" class="flex flex-col p-8 items-center w-screen">
+    <div v-if="!loading" class="pb-24">
+        <div v-if="songs[time_range].length > 0" class="flex flex-col p-8 items-center w-screen">
             <div v-for="(song, index) in songs[time_range]" :key="song.id">
                 <SongCard :img="song.album.images[0].url" :index="index" :title="song.name" :artist="song.artist" class="mb-8"></SongCard>
             </div>
@@ -35,6 +35,7 @@ export default {
             type: 'tracks',
             time_range: 'medium_term',
             songs: [],
+            loading: true,
         }
     },
     computed: {
@@ -42,6 +43,7 @@ export default {
     },
     async mounted() {
         this.songs[this.time_range] = await this.getTopSongs(this.time_range)
+        this.loading = false
     },
     methods: {
         ...mapActions(useUserStore, ['getTopSongs']),

@@ -14,15 +14,17 @@ export default {
         return {}
     },
     computed: {
-        ...mapWritableState(useUserStore, ['authenticated', 'token', 'refresh_token', 'id', 'display_name', 'email', 'avatar', 'id']),
+        ...mapWritableState(useUserStore, ['authenticated', 'token', 'refresh_token', 'display_name', 'email', 'avatar', 'id']),
     },
     mounted() {
+        console.log('[0] mounted callback view')
         let code = window.location.href.split('/callback?code=')[1]
         this.$socket.client.emit('login-step-2', code)
     },
     methods: {
         ...mapActions(useUserStore, ['logout']),
         async getUserInformation() {
+            console.log('[1] getUserInformation')
             const url = 'https://api.spotify.com/v1/me'
             const headers = {
                 Authorization: `Bearer ${this.token}`,
@@ -33,10 +35,13 @@ export default {
                 .then((data) => {
                     user = data
                 })
-                .catch((err) => {
-                    console.log(err)
-                    this.$router.push('/')
+                .catch((e) => {
+                    console.log(e)
+                    this.logout()
+                    this.$router.push('/login')
+                    return
                 })
+
             this.id = user.id
             this.display_name = user.display_name
             this.email = user.email
@@ -51,6 +56,8 @@ export default {
             })
 
             this.$router.push('/')
+
+            return
         },
     },
     sockets: {

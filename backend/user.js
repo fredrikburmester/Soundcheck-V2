@@ -1,9 +1,9 @@
 export class User {
-	constructor(id, socketid) {
+	constructor(id, img, name, socketid) {
 		this.id = id
 		this.socketid = socketid
-		this.name = ''
+		this.name = name
 		this.host = false
-		this.img = ''
+		this.img = img
 	}
 }

@@ -60,7 +60,11 @@ io.on('connection', (socket) => {
 				let room = ROOMS.find((room) => room.code === roomCode)
 
 				if (!user) {
-					socket.emit('error', { status: 404, msg: 'No user' })
+					socket.emit('logout', {
+						status: 500,
+						msg: 'No user with that id found, please log in again',
+					})
+					return
 				}
 
 				if (room) {
@@ -109,7 +113,7 @@ io.on('connection', (socket) => {
 	)
 
 	socket.on('login', ({ id, img, name }) => {
-		console.log('User logged in: ', id)
+		console.log('User logged in: ', id, img, name)
 
 		for (let u of USERS) {
 			console.log(u.id, u.socketid)
@@ -129,25 +133,31 @@ io.on('connection', (socket) => {
 			user.img = img
 			user.name = name
 			user.socketid = socket.id
-
-			if (user.room) {
-				socket.emit('redirect', {
-					status: 303,
-					msg: 'Game created',
-					route: `/room/${user.room}`,
-				})
-			}
 		} else {
-			user = new User(id, img, name)
-			user.socketid = socket.id
+			user = new User(id, img, name, socket.id)
 			USERS.push(user)
 		}
+
+		if (user.room) {
+			socket.emit('redirect', {
+				status: 303,
+				msg: 'Game created',
+				route: `/room/${user.room}`,
+			})
+		}
+
+		return
 	})
 
 	socket.on('joinRoom', ({ userId, roomCode }, callback) => {
 		console.log(`[${roomCode}] ${userId} want's to join the room`)
 
 		let user = USERS.find((user) => user.id === userId)
+		console.log('User', user)
+		for (let u in USERS) {
+			console.log(u)
+		}
+
 		let room = ROOMS.find((room) => room.code === roomCode)
 
 		if (!user) {
