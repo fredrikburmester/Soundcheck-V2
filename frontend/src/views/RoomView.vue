@@ -1,22 +1,21 @@
 <template>
-    <div v-if="!loading" class="p-8 flex flex-col justify-around h-full">
-        <PageTitle :title="$route.params.id" subtitle="Welcome to the game room!" />
-        <UserCard v-for="player in players" :key="player.id" :img="player.img" :display-name="player.name" />
-
-        <button class="btn btn-error mt-auto" @click="leaveRoom">Leave room</button>
+    <div v-if="!loading" class="h-full">
+        <LobbyComponent :players="players" :room="room" @leave-room="leaveRoom" />
     </div>
 </template>
 <script>
 import { mapWritableState } from 'pinia'
 import { useUserStore } from '@/stores/user'
-import UserCard from '../components/UserCard.vue'
-import PageTitle from '../components/PageTitle.vue'
+// import UserCard from '../components/UserCard.vue'
+// import PageTitle from '../components/PageTitle.vue'
+import LobbyComponent from '../components/LobbyComponent.vue'
 export default {
-    components: { UserCard, PageTitle },
+    components: { LobbyComponent },
     data() {
         return {
             loading: true,
             players: [],
+            room: null,
         }
     },
     computed: {
@@ -28,6 +27,7 @@ export default {
     sockets: {
         roomStatus(room) {
             console.log('Room data: ', room)
+            this.room = room
             this.players = room.users
             this.loading = false
         },
