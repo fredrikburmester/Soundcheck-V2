@@ -23,7 +23,7 @@ app.use(createPinia())
 //     const new_id = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
 //     userStore.setId(new_id)
 // }
-const socket_url = process.env.VUE_APP_SOCKET_URL
+const socket_url = import.meta.env.VUE_APP_SOCKET_URL
 const socket = io(socket_url)
 
 app.use(VueSocketIOExt, socket)
