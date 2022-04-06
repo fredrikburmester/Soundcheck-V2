@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import express from 'express'
 import cors from 'cors'
 import queryString from 'query-string'
@@ -231,8 +232,8 @@ io.on('connection', (socket) => {
 	})
 
 	socket.on('login-step-1', () => {
-		const client_id = 'b628fccd4e284c469c95f515f14d079e'
-		const redirect_uri = 'http://localhost:3000/callback'
+		const client_id = process.CLIENT_ID
+		const redirect_uri = process.CALLBACK_URL
 
 		const auth_url =
 			'https://accounts.spotify.com/authorize?' +
@@ -246,8 +247,8 @@ io.on('connection', (socket) => {
 	})
 
 	socket.on('refresh-token', async (refresh_token) => {
-		const client_id = 'b628fccd4e284c469c95f515f14d079e'
-		const client_secret = '3a138e7888e647f2a2e2e90e3e86a113'
+		const client_id = process.CLIENT_ID
+		const client_secret = process.CLIENT_SECRET
 		if (
 			refresh_token == null ||
 			refresh_token == '' ||
@@ -286,9 +287,9 @@ io.on('connection', (socket) => {
 	})
 
 	socket.on('login-step-2', async (code) => {
-		const client_id = 'b628fccd4e284c469c95f515f14d079e'
-		const redirect_uri = 'http://localhost:3000/callback'
-		const client_secret = '3a138e7888e647f2a2e2e90e3e86a113'
+		const client_id = CLIENT_ID
+		const redirect_uri = CALLBACK_URL
+		const client_secret = CLIENT_SECRET
 		const scope =
 			'user-top-read user-read-email user-read-private user-library-read'
 
