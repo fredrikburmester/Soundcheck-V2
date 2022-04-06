@@ -1,14 +1,17 @@
 <template>
     <Transition appear name="fade" mode="out-in">
-        <div v-show="loaded" class="card flex flex-row items-center pl-8 max-w-96 bg-base-300 shadow-xl h-24">
+        <div v-show="loaded" class="mb-4 card flex flex-row items-center pl-8 max-w-96 bg-base-300 shadow-xl h-24">
             <div v-if="img" class="avatar">
-                <div class="w-12 h-12 rounded-full">
+                <div v-if="host" class="w-12 h-12 rounded-full ring ring-primary">
+                    <img :src="img" @load="loaded = true" />
+                </div>
+                <div v-else class="w-12 h-12 rounded-full">
                     <img :src="img" @load="loaded = true" />
                 </div>
             </div>
             <div v-else class="avatar placeholder">
-                <div class="bg-neutral-focus text-neutral-content rounded-full w-24">
-                    <span class="text-3xl">K</span>
+                <div class="bg-neutral-focus text-neutral-content rounded-full w-12 h-12">
+                    <span class="text-3xl">{{ displayName[0] }}</span>
                 </div>
             </div>
             <div class="card-body">
@@ -27,6 +30,11 @@ export default {
         displayName: {
             type: String,
             required: true,
+        },
+        host: {
+            type: Boolean,
+            required: false,
+            default: false,
         },
     },
     data() {
