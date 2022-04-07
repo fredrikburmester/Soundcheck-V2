@@ -29,8 +29,4 @@
 import { ref } from 'vue'
 const room = ref('')
 </script>
-<style>
-#playview {
-    min-height: 90vh;
-}
-</style>
+<style></style>
