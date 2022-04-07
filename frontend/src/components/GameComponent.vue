@@ -135,20 +135,25 @@ export default {
             }
         },
         playSong() {
+            console.log('[0] play song')
             if (this.started == false) {
+                console.log('[1] if started == false')
                 this.started = true
                 this.timer = setInterval(() => {
                     this.getPlayerState()
                 }, 1000)
             } else {
+                console.log('[2] else toggle play')
                 this.togglePlay()
                 this.playing = !this.playing
 
                 if (this.playing) {
+                    console.log('[3] this.playing == true')
                     this.timer = setInterval(() => {
                         this.getPlayerState()
                     }, 1000)
                 } else {
+                    console.log('[4] clear interval')
                     clearInterval(this.timer)
                 }
                 return
@@ -174,11 +179,6 @@ export default {
             let s_state = await this.player.getCurrentState()
             console.log(s_state.position)
         },
-        // async nextTrack() {
-        //     this.player.nextTrack().then(() => {
-        //         console.log('Next song...')
-        //     })
-        // },
     },
 }
 </script>
