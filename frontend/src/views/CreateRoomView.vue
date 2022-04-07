@@ -1,7 +1,7 @@
 <template>
     <div class="hero min-h-8/10">
         <div class="hero-content flex-col items-center lg:flex-row-reverse">
-            <div class="text-left lg:ml-24">
+            <div class="text-left lg:ml-24 px-8">
                 <h1 class="text-5xl font-bold">Create game room</h1>
                 <p class="py-6">
                     Create a game room and invite your friends to join!
