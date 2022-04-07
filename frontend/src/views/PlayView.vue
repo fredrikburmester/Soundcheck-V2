@@ -1,7 +1,8 @@
 <template>
     <div id="playview" class="flex flex-col place-content-around md:flex-row w-screen p-8">
-        <div class="grid place-items-center md:w-64">
+        <div class="grid place-items-center md:w-64 flex-grow">
             <div class="place-items-start">
+                <h1 class="text-2xl font-bold">Join room</h1>
                 <label class="label">
                     <span class="label-text opacity-50">Room code</span>
                     <span class="label-text-alt"></span>
@@ -12,11 +13,14 @@
                 </router-link>
             </div>
         </div>
-        <div class="divider divider-vertical md:divider-horizontal">OR</div>
-        <div class="grid place-items-center md:w-64">
-            <router-link to="/create">
-                <button class="btn btn-primary w-full">Create room</button>
-            </router-link>
+        <div class="divider divider-vertical md:divider-horizontal grow-0">OR</div>
+        <div class="grid place-items-center md:w-64 flex-grow">
+            <div class="place-items-start">
+                <h1 class="text-2xl font-bold mb-4">Create room</h1>
+                <router-link to="/create">
+                    <button class="btn btn-primary w-64">Create room</button>
+                </router-link>
+            </div>
         </div>
     </div>
 </template>

@@ -7,7 +7,9 @@
         <h1 v-else class="font-bold text-xl italic mb-4">{{ players.length }} Players</h1>
         <UserCard v-for="p in players" :key="p.id" :host="room_.host.id == p.id" :img="p.img" :display-name="p.name" />
         <div class="mb-auto"></div>
-        <SongCard :key="currentQuestion" :title="songs[currentQuestion].name" :artist="songs[currentQuestion].artist" :img="songs[currentQuestion].img" />
+        <div class="flex w-full justify-center">
+            <SongCard :key="currentQuestion" :title="songs[currentQuestion].name" :artist="songs[currentQuestion].artist" :img="songs[currentQuestion].img" />
+        </div>
         <div v-if="isHost" class="flex flex-row mb-8 mt-8 space-x-8">
             <button :class="playing ? 'flex flex-grow btn btn-error' : 'flex flex-grow btn btn-success'" @click="playSong">
                 {{ playing ? 'pause' : 'play' }}
@@ -63,8 +65,7 @@ export default {
         document.head.appendChild(recaptchaScript)
 
         window.onSpotifyWebPlaybackSDKReady = () => {
-            const token =
-                'BQCytq8Hn8WIDUd_4lcFiEn10mBHNJj4EF4XaOLjj_mWs2rV_lGo6HYhgHMhH56xpDoxZx18bHsFEnOaiDD_DREnWc_kExhWcu6qqJXNVFkL9St2DK2yoaGW1LlufU57ky_guM-vImRJSzzlm1BFJ7LLA0iKY-13Z9cqryK096oxUXP-9msa9ztTHFs'
+            const token = this.token
             // eslint-disable-next-line no-undef
             const player = new Spotify.Player({
                 name: 'Web Playback SDK Quick Start Player',
