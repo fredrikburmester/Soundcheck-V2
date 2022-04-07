@@ -71,6 +71,7 @@ export default {
     },
     watch: {
         room: function (newVal, oldVal) {
+            console.log('room changed', newVal.currentQuestion, oldVal.currentQuestion)
             this.room_ = JSON.parse(JSON.stringify(this.room))
 
             if (newVal.currentQuestion != oldVal.currentQuestion) {
@@ -95,13 +96,16 @@ export default {
     methods: {
         async getPlayerState() {
             let state = await this.player.getCurrentState()
+            console.log(state)
             this.duration = state.duration
             this.playerPosition = state.position
         },
         isHost() {
+            console.log(this.room_.host.id, this.id)
             return this.room_.host.id == this.id
         },
         connectToSpotifyPlayer() {
+            console.log('connecting to spotify player')
             this.connectionLoading = true
             let recaptchaScript = document.createElement('script')
             recaptchaScript.setAttribute('src', 'https://sdk.scdn.co/spotify-player.js')
@@ -127,6 +131,7 @@ export default {
                 })
 
                 player.connect()
+                console.log(player)
             }
         },
         playSong() {
@@ -162,10 +167,18 @@ export default {
             this.playing = true
         },
         async togglePlay() {
-            this.player.togglePlay().then(() => {})
+            this.player.togglePlay().then(() => {
+                console.log('Toggled playback!')
+            })
 
             let s_state = await this.player.getCurrentState()
+            console.log(s_state.position)
         },
+        // async nextTrack() {
+        //     this.player.nextTrack().then(() => {
+        //         console.log('Next song...')
+        //     })
+        // },
     },
 }
 </script>
