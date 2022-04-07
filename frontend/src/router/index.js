@@ -66,6 +66,10 @@ const router = createRouter({
         // will match everything and put it under `$route.params.pathMatch`
         { path: '/:pathMatch(.*)*', name: 'NotFound', component: NotFound },
     ],
+    scrollBehavior() {
+        // always scroll to top
+        return { top: 0 }
+    },
 })
 
 router.beforeEach(async (to) => {
