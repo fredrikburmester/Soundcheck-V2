@@ -13,7 +13,7 @@
                     Choose the number of top songs should be picked from each player and select if you want to see the correct answer after each question.
                 </p>
             </div>
-            <div class="card flex-shrink-0 w-full max-w-sm shadow-xl bg-base-100">
+            <div class="card flex-shrink-0 w-full max-w-sm shadow-md bg-base-300">
                 <div class="card-body">
                     <div class="form-control mb-4">
                         <div class="form-control w-full max-w-xs mb-4">

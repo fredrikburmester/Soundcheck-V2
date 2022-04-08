@@ -4,10 +4,10 @@
             <h1 class="text-3xl text-center">Your top songs</h1>
             <p class="text-center">Choose the time range at the bottom.</p>
         </div>
-        <div v-if="!loading" class="pb-8">
+        <div v-if="!loading" class="pb-4">
             <div v-if="songs[time_range].length > 0" class="flex flex-col place-items-center">
                 <div v-for="(song, index) in songs[time_range]" :key="song.id">
-                    <SongCard :img="song.album.images[0].url" :artist="song.artists[0].name" :index="index" :title="song.name" class="mb-8"></SongCard>
+                    <SongCard :img="song.album.images[0].url" :artist="song.artists[0].name" :index="index" :title="song.name" class="mb-4"></SongCard>
                 </div>
             </div>
             <div v-else class="flex flex-col p-8">

@@ -1,6 +1,6 @@
 <template>
     <Transition appear name="fade" mode="out-in">
-        <div v-show="loaded" class="mb-4 card flex flex-row items-center pl-8 max-w-96 bg-base-300 shadow-xl h-24">
+        <div v-show="loaded" class="mb-4 card flex flex-row items-center pl-8 max-w-96 bg-base-300 shadow-xl h-24 flex-shrink-0">
             <div v-if="img" class="avatar">
                 <div v-if="host" class="w-12 h-12 rounded-full ring ring-primary animate">
                     <img :src="img" @load="loaded = true" />

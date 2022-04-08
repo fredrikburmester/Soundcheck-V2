@@ -13,6 +13,12 @@
                     <li><router-link class="font-bold" to="/play">Play</router-link></li>
                     <li><router-link class="font-bold" to="/my-previous-games">Previous Games</router-link></li>
                     <li><router-link class="font-bold" to="/my-top-songs">My top songs</router-link></li>
+                    <li><router-link class="font-bold" to="/my-top-artists">My top artists</router-link></li>
+                    <hr v-if="roomCode" class="opacity-10 my-4 mx-4" />
+                    <p v-if="roomCode" class="font-bold text-md ml-4 mb-2">{{ roomCode }}</p>
+                    <router-link :to="`/room/${roomCode}`">
+                        <button v-if="roomCode" class="btn btn-primary animate-pulse mx-4 mb-4">Active game</button>
+                    </router-link>
                 </ul>
             </div>
         </div>
@@ -55,7 +61,7 @@ import { mapWritableState } from 'pinia'
 
 export default {
     computed: {
-        ...mapWritableState(useUserStore, ['refresh_token', 'token', 'avatar', 'authenticated', 'display_name', 'email', 'id']),
+        ...mapWritableState(useUserStore, ['refresh_token', 'token', 'avatar', 'authenticated', 'display_name', 'email', 'id', 'roomCode']),
     },
     methods: {
         logout() {

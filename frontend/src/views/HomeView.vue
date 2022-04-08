@@ -1,6 +1,6 @@
 <template>
     <div class="flex w-screen justify-start px-8 md:px-32 md:mt-16">
-        <div class="flex flex-col space-y-12 items-start">
+        <div class="flex flex-col space-y-12 items-start mb-12">
             <div class="flex flex-row space-x-8 items-center">
                 <div class="avatar pt-2">
                     <div class="w-24 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">

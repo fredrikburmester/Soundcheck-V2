@@ -1,6 +1,5 @@
-/* eslint-disable no-undef */
 <template>
-    <div class="flex w-screen md:max-w-3xl flex-col p-8 h-full">
+    <div class="flex w-screen md:max-w-3xl flex-col px-8 h-full">
         <PageTitle :title="$route.params.id" subtitle="Guess the player you think this song belongs to!" />
         <button class="btn btn-error btn-sm mb-4" @click="$emit('leaveRoom')">Leave room</button>
         <h1 v-if="players.length == 1" class="font-bold text-xl italic mb-4">{{ players.length }} Player</h1>
@@ -8,20 +7,19 @@
         <UserCard v-for="p in players" :key="p.id" :host="room_.host.id == p.id" :img="p.img" :display-name="p.name" />
         <div class="mb-auto"></div>
         <div class="flex flex-col w-full justify-center">
+            <hr class="my-4 opacity-20" />
             <SongCard :key="currentQuestion" :title="songs[currentQuestion].name" :artist="songs[currentQuestion].artist" :img="songs[currentQuestion].img" />
-            <progress :value="playerPosition" class="progress progress-primary bg-gray-700 w-full mt-8" :max="duration"></progress>
+            <input v-model="playerPosition" type="range" min="0" :max="duration" class="range range-xs mt-4" @change="seek" @mousedown="stopProgress" />
         </div>
         <div v-if="connected">
-            <div v-if="isHost" class="flex flex-row mb-8 mt-8 space-x-8">
-                <button :class="playing ? 'flex flex-grow btn btn-error' : 'flex flex-grow btn btn-success'" @click="playSong">
-                    {{ playing ? 'pause' : 'play' }}
-                </button>
-                <button class="flex flex-grow btn btn-primary" @click="$emit('nextQuestion')">Next song</button>
+            <div v-if="isHost" class="flex flex-row mt-8 space-x-8">
+                <button v-if="!playing" class="flex flex-grow btn btn-success" @click="playSong">Play</button>
+                <button v-else class="flex flex-grow btn btn-error" @click="pauseSong">plause</button>
+                <button class="flex flex-grow btn btn-primary" @click="nextQuestion">Next song</button>
             </div>
             <div v-else>
-                <button :class="playing ? 'flex flex-grow btn btn-error' : 'flex flex-grow btn btn-success'" @click="playSong">
-                    {{ playing ? 'pause' : 'play' }}
-                </button>
+                <button v-if="!playing" class="flex flex-grow btn btn-success" @click="playSong">Play</button>
+                <button v-else class="flex flex-grow btn btn-error" @click="pauseSong">plause</button>
             </div>
         </div>
         <div v-else class="flex flex-col mt-8">
@@ -55,7 +53,7 @@ export default {
             device_id: '',
             player: null,
             playing: false,
-            started: false,
+            playerInitiated: false,
             host: this.room.host.id == this.id,
             currentQuestion: this.room.currentQuestion,
             songs: this.room.songs,
@@ -76,11 +74,11 @@ export default {
 
             if (newVal.currentQuestion != oldVal.currentQuestion) {
                 this.playing = false
-                this.started = false
+                this.playerInitiated = false
                 this.playerPosition = 0
                 this.duration = 0
                 this.currentQuestion = newVal.currentQuestion
-                this.togglePlay()
+                this.player.pause()
                 clearInterval(this.timer)
             }
         },
@@ -88,17 +86,42 @@ export default {
     mounted() {},
     beforeUnmount() {
         if (this.playing) {
-            this.togglePlay()
+            this.player.pause()
         }
-        this.player.disconnect()
+
+        if (this.player) {
+            this.player.disconnect()
+        }
+
         clearInterval(this.timer)
     },
     methods: {
-        async getPlayerState() {
-            let state = await this.player.getCurrentState()
-            console.log(state)
+        test() {
+            console.log('test click')
+        },
+        test2() {
+            console.log('test click2')
+        },
+        seek() {
+            this.player.seek(this.playerPosition)
+            this.startProgress()
+        },
+        async setProgress() {
+            let state = await this.getPlayerState()
             this.duration = state.duration
             this.playerPosition = state.position
+        },
+        stopProgress() {
+            clearInterval(this.timer)
+        },
+        startProgress() {
+            this.timer = setInterval(() => {
+                this.setProgress()
+            }, 1000)
+        },
+        async getPlayerState() {
+            let state = await this.player.getCurrentState()
+            return state
         },
         isHost() {
             console.log(this.room_.host.id, this.id)
@@ -131,53 +154,55 @@ export default {
                 })
 
                 player.connect()
-                console.log(player)
             }
         },
-        playSong() {
-            console.log('[0] play song')
-            if (this.started == false) {
-                console.log('[1] if started == false')
-                this.started = true
-                this.timer = setInterval(() => {
-                    this.getPlayerState()
-                }, 1000)
+        nextQuestion() {
+            this.$emit('nextQuestion')
+        },
+        async playSong() {
+            if (this.playerInitiated == false) {
+                var self = this
+                await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${self.device_id}`, {
+                    method: 'PUT',
+                    body: JSON.stringify({
+                        uris: [`spotify:track:${this.songs[this.currentQuestion].id}`],
+                    }),
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${self.token}`,
+                    },
+                })
+                    .then((res) => {
+                        this.playerInitiated = true
+                    })
+                    .catch((err) => {
+                        console.log(err)
+                    })
             } else {
-                console.log('[2] else toggle play')
-                this.togglePlay()
-                this.playing = !this.playing
-
-                if (this.playing) {
-                    console.log('[3] this.playing == true')
-                    this.timer = setInterval(() => {
-                        this.getPlayerState()
-                    }, 1000)
-                } else {
-                    console.log('[4] clear interval')
-                    clearInterval(this.timer)
+                this.player.resume()
+                let state = await this.getPlayerState()
+                console.log(state)
+                if (!state.playing) {
+                    this.player.resume()
                 }
-                return
             }
-            var self = this
-            fetch(`https://api.spotify.com/v1/me/player/play?device_id=${self.device_id}`, {
-                method: 'PUT',
-                body: JSON.stringify({
-                    uris: [`spotify:track:${this.songs[this.currentQuestion].id}`],
-                }),
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${self.token}`,
-                },
-            })
+
+            let state = await this.getPlayerState()
+            if (!state.playing) {
+                this.player.resume()
+            }
+
+            this.startProgress()
+
             this.playing = true
         },
+        async pauseSong() {
+            this.player.pause()
+            this.playing = false
+            clearInterval(this.timer)
+        },
         async togglePlay() {
-            this.player.togglePlay().then(() => {
-                console.log('Toggled playback!')
-            })
-
-            let s_state = await this.player.getCurrentState()
-            console.log(s_state.position)
+            this.player.togglePlay()
         },
     },
 }

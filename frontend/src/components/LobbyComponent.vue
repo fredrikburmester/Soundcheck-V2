@@ -1,11 +1,11 @@
 <template>
-    <div class="flex w-screen md:max-w-3xl flex-col p-8 h-full">
+    <div id="lobby" class="flex w-screen md:max-w-3xl flex-col px-8 h-full">
         <PageTitle :title="$route.params.id" subtitle="Welcome to the game room!" />
         <button class="btn btn-error btn-sm mb-4" @click="$emit('leaveRoom')">Leave room</button>
         <h1 v-if="players.length == 1" class="font-bold text-xl italic mb-4">{{ players.length }} Player</h1>
         <h1 v-else class="font-bold text-xl italic mb-4">{{ players.length }} Players</h1>
         <UserCard v-for="player in players" :key="player.id" :host="room.host.id == player.id" :img="player.img" :display-name="player.name" />
-        <button v-if="isHost()" class="btn btn-success mt-auto mb-12 shadow-md" @click="$emit('startGame')">Start game</button>
+        <button v-if="isHost()" class="btn btn-success shadow-md mt-auto" @click="$emit('startGame')">Start game</button>
     </div>
 </template>
 
@@ -34,11 +34,15 @@ export default {
     },
     methods: {
         isHost() {
-            console.log(this.room.host.id, this.id)
+            console.log('Is host: ', this.room.host.id == this.id)
             return this.room.host.id == this.id
         },
     },
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+#lobby {
+    margin-bottom: 100px;
+}
+</style>
