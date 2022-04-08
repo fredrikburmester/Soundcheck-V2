@@ -17,6 +17,7 @@ const io = new Server(httpServer, {
 		origin: '*',
 		methods: ['GET', 'POST'],
 	},
+	path: '/ws',
 })
 
 const PORT = process.env.PORT
@@ -182,10 +183,9 @@ io.on('connection', (socket) => {
 		}
 
 		if (room.status === roomStatus[2]) {
-			console.log('[REDIRECT] Game has ended')
-			socket.emit('redirect', {
-				status: 303,
-				msg: 'Game has ended',
+			callback({
+				status: 200,
+				room: room,
 			})
 			return
 		}
