@@ -31,6 +31,7 @@ app.use(cors())
 
 var USERS = []
 var ROOMS = []
+var ACTIVE_USERS = 0
 
 const firstConnect = (id, socket) => {
 	// Handles the first connection before log in.
@@ -41,12 +42,27 @@ const broadcastRoomUpdates = (room) => {
 }
 
 io.on('connection', (socket) => {
+	ACTIVE_USERS++
 	var id = socket.id
 	firstConnect(id, socket)
 	socket.emit('connected')
 
 	socket.on('disconnect', () => {
 		console.log(`User disconnected`)
+		ACTIVE_USERS--
+	})
+
+	socket.on('getStats', () => {
+		let activeGames = 0
+		for (let r in ROOMS) {
+			if (r.status == 'active') {
+				activeGames++
+			}
+		}
+		socket.emit('stats', {
+			activeUsers: ACTIVE_USERS,
+			activeGames: activeGames,
+		})
 	})
 
 	socket.on(
@@ -101,7 +117,7 @@ io.on('connection', (socket) => {
 					// redirect user to room
 					socket.emit('redirect', {
 						status: 303,
-						msg: 'Game created',
+						msg: '',
 						id: room.code,
 					})
 
@@ -254,6 +270,7 @@ io.on('connection', (socket) => {
 		}
 
 		room.removeUserFromRoom(user)
+		socket.leave(room.code)
 		user.room = null
 		broadcastRoomUpdates(room)
 
