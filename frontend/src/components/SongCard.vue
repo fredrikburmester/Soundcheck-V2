@@ -5,9 +5,13 @@
 
             <div class="card-body flex flex-row h-24 items-center">
                 <div class="flex flex-col w-full">
-                    <div class="flex flex-row">
+                    <div class="flex flex-row items-center">
                         <p v-if="index != undefined" class="text-3xl opacity-50">#{{ index + 1 }}</p>
-                        <div class="text-right flex flex-col items-end">
+                        <div v-if="index != undefined" class="text-right flex flex-col items-end">
+                            <h2 class="card-title">{{ shortTitle }}</h2>
+                            <p>{{ artist }}</p>
+                        </div>
+                        <div v-else class="flex flex-col items-start">
                             <h2 class="card-title">{{ shortTitle }}</h2>
                             <p>{{ artist }}</p>
                         </div>
@@ -53,7 +57,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .fade-enter-active,
 .fade-leave-active {
     transition: all 0.5s ease;
@@ -66,5 +70,8 @@ export default {
 }
 img {
     width: 100%;
+}
+.card-title {
+    color: white;
 }
 </style>
