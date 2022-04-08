@@ -11,7 +11,8 @@ export const useUserStore = defineStore({
         display_name: useLocalStorage('display_name', ''),
         email: useLocalStorage('email', ''),
         avatar: useLocalStorage('avatar', ''),
-        top_songs: [],
+        top_songs: useLocalStorage('top_songs', []),
+        roomCode: useLocalStorage('roomCode', ''),
     }),
     hydrate(storeState) {
         storeState.authenticated = useLocalStorage('authenticated', false)
@@ -21,6 +22,8 @@ export const useUserStore = defineStore({
         storeState.display_name = useLocalStorage('display_name', '')
         storeState.email = useLocalStorage('email', '')
         storeState.avatar = useLocalStorage('avatar', '')
+        storeState.top_songs = useLocalStorage('top_songs', [])
+        storeState.roomCode = useLocalStorage('roomCode', '')
     },
     getters: {
         isAuthenticated: (state) => state.authenticated,
@@ -38,6 +41,8 @@ export const useUserStore = defineStore({
             this.display_name = ''
             this.email = ''
             this.avatar = ''
+            this.top_songs = []
+            this.roomCode = ''
 
             localStorage.setItem('authenticated', false)
             localStorage.setItem('token', '')
@@ -45,6 +50,10 @@ export const useUserStore = defineStore({
             localStorage.setItem('name', '')
             localStorage.setItem('email', '')
             localStorage.setItem('avatar', '')
+            localStorage.setItem('top_songs', [])
+            localStorage.setItem('roomCode', '')
+
+            this.$router.push({ name: 'Login' })
         },
         async getTopSongs(time_range, limit) {
             console.log(time_range, limit)
@@ -95,6 +104,10 @@ export const useUserStore = defineStore({
                     this.display_name = data.display_name
                     this.email = data.email
                     this.spotify_dataname = data.id
+                })
+                .catch((err) => {
+                    console.log(err)
+                    this.logout()
                 })
 
             return user
