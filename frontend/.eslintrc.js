@@ -9,5 +9,6 @@ module.exports = {
         'vue/require-default-prop': 'off',
         'no-unused-vars': [1],
         'vue/no-unused-components': [1],
+        'vue/no-parsing-error': [1],
     },
 }
