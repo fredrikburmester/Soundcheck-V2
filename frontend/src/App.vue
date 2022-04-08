@@ -54,7 +54,7 @@ export default {
     <div class="flex flex-col pt-16 items-center h-full">
         <RouterView />
     </div>
-    <NotificationComponent />
+    <NotificationComponent class="z-100" />
     <span class="fixed bottom-0 left-0">{{ $socket.connected ? 'Connected' : 'Disconnected' }}</span>
 </template>
 
