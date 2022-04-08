@@ -1,5 +1,5 @@
 <template>
-    <div class="px-8">
+    <div id="results" class="px-8">
         <PageTitle :title="$route.params.id" subtitle="Check out the results by pressing a user below!" />
 
         <div v-for="p in sortedUsers" :key="p.id" tabindex="0" class="collapse">
@@ -7,13 +7,17 @@
             <input type="checkbox" class="peer" />
             <div class="rounded-b-2xl m-0 px-4 collapse-content bg-secondary text-primary-content">
                 <h1 class="text-white mt-4 text-2xl font-bold">Points: {{ p.points * 10 }}</h1>
-                <p class="text-white opacity-70">Check out your guess for each song!</p>
+                <p class="text-white opacity-70">Per song answers for {{ p.name }}</p>
                 <div v-for="(song, index) in room.songs" :key="song.id" class="mt-6">
                     <SongCard :index="index" :title="song.name" :img="song.img" :artist="song.artist" />
                     <p class="text-white mt-2 ml-2 opacity-70">Your guess: {{ getGuessName(p.guesses, song.id) }}</p>
                     <p class="text-white ml-2 opacity-70">Correct answer: {{ getCorrectAnswerName(song.id) }}</p>
                 </div>
             </div>
+        </div>
+        <div v-if="sortedUsers.length == 0">
+            <hr class="my-4 opacity-20" />
+            <p class="my-4 text-left text-xl italic text-white">Hmm i guess no one even played this one? Maybe everyone left before it even started.</p>
         </div>
     </div>
 </template>
@@ -87,9 +91,12 @@ export default {
     },
 }
 </script>
-<style>
+<style scoped>
 .collapse-content {
     transform: translateY(-20px);
     z-index: 1;
+}
+#results {
+    padding-bottom: 50px;
 }
 </style>
