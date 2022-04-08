@@ -1,25 +1,46 @@
 <template>
     <div class="flex w-screen md:max-w-3xl flex-col px-8 h-full">
         <PageTitle :title="$route.params.id" subtitle="Guess the player you think this song belongs to!" />
-        <button class="btn btn-error btn-sm mb-4" @click="$emit('leaveRoom')">Leave room</button>
+        <button class="btn btn-error btn-sm mb-4" @click="leaveRoom">Leave room</button>
         <h1 v-if="players.length == 1" class="font-bold text-xl italic mb-4">{{ players.length }} Player</h1>
         <h1 v-else class="font-bold text-xl italic mb-4">{{ players.length }} Players</h1>
-        <UserCard v-for="p in players" :key="p.id" :host="room_.host.id == p.id" :img="p.img" :display-name="p.name" />
+        <UserCard
+            v-for="p in players"
+            :key="p.id"
+            :host="room_.host.id == p.id"
+            :img="p.img"
+            :display-name="p.name"
+            :class="makePlayerGuessId == p.id ? 'animate-pulse border-orange-500 border-2' : ''"
+            @click="makePlayerGuess(p.id)"
+        />
         <div class="mb-auto"></div>
         <div class="flex flex-col w-full justify-center">
             <hr class="my-4 opacity-20" />
             <SongCard :key="currentQuestion" :title="songs[currentQuestion].name" :artist="songs[currentQuestion].artist" :img="songs[currentQuestion].img" />
-            <input v-model="playerPosition" type="range" min="0" :max="duration" class="range range-xs mt-4" @change="seek" @mousedown="stopProgress" />
+            <input
+                v-if="!spotifyConnectionError"
+                v-model="playerPosition"
+                type="range"
+                min="0"
+                :max="duration"
+                class="range range-xs mt-4"
+                @change="seek"
+                @mousedown="stopProgress"
+            />
         </div>
-        <div v-if="connected">
-            <div v-if="isHost" class="flex flex-row mt-8 space-x-8">
-                <button v-if="!playing" class="flex flex-grow btn btn-success" @click="playSong">Play</button>
-                <button v-else class="flex flex-grow btn btn-error" @click="pauseSong">plause</button>
+        <div v-if="connected || spotifyConnectionError">
+            <div v-if="isHost()" class="flex flex-row mt-8 space-x-8">
+                <div v-if="!spotifyConnectionError" class="flex flex-grow">
+                    <button v-if="!playing" class="flex flex-grow btn btn-success" @click="playSong">Play</button>
+                    <button v-else class="flex flex-grow btn btn-error" @click="pauseSong">plause</button>
+                </div>
                 <button class="flex flex-grow btn btn-primary" @click="nextQuestion">Next song</button>
             </div>
             <div v-else>
-                <button v-if="!playing" class="flex flex-grow btn btn-success" @click="playSong">Play</button>
-                <button v-else class="flex flex-grow btn btn-error" @click="pauseSong">plause</button>
+                <div v-if="!spotifyConnectionError" class="flex flex-grow">
+                    <button v-if="!playing" class="flex flex-grow btn btn-success" @click="playSong">Play</button>
+                    <button v-else class="flex flex-grow btn btn-error" @click="pauseSong">plause</button>
+                </div>
             </div>
         </div>
         <div v-else class="flex flex-col mt-8">
@@ -62,10 +83,12 @@ export default {
             timer: null,
             playerPosition: 0,
             duration: 0,
+            makePlayerGuessId: null,
+            spotifyConnectionError: false,
         }
     },
     computed: {
-        ...mapWritableState(useUserStore, ['token', 'id']),
+        ...mapWritableState(useUserStore, ['token', 'id', 'notification']),
     },
     watch: {
         room: function (newVal, oldVal) {
@@ -78,14 +101,18 @@ export default {
                 this.playerPosition = 0
                 this.duration = 0
                 this.currentQuestion = newVal.currentQuestion
-                this.player.pause()
-                clearInterval(this.timer)
+                this.makePlayerGuessId = null
+
+                if (this.player) {
+                    this.player.pause()
+                    clearInterval(this.timer)
+                }
             }
         },
     },
     mounted() {},
     beforeUnmount() {
-        if (this.playing) {
+        if (this.player && this.playing) {
             this.player.pause()
         }
 
@@ -96,11 +123,19 @@ export default {
         clearInterval(this.timer)
     },
     methods: {
-        test() {
-            console.log('test click')
+        leaveRoom() {
+            this.stopProgress()
+            this.$emit('leaveRoom')
         },
-        test2() {
-            console.log('test click2')
+        makePlayerGuess(id) {
+            console.log('guess', id)
+            this.$socket.client.emit('makePlayerGuess', {
+                roomId: this.$route.params.id,
+                userId: this.id,
+                songId: this.room_.songs[this.currentQuestion].id,
+                guess: id,
+            })
+            this.makePlayerGuessId = id
         },
         seek() {
             this.player.seek(this.playerPosition)
@@ -124,7 +159,7 @@ export default {
             return state
         },
         isHost() {
-            console.log(this.room_.host.id, this.id)
+            console.log('is host 2', this.room_.host.id, this.id)
             return this.room_.host.id == this.id
         },
         connectToSpotifyPlayer() {
@@ -153,10 +188,27 @@ export default {
                     this.connectionLoading = false
                 })
 
+                player.addListener('not_ready', ({ device_id }) => {
+                    console.log('Device ID is not ready for playback', device_id)
+                })
+                player.on('initialization_error', ({ message }) => {
+                    console.error('Failed to initialize', message)
+                })
+
+                player.on('authentication_error', ({ message }) => {
+                    console.error('Failed to authenticate', message)
+                })
+                player.on('account_error', ({ message }) => {
+                    console.error('Failed to validate Spotify account', message)
+                    this.notification = 'You need a premium account to play music'
+                    this.spotifyConnectionError = true
+                })
+
                 player.connect()
             }
         },
         nextQuestion() {
+            this.makePlayerGuessId = null
             this.$emit('nextQuestion')
         },
         async playSong() {
