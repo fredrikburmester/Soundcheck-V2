@@ -4,26 +4,29 @@ import NavBar from './components/NavBar.vue'
 
 import { useUserStore } from '@/stores/user'
 import { mapWritableState, mapActions } from 'pinia'
+import NotificationComponent from './components/NotificationComponent.vue'
 
 export default {
     name: 'App',
     components: {
         NavBar,
         RouterView,
+        NotificationComponent,
     },
     data() {
         return {}
     },
     computed: {
-        ...mapWritableState(useUserStore, ['authenticated', 'key', 'id', 'name']),
+        ...mapWritableState(useUserStore, ['authenticated', 'key', 'id', 'name', 'notification']),
     },
     methods: {
-        ...mapActions(useUserStore, ['logout']),
+        ...mapActions(useUserStore, ['logout', 'getUser']),
     },
     sockets: {
         connected() {},
         error({ status, msg }) {
             console.log(status, msg)
+            this.notification = msg
             if (status != 200) {
                 this.$router.push(`/`)
             }
@@ -31,12 +34,14 @@ export default {
         redirect({ status, msg, route }) {
             if (!route) route = '/'
             console.log(status, msg)
+            this.notification = msg
             if (status != 200) {
                 this.$router.push(route)
             }
         },
         logout({ status, msg }) {
             console.log(status, msg)
+            this.notification = msg
             this.logout()
             this.$router.push(`/login`)
         },
@@ -49,6 +54,8 @@ export default {
     <div class="flex flex-col pt-16 items-center h-full">
         <RouterView />
     </div>
+    <NotificationComponent />
+    <span class="fixed bottom-0 left-0">{{ $socket.connected ? 'Connected' : 'Disconnected' }}</span>
 </template>
 
 <style>
