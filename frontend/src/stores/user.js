@@ -11,7 +11,7 @@ export const useUserStore = defineStore({
         display_name: useLocalStorage('display_name', ''),
         email: useLocalStorage('email', ''),
         avatar: useLocalStorage('avatar', ''),
-        top_songs: useLocalStorage('top_songs', []),
+        top_items: useLocalStorage('top_items', {}),
         roomCode: useLocalStorage('roomCode', ''),
     }),
     hydrate(storeState) {
@@ -22,7 +22,7 @@ export const useUserStore = defineStore({
         storeState.display_name = useLocalStorage('display_name', '')
         storeState.email = useLocalStorage('email', '')
         storeState.avatar = useLocalStorage('avatar', '')
-        storeState.top_songs = useLocalStorage('top_songs', [])
+        storeState.top_items = useLocalStorage('top_items', {})
         storeState.roomCode = useLocalStorage('roomCode', '')
     },
     getters: {
@@ -41,7 +41,7 @@ export const useUserStore = defineStore({
             this.display_name = ''
             this.email = ''
             this.avatar = ''
-            this.top_songs = []
+            this.top_items = {}
             this.roomCode = ''
 
             localStorage.setItem('authenticated', false)
@@ -50,13 +50,26 @@ export const useUserStore = defineStore({
             localStorage.setItem('name', '')
             localStorage.setItem('email', '')
             localStorage.setItem('avatar', '')
-            localStorage.setItem('top_songs', [])
+            localStorage.setItem('top_items', {})
             localStorage.setItem('roomCode', '')
 
             this.$router.push({ name: 'Login' })
         },
-        async getTopSongs(time_range, limit) {
-            console.log(time_range, limit)
+        async getTopSongs(time_range, limit, type) {
+            this.top_items = {
+                tracks: {
+                    short_term: this.top_items?.tracks?.short_term || [],
+                    medium_term: this.top_items?.tracks?.medium_term || [],
+                    long_term: this.top_items?.tracks?.long_term || [],
+                },
+                artists: {
+                    short_term: this.top_items?.artists?.short_term || [],
+                    medium_term: this.top_items?.artists?.medium_term || [],
+                    long_term: this.top_items?.artists?.long_term || [],
+                },
+            }
+
+            console.log(time_range, limit, type)
             if (!time_range) {
                 time_range = 'medium_term'
             }
@@ -65,12 +78,16 @@ export const useUserStore = defineStore({
                 limit = 25
             }
 
-            if (this.top_songs[time_range]) {
-                // get only limit about from array
-                return this.top_songs[time_range].slice(0, limit)
+            if (!type) {
+                type = 'tracks'
             }
 
-            const url = `https://api.spotify.com/v1/me/top/tracks?time_range=${time_range}&limit=${limit}`
+            if (this.top_items[type][time_range].length >= limit) {
+                // get only limit about from array
+                return this.top_items[type][time_range].slice(0, limit)
+            }
+
+            const url = `https://api.spotify.com/v1/me/top/${type}?time_range=${time_range}&limit=${limit}`
             await fetch(url, {
                 headers: {
                     Accept: 'application/json',
@@ -79,6 +96,7 @@ export const useUserStore = defineStore({
                 },
             })
                 .then((response) => {
+                    console.log('res: ', response)
                     return response.json()
                 })
                 .then((data) => {
@@ -86,9 +104,9 @@ export const useUserStore = defineStore({
                         this.logout()
                         return
                     }
-                    this.top_songs[this.time_range] = data.items
+                    this.top_items[type][time_range] = data.items
                 })
-            return this.top_songs[this.time_range]
+            return this.top_items[type][time_range]
         },
         async getUser() {
             let user = null
