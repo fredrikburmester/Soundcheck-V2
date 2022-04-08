@@ -1,8 +1,8 @@
 <template>
-    <div v-if="!loading" class="h-full">
+    <div v-if="!loading" id="room">
         <LobbyComponent v-if="gameState == 'lobby'" :players="players" :room="room" @leave-room="leaveRoom" @start-game="startGame" />
         <GameComponent v-if="gameState == 'playing'" :players="players" :room="room" @leave-room="leaveRoom" @next-question="nextQuestion" />
-        <div v-if="gameState == 'finished'">Done</div>
+        <div v-if="gameState == 'finished'">The game has ended</div>
     </div>
 </template>
 
@@ -23,7 +23,7 @@ export default {
         }
     },
     computed: {
-        ...mapWritableState(useUserStore, ['id']),
+        ...mapWritableState(useUserStore, ['id', 'roomCode']),
     },
     mounted() {
         this.joinRoom()
@@ -34,6 +34,7 @@ export default {
             this.room = room
             this.players = room.users
             this.gameState = this.room.status
+            this.roomCode = this.room.code
 
             this.loading = false
         },
@@ -53,8 +54,19 @@ export default {
                 },
                 (response) => {
                     if (response.status == 200) {
+                        console.log(response.room)
                         this.room = response.room
-                        this.sendTopSongs(this.room.settings.timeRange, this.room.settings.nrOfSongs)
+                        if (response.room.status == 'lobby') {
+                            this.sendTopSongs(this.room.settings.timeRange, this.room.settings.nrOfSongs)
+                        }
+
+                        if (response.room.status == 'finished') {
+                            console.log('Room is finished')
+                            this.gameState = 'finished'
+                            this.roomCode = ''
+                        }
+
+                        this.loading = false
                     }
                 }
             )
@@ -72,6 +84,7 @@ export default {
                 roomCode: this.$route.params.id,
                 userId: this.id,
             })
+            this.roomCode = null
             this.$router.push('/')
         },
         startGame() {
@@ -89,3 +102,10 @@ export default {
     },
 }
 </script>
+
+<style>
+#room {
+    margin-bottom: 100px;
+    min-height: calc(100vh - 100px);
+}
+</style>
