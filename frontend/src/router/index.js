@@ -15,7 +15,7 @@ const router = createRouter({
     routes: [
         {
             path: '/play',
-            name: 'play',
+            name: 'Play',
             component: PlayView,
             meta: {
                 requiresAuth: true,
@@ -23,7 +23,7 @@ const router = createRouter({
         },
         {
             path: '/',
-            name: 'home',
+            name: 'Home',
             component: HomeView,
             meta: {
                 requiresAuth: true,
@@ -31,7 +31,7 @@ const router = createRouter({
         },
         {
             path: '/create',
-            name: 'create',
+            name: 'Create',
             component: CreateRoomView,
             meta: {
                 requiresAuth: true,
@@ -39,7 +39,7 @@ const router = createRouter({
         },
         {
             path: '/room/:id',
-            name: 'room',
+            name: 'Room',
             component: RoomView,
             meta: {
                 requiresAuth: true,
@@ -47,12 +47,12 @@ const router = createRouter({
         },
         {
             path: '/login',
-            name: 'login',
+            name: 'Login',
             component: LoginView,
         },
         {
             path: '/callback',
-            name: 'callback',
+            name: 'Callback',
             component: CallbackView,
         },
         {
@@ -74,7 +74,19 @@ const router = createRouter({
 
 router.beforeEach(async (to) => {
     const store = useUserStore()
-    if (to.meta.requiresAuth && (!store.isAuthenticated || store.getToken.length == 0)) return '/login'
+
+    if (to.meta.requiresAuth) {
+        const url = 'https://api.spotify.com/v1/me'
+        const headers = {
+            Authorization: `Bearer ${store.token}`,
+        }
+        await fetch(url, { headers }).then((response) => {
+            if (response.status != 200) {
+                store.logout()
+                return
+            }
+        })
+    }
 })
 
 export default router
