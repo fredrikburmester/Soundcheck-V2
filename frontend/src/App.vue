@@ -55,7 +55,6 @@ export default {
         <RouterView />
     </div>
     <NotificationComponent class="z-100" />
-    <span class="fixed bottom-0 left-0">{{ $socket.connected ? 'Connected' : 'Disconnected' }}</span>
 </template>
 
 <style>
