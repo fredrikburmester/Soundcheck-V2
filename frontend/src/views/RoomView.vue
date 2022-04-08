@@ -84,7 +84,7 @@ export default {
                 roomCode: this.$route.params.id,
                 userId: this.id,
             })
-            this.roomCode = null
+            this.roomCode = ''
             this.$router.push('/')
         },
         startGame() {
