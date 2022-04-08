@@ -41,13 +41,33 @@ export class Room {
 						s.artists[0].name,
 						s.album.images[0].url
 					)
-					song.users.push(u)
+					song.users.push(u.id)
 					songs.push(song)
 				}
 			}
 		}
 		this.songs = [...songs]
 		return songs
+	}
+
+	compileResults() {
+		for (let s of this.songs) {
+			let currentSongCorrectAnswers = s.users // answers
+
+			for (let u of this.users) {
+				for (let g of u.guesses) {
+					// get guess for current song
+					if (g.songId === s.id) {
+						// if g.userId is in currentSongCorrectAnswers
+						if (currentSongCorrectAnswers.includes(g.userId)) {
+							// add points
+							u.points += 1
+							g.correct = true
+						}
+					}
+				}
+			}
+		}
 	}
 
 	addUserToRoom(user, socket) {

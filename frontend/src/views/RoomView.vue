@@ -2,7 +2,7 @@
     <div v-if="!loading" id="room">
         <LobbyComponent v-if="gameState == 'lobby'" :players="players" :room="room" @leave-room="leaveRoom" @start-game="startGame" />
         <GameComponent v-if="gameState == 'playing'" :players="players" :room="room" @leave-room="leaveRoom" @next-question="nextQuestion" />
-        <div v-if="gameState == 'finished'">The game has ended</div>
+        <ResultsComponent v-if="gameState == 'finished'" :players="players" :room="room" />
     </div>
 </template>
 
@@ -11,9 +11,10 @@ import { mapWritableState, mapActions } from 'pinia'
 import { useUserStore } from '@/stores/user'
 import LobbyComponent from '../components/LobbyComponent.vue'
 import GameComponent from '../components/GameComponent.vue'
+import ResultsComponent from '../components/ResultsComponent.vue'
 
 export default {
-    components: { LobbyComponent, GameComponent },
+    components: { LobbyComponent, GameComponent, ResultsComponent },
     data() {
         return {
             loading: true,
@@ -63,7 +64,6 @@ export default {
                         if (response.room.status == 'finished') {
                             console.log('Room is finished')
                             this.gameState = 'finished'
-                            this.roomCode = ''
                         }
 
                         this.loading = false

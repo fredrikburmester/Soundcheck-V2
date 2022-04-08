@@ -149,6 +149,18 @@ io.on('connection', (socket) => {
 		return
 	})
 
+	socket.on('makePlayerGuess', ({ roomId, userId, songId, guess }) => {
+		console.log(roomId, userId, songId, guess)
+		let room = ROOMS.find((room) => room.code === roomId)
+		let user = USERS.find((user) => user.id === userId)
+
+		if (room && user) {
+			if (room.status === roomStatus[1]) {
+				user.makeGuess(songId, guess)
+			}
+		}
+	})
+
 	socket.on('joinRoom', ({ userId, roomCode }, callback) => {
 		console.log(`[${roomCode}] ${userId} want's to join the room`)
 
@@ -171,6 +183,10 @@ io.on('connection', (socket) => {
 				msg: 'This room does not exist',
 			})
 			return
+		}
+
+		if (room.status === roomStatus[0]) {
+			user.clearGuesses()
 		}
 
 		if (room.status === roomStatus[1] && user.room != room.code) {
@@ -324,6 +340,11 @@ io.on('connection', (socket) => {
 		console.log(`[${roomCode}] Next question`)
 		let room = ROOMS.find((room) => room.code === roomCode)
 		room.nextQuestion()
+
+		if (room.status === roomStatus[2]) {
+			room.compileResults()
+		}
+
 		broadcastRoomUpdates(room)
 	})
 
