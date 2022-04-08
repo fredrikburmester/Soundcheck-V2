@@ -5,7 +5,7 @@ import NotFound from '../components/NotFound.vue'
 import CreateRoomView from '../views/CreateRoomView.vue'
 import RoomView from '../views/RoomView.vue'
 import CallbackView from '../views/CallbackView.vue'
-import MyTopSongsView from '../views/MyTopSongsView.vue'
+import MyTopView from '../views/MyTopView.vue'
 import HomeView from '../views/HomeView.vue'
 
 import { useUserStore } from '@/stores/user'
@@ -56,9 +56,9 @@ const router = createRouter({
             component: CallbackView,
         },
         {
-            path: '/my-top-songs',
-            name: 'MyTopSongs',
-            component: MyTopSongsView,
+            path: '/my-top/:id',
+            name: 'MyTop',
+            component: MyTopView,
             meta: {
                 requiresAuth: true,
             },
