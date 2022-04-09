@@ -17,7 +17,7 @@ export default {
     },
     mounted() {
         console.log('[0] mounted callback view')
-        let code = window.location.href.split('/callback?code=')[1]
+        let code = window.location.href.split('/logincallback?code=')[1]
         this.$socket.client.emit('login-step-2', code)
     },
     methods: {

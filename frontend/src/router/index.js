@@ -51,7 +51,7 @@ const router = createRouter({
             component: LoginView,
         },
         {
-            path: '/callback',
+            path: '/logincallback',
             name: 'Callback',
             component: CallbackView,
         },
