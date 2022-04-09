@@ -79,7 +79,7 @@ io.on('connection', (socket) => {
 				if (!user) {
 					socket.emit('logout', {
 						status: 500,
-						msg: 'No user with that id found, please log in again',
+						msg: 'Could not find your user, plase log in again.',
 					})
 					return
 				}
