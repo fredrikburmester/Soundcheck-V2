@@ -33,18 +33,12 @@ var USERS = []
 var ROOMS = []
 var ACTIVE_USERS = 0
 
-const firstConnect = (id, socket) => {
-	// Handles the first connection before log in.
-}
-
 const broadcastRoomUpdates = (room) => {
 	io.to(room.code).emit('roomStatus', room)
 }
 
 io.on('connection', (socket) => {
 	ACTIVE_USERS++
-	var id = socket.id
-	firstConnect(id, socket)
 	socket.emit('connected')
 
 	socket.on('disconnect', () => {
@@ -71,7 +65,8 @@ io.on('connection', (socket) => {
 			if (
 				roomCode !== undefined &&
 				nrOfSongs !== undefined &&
-				showCorrectGuesses !== undefined
+				showCorrectGuesses !== undefined &&
+				timeRange !== undefined
 			) {
 				let user = USERS.find((user) => user.id === userId)
 				let room = ROOMS.find((room) => room.code === roomCode)
@@ -88,19 +83,19 @@ io.on('connection', (socket) => {
 					if (room.status === roomStatus[0]) {
 						socket.emit('redirect', {
 							status: 303,
-							msg: 'Game created but not started',
+							msg: '',
 							id: room.code,
 						})
 					} else if (room.status === roomStatus[1]) {
 						socket.emit('error', {
 							status: 401,
-							msg: 'Game already started',
+							msg: 'Game already started. Try creating a new room!',
 						})
 					} else if (room.status === roomStatus[2]) {
 						// socket redirect to result page
 						socket.emit('redirect', {
 							status: 303,
-							msg: 'Game has ended',
+							msg: 'Game has ended. Check out the results!',
 							id: room.code,
 						})
 					}
@@ -120,8 +115,6 @@ io.on('connection', (socket) => {
 						msg: '',
 						id: room.code,
 					})
-
-					console.log(`\n${userId} created a room: ${roomCode}\n`)
 				}
 			} else {
 				socket.emit('error', {
@@ -133,13 +126,10 @@ io.on('connection', (socket) => {
 	)
 
 	socket.on('login', ({ id, img, name }) => {
-		console.log('User logged in: ', id, img, name)
-
 		// Check if user is alredy logged in
 		let user = USERS.find((user) => user.id === id)
 
 		if (user && user.socketid != socket.id) {
-			console.log('Found old client, logging it out.')
 			io.to(user.socketid).emit('logout', {
 				status: 303,
 				msg: 'You have switched to another client',
@@ -170,7 +160,6 @@ io.on('connection', (socket) => {
 	})
 
 	socket.on('makePlayerGuess', ({ roomId, userId, songId, guess }) => {
-		console.log(roomId, userId, songId, guess)
 		let room = ROOMS.find((room) => room.code === roomId)
 		let user = USERS.find((user) => user.id === userId)
 
@@ -182,13 +171,10 @@ io.on('connection', (socket) => {
 	})
 
 	socket.on('joinRoom', ({ userId, roomCode }, callback) => {
-		console.log(`[${roomCode}] ${userId} want's to join the room`)
-
 		let user = USERS.find((user) => user.id === userId)
 		let room = ROOMS.find((room) => room.code === roomCode)
 
 		if (!user) {
-			console.log('[ERROR] No user')
 			socket.emit('error', {
 				status: 404,
 				msg: 'The user does not exist',
@@ -197,7 +183,6 @@ io.on('connection', (socket) => {
 		}
 
 		if (!room) {
-			console.log('[ERROR] No room')
 			socket.emit('redirect', {
 				status: 404,
 				msg: 'This room does not exist',
@@ -210,7 +195,6 @@ io.on('connection', (socket) => {
 		}
 
 		if (room.status === roomStatus[1] && user.room != room.code) {
-			console.log('[REDIRECT] Game has already started')
 			socket.emit('error', {
 				status: 303,
 				msg: 'Game has already started',
@@ -227,14 +211,10 @@ io.on('connection', (socket) => {
 		}
 
 		if (room.hasUser(user)) {
-			console.log(`[${roomCode}] User is already in room`)
-
 			room.switchUserClient(user, socket)
 			broadcastRoomUpdates(room)
 			return
 		}
-
-		console.log(`[${roomCode}] Adding user ${user.id} to room`)
 
 		// Add room to user object
 		user.room = room.code
@@ -256,7 +236,6 @@ io.on('connection', (socket) => {
 		let room = ROOMS.find((room) => room.code === roomCode)
 
 		if (!user) {
-			console.log('[ERROR] No user')
 			socket.emit('error', {
 				status: 404,
 				msg: 'The user does not exist',
@@ -265,7 +244,6 @@ io.on('connection', (socket) => {
 		}
 
 		if (!room) {
-			console.log('[ERROR] No room')
 			socket.emit('redirect', {
 				status: 404,
 				msg: 'This room does not exist',
@@ -278,7 +256,6 @@ io.on('connection', (socket) => {
 		user.room = null
 		broadcastRoomUpdates(room)
 
-		console.log(`[${roomCode}] ${userId} left the room`)
 		return
 	})
 
@@ -338,7 +315,6 @@ io.on('connection', (socket) => {
 	})
 
 	socket.on('startGame', ({ roomCode }) => {
-		console.log(`[${roomCode}] Starting game`)
 		let room = ROOMS.find((room) => room.code === roomCode)
 		room.compileSongList()
 		room.status = roomStatus[1]
@@ -349,7 +325,6 @@ io.on('connection', (socket) => {
 	})
 
 	socket.on('topSongs', ({ userId, songs }) => {
-		console.log(`[${userId}] Top songs`, songs.length)
 		let user = USERS.find((user) => user.id === userId)
 		let room = ROOMS.find((room) => room.code === user.room)
 		user.songs = songs
@@ -358,7 +333,6 @@ io.on('connection', (socket) => {
 	})
 
 	socket.on('nextQuestion', ({ roomCode }) => {
-		console.log(`[${roomCode}] Next question`)
 		let room = ROOMS.find((room) => room.code === roomCode)
 		room.nextQuestion()
 
