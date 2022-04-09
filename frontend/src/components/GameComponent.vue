@@ -24,6 +24,7 @@
                 min="0"
                 :max="duration"
                 class="range range-xs mt-4"
+                :disabled="!settings.allowSongSeeking"
                 @change="seek"
                 @mousedown="stopProgress"
             />
@@ -63,6 +64,10 @@ export default {
             required: true,
         },
         room: {
+            type: Object,
+            required: true,
+        },
+        settings: {
             type: Object,
             required: true,
         },

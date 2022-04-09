@@ -45,8 +45,16 @@
                     <div class="form-control mb-4">
                         <div class="form-control">
                             <label class="label cursor-pointer">
-                                <span class="label-text text-opacity-50">Show correct guesses</span>
-                                <input v-model="showCorrectGuesses" type="checkbox" class="toggle toggle-primary" checked />
+                                <span class="label-text text-opacity-50">Show correct guesses?</span>
+                                <input v-model="showCorrectGuesses" disabled type="checkbox" class="toggle toggle-primary" checked />
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-control mb-4">
+                        <div class="form-control">
+                            <label class="label cursor-pointer">
+                                <span class="label-text text-opacity-50">Allow song seeking?</span>
+                                <input v-model="allowSongSeeking" type="checkbox" class="toggle toggle-primary" checked />
                             </label>
                         </div>
                     </div>
@@ -84,6 +92,7 @@ export default {
         const showCorrectGuesses = ref(false)
         const generateRoomCodeActive = ref(true)
         const time_range = ref('medium_term')
+        const allowSongSeeking = ref(false)
 
         // generate random 4 letter room code
         const generateRoomCode = () => {
@@ -113,6 +122,7 @@ export default {
             generateRoomCode,
             updateRoomCode,
             time_range,
+            allowSongSeeking,
         }
     },
     computed: {
@@ -134,6 +144,7 @@ export default {
                 nrOfSongs: this.nrOfSongs,
                 showCorrectGuesses: this.showCorrectGuesses,
                 timeRange: this.time_range,
+                allowSongSeeking: this.allowSongSeeking,
             })
         },
         changeTimeRange(e, time_range) {

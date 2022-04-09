@@ -16,6 +16,7 @@ export class Room {
 			nrOfSongs: 0,
 			showCorrectGuesses: true,
 			timeRange: 'short_term',
+			allowSongSeeking: true,
 		}
 		this.host = host
 		this.songs = []

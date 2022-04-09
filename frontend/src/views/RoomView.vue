@@ -1,7 +1,14 @@
 <template>
     <div v-if="!loading" id="room">
         <LobbyComponent v-if="gameState == 'lobby'" :players="players" :room="room" @leave-room="leaveRoom" @start-game="startGame" />
-        <GameComponent v-if="gameState == 'playing'" :players="players" :room="room" @leave-room="leaveRoom" @next-question="nextQuestion" />
+        <GameComponent
+            v-if="gameState == 'playing'"
+            :settings="room.settings"
+            :players="players"
+            :room="room"
+            @leave-room="leaveRoom"
+            @next-question="nextQuestion"
+        />
         <ResultsComponent v-if="gameState == 'finished'" :players="players" :room="room" />
     </div>
 </template>

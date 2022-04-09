@@ -9,6 +9,8 @@ import { Server } from 'socket.io'
 import { Room, roomStatus } from './room.js'
 import { User } from './user.js'
 import { Song } from './song.js'
+import { loginStep2 } from './auth.js'
+import { createLoginUrl } from './auth.js'
 
 const app = express()
 const httpServer = createServer()
@@ -61,7 +63,14 @@ io.on('connection', (socket) => {
 
 	socket.on(
 		'createRoom',
-		({ userId, roomCode, nrOfSongs, showCorrectGuesses, timeRange }) => {
+		({
+			userId,
+			roomCode,
+			nrOfSongs,
+			showCorrectGuesses,
+			timeRange,
+			allowSongSeeking,
+		}) => {
 			if (
 				roomCode !== undefined &&
 				nrOfSongs !== undefined &&
@@ -105,6 +114,7 @@ io.on('connection', (socket) => {
 					room.settings.timeRange = timeRange
 					room.settings.nrOfSongs = nrOfSongs
 					room.settings.showCorrectGuesses = showCorrectGuesses
+					room.settings.allowSongSeeking = allowSongSeeking
 
 					// add room to rooms
 					ROOMS.push(room)
@@ -260,59 +270,49 @@ io.on('connection', (socket) => {
 	})
 
 	socket.on('login-step-1', () => {
-		const client_id = process.env.CLIENT_ID
-		const redirect_uri = process.env.CALLBACK_URL
-
-		const auth_url =
-			'https://accounts.spotify.com/authorize?' +
-			queryString.stringify({
-				response_type: 'code',
-				client_id: client_id,
-				redirect_uri: redirect_uri,
-				scope: 'user-top-read user-read-email user-read-private user-library-read user-modify-playback-state user-read-playback-state user-read-currently-playing streaming app-remote-control',
-			})
+		let auth_url = createLoginUrl()
 		socket.emit('login', auth_url)
 	})
 
-	socket.on('refresh-token', async (refresh_token) => {
-		const client_id = process.env.CLIENT_ID
-		const client_secret = process.env.CLIENT_SECRET
-		if (
-			refresh_token == null ||
-			refresh_token == '' ||
-			refresh_token == undefined
-		) {
-			socket.emit('error', { status: 500, msg: 'Missing parameters' })
-			return
-		}
+	// socket.on('refresh-token', async (refresh_token) => {
+	// 	const client_id = process.env.CLIENT_ID
+	// 	const client_secret = process.env.CLIENT_SECRET
+	// 	if (
+	// 		refresh_token == null ||
+	// 		refresh_token == '' ||
+	// 		refresh_token == undefined
+	// 	) {
+	// 		socket.emit('error', { status: 500, msg: 'Missing parameters' })
+	// 		return
+	// 	}
 
-		const url = 'https://accounts.spotify.com/api/token'
-		const body = {
-			grant_type: 'refresh_token',
-			refresh_token: refresh_token,
-			client_id: client_id,
-			client_secret: client_secret,
-		}
+	// 	const url = 'https://accounts.spotify.com/api/token'
+	// 	const body = {
+	// 		grant_type: 'refresh_token',
+	// 		refresh_token: refresh_token,
+	// 		client_id: client_id,
+	// 		client_secret: client_secret,
+	// 	}
 
-		var result = null
+	// 	var result = null
 
-		await fetch(url, {
-			method: 'POST',
-			headers: {
-				Accept: 'application/json',
-				'Content-Type':
-					'application/x-www-form-urlencoded;charset=UTF-8',
-			},
-			body: queryString.stringify(body),
-		})
-			.then((response) => {
-				return response.json()
-			})
-			.then((data) => {
-				result = data
-			})
-		socket.emit('refreshToken', result)
-	})
+	// 	await fetch(url, {
+	// 		method: 'POST',
+	// 		headers: {
+	// 			Accept: 'application/json',
+	// 			'Content-Type':
+	// 				'application/x-www-form-urlencoded;charset=UTF-8',
+	// 		},
+	// 		body: queryString.stringify(body),
+	// 	})
+	// 		.then((response) => {
+	// 			return response.json()
+	// 		})
+	// 		.then((data) => {
+	// 			result = data
+	// 		})
+	// 	socket.emit('refreshToken', result)
+	// })
 
 	socket.on('startGame', ({ roomCode }) => {
 		let room = ROOMS.find((room) => room.code === roomCode)
@@ -344,49 +344,8 @@ io.on('connection', (socket) => {
 	})
 
 	socket.on('login-step-2', async (code) => {
-		const client_id = process.env.CLIENT_ID
-		const redirect_uri = process.env.CALLBACK_URL
-		const client_secret = process.env.CLIENT_SECRET
-		const scope =
-			'user-top-read user-read-email user-read-private user-library-read user-modify-playback-state user-read-playback-state user-read-currently-playing streaming app-remote-control'
-
-		if (code === null) {
-			socket.emit('error', {
-				status: 500,
-				msg: 'Missing parameters',
-			})
-			return
-		} else {
-			const url = 'https://accounts.spotify.com/api/token'
-			const body = {
-				grant_type: 'authorization_code',
-				code: code,
-				scope: scope,
-				redirect_uri: redirect_uri,
-				client_id: client_id,
-				client_secret: client_secret,
-			}
-
-			var result = null
-
-			await fetch(url, {
-				method: 'POST',
-				headers: {
-					Accept: 'application/json',
-					'Content-Type':
-						'application/x-www-form-urlencoded;charset=UTF-8',
-				},
-				body: queryString.stringify(body),
-			})
-				.then((response) => {
-					return response.json()
-				})
-				.then((data) => {
-					result = data
-				})
-
-			socket.emit('loginData', result)
-		}
+		let result = await loginStep2(socket, code)
+		socket.emit('loginData', result)
 	})
 })
 
