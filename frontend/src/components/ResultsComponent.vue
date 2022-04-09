@@ -3,8 +3,8 @@
         <PageTitle :title="$route.params.id" subtitle="Check out the results by pressing a user below!" />
 
         <div v-for="p in sortedUsers" :key="p.id" tabindex="0" class="collapse" :style="cssVars">
-            <UserCard :img="p.img" :display-name="p.name" class="collapse-title" @click="openGuesses(p.id)" />
-            <input type="checkbox" class="peer" />
+            <UserCard :img="p.img" :display-name="p.name" class="collapse-title" />
+            <input id="checkbox" type="checkbox" class="peer" />
             <div class="rounded-b-2xl m-0 px-4 collapse-content bg-secondary text-primary-content">
                 <h1 class="text-white mt-4 text-2xl font-bold">Points: {{ p.points * 10 }}</h1>
                 <p class="text-white opacity-70">Per song answers for {{ p.name }}</p>
@@ -58,9 +58,6 @@ export default {
         console.log(this.room.songs.length)
     },
     methods: {
-        openGuesses(id) {
-            // this.$emit('openGuesses', id);
-        },
         getCorrectAnswerName(songId) {
             let users = null
             // ger users from songs.users
@@ -107,7 +104,7 @@ export default {
 }
 .collapse,
 .collapse-content {
-    transition: all 1s ease !important;
+    transition: all 0.5s ease !important;
 }
 
 .collapse-open .collapse-content,

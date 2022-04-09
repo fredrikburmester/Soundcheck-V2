@@ -36,6 +36,9 @@
                 </p>
             </div>
         </div>
+        <div v-else class="flex flex-col items-center place-content-center mt-32">
+            <div class="radial-progress text-primary animate-spin" style="--value: 70"></div>
+        </div>
     </div>
 
     <div class="tabs tabs-boxed z-100 bg-primary">
@@ -79,15 +82,18 @@ export default {
                 this.item_type = this.$route.params.id
                 this.time_range = 'medium_term'
                 this.getItems()
+                this.loading = false
             }
         },
     },
     async mounted() {
-        this.getItems()
+        await this.getItems()
+        this.loading = false
     },
     methods: {
         ...mapActions(useUserStore, ['getTopSongs']),
         async toggleActive(e, time_range) {
+            this.loading = true
             Array.from(document.getElementsByClassName('tab')).forEach((element) => {
                 element.classList.remove('tab-active')
             })
@@ -98,6 +104,9 @@ export default {
 
             // Set time range
             this.time_range = time_range
+
+            // stop loading
+            this.loading = false
         },
         async getItems() {
             this.loading = true

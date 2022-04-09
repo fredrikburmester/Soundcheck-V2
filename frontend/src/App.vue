@@ -72,5 +72,13 @@ select:focus,
 textarea:focus,
 button:focus {
     outline: none;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    -webkit-appearance: none;
+}
+
+input {
+    box-shadow: none;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    -webkit-appearance: none;
 }
 </style>
