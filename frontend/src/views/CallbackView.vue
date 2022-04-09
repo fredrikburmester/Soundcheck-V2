@@ -16,8 +16,7 @@ export default {
         ...mapWritableState(useUserStore, ['authenticated', 'token', 'refresh_token', 'display_name', 'email', 'avatar', 'id']),
     },
     mounted() {
-        console.log('[0] mounted callback view')
-        let code = window.location.href.split('/logincallback?code=')[1]
+        let code = window.location.href.split(`${import.meta.env.VITE_LOGIN_CALLBACK_PATH}?code=`)[1]
         this.$socket.client.emit('login-step-2', code)
     },
     methods: {

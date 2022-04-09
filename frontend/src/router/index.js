@@ -51,7 +51,7 @@ const router = createRouter({
             component: LoginView,
         },
         {
-            path: '/logincallback',
+            path: import.meta.env.VITE_LOGIN_CALLBACK_PATH,
             name: 'Callback',
             component: CallbackView,
         },
