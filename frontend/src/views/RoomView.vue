@@ -105,7 +105,7 @@ export default {
 
 <style>
 #room {
-    margin-bottom: 100px;
+    margin-bottom: 200px;
     min-height: calc(100vh - 100px);
 }
 </style>

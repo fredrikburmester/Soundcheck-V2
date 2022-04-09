@@ -1,6 +1,6 @@
 <template>
     <div class="flex w-screen md:max-w-3xl flex-col px-8 h-full">
-        <PageTitle :title="$route.params.id" subtitle="Guess the player you think this song belongs to!" />
+        <PageTitle :title="$route.params.id" subtitle="Click on the player that you think this song belongs to! Who's favorite song is it??" />
         <button class="btn btn-error btn-sm mb-4" @click="leaveRoom">Leave room</button>
         <h1 v-if="players.length == 1" class="font-bold text-xl italic mb-4">{{ players.length }} Player</h1>
         <h1 v-else class="font-bold text-xl italic mb-4">{{ players.length }} Players</h1>
@@ -145,6 +145,7 @@ export default {
             let state = await this.getPlayerState()
             this.duration = state.duration
             this.playerPosition = state.position
+            this.playing = !state.paused
         },
         stopProgress() {
             clearInterval(this.timer)
@@ -156,7 +157,14 @@ export default {
         },
         async getPlayerState() {
             let state = await this.player.getCurrentState()
-            return state
+
+            console.log('getPlayerState', state)
+
+            if (state == null || state == undefined) {
+                return false
+            } else {
+                return state
+            }
         },
         isHost() {
             console.log('is host 2', this.room_.host.id, this.id)
@@ -233,14 +241,13 @@ export default {
             } else {
                 this.player.resume()
                 let state = await this.getPlayerState()
-                console.log(state)
-                if (!state.playing) {
+                if (state.paused) {
                     this.player.resume()
                 }
             }
 
             let state = await this.getPlayerState()
-            if (!state.playing) {
+            if (state.paused) {
                 this.player.resume()
             }
 

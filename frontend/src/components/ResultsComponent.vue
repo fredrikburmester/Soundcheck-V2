@@ -2,7 +2,7 @@
     <div id="results" class="px-8">
         <PageTitle :title="$route.params.id" subtitle="Check out the results by pressing a user below!" />
 
-        <div v-for="p in sortedUsers" :key="p.id" tabindex="0" class="collapse">
+        <div v-for="p in sortedUsers" :key="p.id" tabindex="0" class="collapse" :style="cssVars">
             <UserCard :img="p.img" :display-name="p.name" class="collapse-title" @click="openGuesses(p.id)" />
             <input type="checkbox" class="peer" />
             <div class="rounded-b-2xl m-0 px-4 collapse-content bg-secondary text-primary-content">
@@ -47,9 +47,15 @@ export default {
             let users = this.room_.users.slice()
             return users.sort((a, b) => b.points - a.points)
         },
+        cssVars() {
+            return {
+                '--max-card-height': 150 + this.room.songs.length * 154 + 'px',
+            }
+        },
     },
     mounted() {
         console.log(this.room)
+        console.log(this.room.songs.length)
     },
     methods: {
         openGuesses(id) {
@@ -98,5 +104,15 @@ export default {
 }
 #results {
     padding-bottom: 50px;
+}
+.collapse,
+.collapse-content {
+    transition: all 1s ease !important;
+}
+
+.collapse-open .collapse-content,
+.collapse:focus:not(.collapse-close) .collapse-content,
+.collapse:not(.collapse-close) input[type='checkbox']:checked ~ .collapse-content {
+    max-height: var(--max-card-height) !important;
 }
 </style>

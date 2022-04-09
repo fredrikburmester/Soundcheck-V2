@@ -67,4 +67,10 @@ export default {
     height: 100%;
     width: 100%;
 }
+input:focus,
+select:focus,
+textarea:focus,
+button:focus {
+    outline: none;
+}
 </style>
