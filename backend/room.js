@@ -50,6 +50,19 @@ export class Room {
 		return songs
 	}
 
+	endGame() {
+		// set room status to finished
+		this.status = roomStatus[2]
+
+		// compile results
+		this.compileResults()
+
+		// set user.room to null for all users in the room
+		for (let u of this.users) {
+			u.room = null
+		}
+	}
+
 	compileResults() {
 		for (let s of this.songs) {
 			let currentSongCorrectAnswers = s.users // answers

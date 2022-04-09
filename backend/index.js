@@ -154,7 +154,11 @@ io.on('connection', (socket) => {
 			USERS.push(user)
 		}
 
-		if (user.room) {
+		if (
+			user.room &&
+			(user.room.status === roomStatus[0] ||
+				user.room.status === roomStatus[1])
+		) {
 			socket.emit('redirect', {
 				status: 303,
 				msg: 'Game created',
@@ -359,7 +363,7 @@ io.on('connection', (socket) => {
 		room.nextQuestion()
 
 		if (room.status === roomStatus[2]) {
-			room.compileResults()
+			room.endGame()
 		}
 
 		broadcastRoomUpdates(room)
