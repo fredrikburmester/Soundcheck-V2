@@ -49,7 +49,7 @@ export default {
         },
         cssVars() {
             return {
-                '--max-card-height': 150 + this.room.songs.length * 154 + 'px',
+                '--max-card-height': 150 + this.room.songs.length * 180 + 'px',
             }
         },
     },
