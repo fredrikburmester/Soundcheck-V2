@@ -75,7 +75,8 @@ io.on('connection', (socket) => {
 				roomCode !== undefined &&
 				nrOfSongs !== undefined &&
 				showCorrectGuesses !== undefined &&
-				timeRange !== undefined
+				timeRange !== undefined &&
+				allowSongSeeking !== undefined
 			) {
 				let user = USERS.find((user) => user.id === userId)
 				let room = ROOMS.find((room) => room.code === roomCode)
