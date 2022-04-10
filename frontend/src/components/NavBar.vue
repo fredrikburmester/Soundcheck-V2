@@ -10,12 +10,19 @@
                         </svg>
                     </label>
                 </div>
-                <ul tabindex="0" class="menu dropdown-content mt-3 p-2 bg-base-300 shadow rounded-box w-52">
+                <ul tabindex="0" class="menu dropdown-content mt-3 p-2 bg-base-300 shadow rounded-box w-72">
                     <li><router-link class="font-bold" to="/">Home</router-link></li>
                     <li><router-link class="font-bold" to="/play">Play</router-link></li>
-                    <li><router-link class="font-bold" to="/my-previous-games">Previous Games</router-link></li>
+                    <li class="">
+                        <a class="justify-between">
+                            Previous games
+                            <span class="badge badge-secondary">Coming soon</span>
+                        </a>
+                    </li>
                     <li><router-link class="font-bold" to="/my-top/tracks">My top tracks</router-link></li>
-                    <li><router-link class="font-bold" to="/my-top/artists">My top artists</router-link></li>
+                    <li>
+                        <router-link class="font-bold" to="/my-top/artists">My top artists<span class="badge badge-success">New</span></router-link>
+                    </li>
                     <hr v-if="roomCode" class="opacity-10 my-4 mx-4" />
                     <p v-if="roomCode" class="font-bold text-md ml-4 mb-2">{{ roomCode }}</p>
                     <router-link :to="`/room/${roomCode}`">
@@ -47,14 +54,6 @@
                             {{ $socket.connected ? 'Connected' : 'Disconnected' }}
                         </p>
                     </li>
-
-                    <!-- <li>
-                        <a class="justify-between">
-                            Profile
-                            <span class="badge">New</span>
-                        </a>
-                    </li>
-                    <li><a>Settings</a></li> -->
 
                     <li><a class="bg-red-600 text-black font-bold" @click="logout">Logout</a></li>
                 </ul>

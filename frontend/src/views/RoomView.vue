@@ -115,4 +115,7 @@ export default {
     margin-bottom: 200px;
     min-height: calc(100vh - 100px);
 }
+#player-view {
+    padding-bottom: 250px;
+}
 </style>

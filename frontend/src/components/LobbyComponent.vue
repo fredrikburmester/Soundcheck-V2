@@ -1,11 +1,15 @@
 <template>
     <div id="lobby" class="flex w-screen md:max-w-3xl flex-col px-8 h-full">
-        <PageTitle :title="$route.params.id" subtitle="Welcome to the game room!" />
-        <button class="btn btn-error btn-sm mb-4" @click="$emit('leaveRoom')">Leave room</button>
-        <h1 v-if="players.length == 1" class="font-bold text-xl italic mb-4">{{ players.length }} Player</h1>
-        <h1 v-else class="font-bold text-xl italic mb-4">{{ players.length }} Players</h1>
-        <UserCard v-for="player in players" :key="player.id" :host="room.host.id == player.id" :img="player.img" :display-name="player.name" />
-        <button v-if="isHost()" class="btn btn-success shadow-md mt-auto" @click="$emit('startGame')">Start game</button>
+        <div>
+            <PageTitle :title="$route.params.id" subtitle="Welcome to the game room!" />
+            <button class="btn btn-error btn-sm mb-4" @click="$emit('leaveRoom')">Leave room</button>
+            <h1 v-if="players.length == 1" class="font-bold text-xl italic mb-4">{{ players.length }} Player</h1>
+            <h1 v-else class="font-bold text-xl italic mb-4">{{ players.length }} Players</h1>
+        </div>
+        <div id="player-view">
+            <UserCard v-for="player in players" :key="player.id" :host="room.host.id == player.id" :img="player.img" :display-name="player.name" />
+        </div>
+        <button v-if="isHost()" class="btn btn-success shadow-md fixed-center-button" @click="$emit('startGame')">Start game</button>
     </div>
 </template>
 

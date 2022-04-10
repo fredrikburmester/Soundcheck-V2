@@ -81,4 +81,12 @@ input {
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
     -webkit-appearance: none;
 }
+.fixed-center-button {
+    left: 50%;
+    transform: translate(-50%, 0);
+    width: calc(100vw - 5em);
+    max-width: 700px;
+    position: fixed;
+    bottom: 40px;
+}
 </style>

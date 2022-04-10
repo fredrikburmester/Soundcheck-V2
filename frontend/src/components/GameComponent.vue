@@ -1,52 +1,59 @@
 <template>
     <div class="flex w-screen md:max-w-3xl flex-col px-8 h-full">
-        <PageTitle :title="$route.params.id" subtitle="Click on the player that you think this song belongs to! Who's favorite song is it??" />
+        <PageTitle :title="$route.params.id" subtitle="Click the player you think this song belongs to! Who's favorite song is it?" />
         <button class="btn btn-error btn-sm mb-4" @click="leaveRoom">Leave room</button>
         <h1 v-if="players.length == 1" class="font-bold text-xl italic mb-4">{{ players.length }} Player</h1>
         <h1 v-else class="font-bold text-xl italic mb-4">{{ players.length }} Players</h1>
-        <UserCard
-            v-for="p in players"
-            :key="p.id"
-            :host="room_.host.id == p.id"
-            :img="p.img"
-            :display-name="p.name"
-            :class="makePlayerGuessId == p.id ? 'animate-pulse border-orange-500 border-2' : ''"
-            @click="makePlayerGuess(p.id)"
-        />
-        <div class="mb-auto"></div>
-        <div class="flex flex-col w-full justify-center">
-            <hr class="my-4 opacity-20" />
-            <SongCard :key="currentQuestion" :title="songs[currentQuestion].name" :artist="songs[currentQuestion].artist" :img="songs[currentQuestion].img" />
-            <input
-                v-if="!spotifyConnectionError"
-                v-model="playerPosition"
-                type="range"
-                min="0"
-                :max="duration"
-                class="range range-xs mt-4"
-                :disabled="!settings.allowSongSeeking"
-                @change="seek"
-                @mousedown="stopProgress"
+        <div id="player-view">
+            <UserCard
+                v-for="p in players"
+                :key="p.id"
+                :host="room_.host.id == p.id"
+                :img="p.img"
+                :display-name="p.name"
+                :class="makePlayerGuessId == p.id ? 'animate-pulse outline outline-orange-500 outline-offset-4' : ''"
+                @click="makePlayerGuess(p.id)"
             />
         </div>
-        <div v-if="connected || spotifyConnectionError">
-            <div v-if="isHost()" class="flex flex-row mt-8 space-x-8">
-                <div v-if="!spotifyConnectionError" class="flex flex-grow">
-                    <button v-if="!playing" class="flex flex-grow btn btn-success" @click="playSong">Play</button>
-                    <button v-else class="flex flex-grow btn btn-error" @click="pauseSong">plause</button>
-                </div>
-                <button class="flex flex-grow btn btn-primary" @click="nextQuestion">Next song</button>
+        <div class="fixed-center-button">
+            <div class="flex flex-col w-full justify-center">
+                <SongCard
+                    :key="currentQuestion"
+                    :title="songs[currentQuestion].name"
+                    :artist="songs[currentQuestion].artist"
+                    :img="songs[currentQuestion].img"
+                />
+                <input
+                    v-if="!spotifyConnectionError"
+                    v-model="playerPosition"
+                    type="range"
+                    min="0"
+                    :max="duration"
+                    class="range range-xs mt-4"
+                    :disabled="!settings.allowSongSeeking"
+                    @change="seek"
+                    @mousedown="stopProgress"
+                />
             </div>
-            <div v-else>
-                <div v-if="!spotifyConnectionError" class="flex flex-grow">
-                    <button v-if="!playing" class="flex flex-grow btn btn-success" @click="playSong">Play</button>
-                    <button v-else class="flex flex-grow btn btn-error" @click="pauseSong">plause</button>
+            <div v-if="connected || spotifyConnectionError" class="mt-4">
+                <div v-if="isHost()" class="flex flex-row mt-8 space-x-8">
+                    <div v-if="!spotifyConnectionError" class="flex flex-grow">
+                        <button v-if="!playing" class="flex flex-grow btn btn-success" @click="playSong">Play</button>
+                        <button v-else class="flex flex-grow btn btn-error" @click="pauseSong">plause</button>
+                    </div>
+                    <button class="flex flex-grow btn btn-primary" @click="nextQuestion">Next song</button>
+                </div>
+                <div v-else>
+                    <div v-if="!spotifyConnectionError" class="flex flex-grow">
+                        <button v-if="!playing" class="flex flex-grow btn btn-success" @click="playSong">Play</button>
+                        <button v-else class="flex flex-grow btn btn-error" @click="pauseSong">plause</button>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div v-else class="flex flex-col mt-8">
-            <button v-if="!connectionLoading" class="btn btn-success animate-pulse" @click="connectToSpotifyPlayer">Connect</button>
-            <button v-else class="btn btn-success loading"></button>
+            <div v-else class="mt-4">
+                <button v-if="!connectionLoading" class="btn btn-success animate-pulse w-full" @click="connectToSpotifyPlayer">Connect</button>
+                <button v-else class="btn btn-success loading w-full"></button>
+            </div>
         </div>
     </div>
 </template>
