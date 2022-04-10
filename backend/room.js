@@ -47,7 +47,7 @@ export class Room {
 				}
 			}
 		}
-		this.songs = [...songs]
+		this.songs = songs.sort(() => Math.random() - 0.5)
 		return songs
 	}
 
