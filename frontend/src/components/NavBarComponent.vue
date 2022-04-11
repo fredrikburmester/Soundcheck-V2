@@ -10,7 +10,7 @@
                         </svg>
                     </label>
                 </div>
-                <transition name="fade">
+                <transition name="slide-from-left">
                     <ul v-if="navbarOpen" class="menu menu-dropdown mt-3 p-2 bg-base-300 shadow rounded-box w-72">
                         <li><router-link class="font-bold" to="/">Home</router-link></li>
                         <li><router-link class="font-bold" to="/play">Play</router-link></li>
@@ -40,7 +40,7 @@
                         <img :src="avatar" />
                     </div>
                 </label>
-                <transition name="fade">
+                <transition name="slide-from-right">
                     <ul v-if="profileOpen" class="mt-3 p-2 shadow menu menu-compact fixed top-14 right-2 bg-base-300 rounded-box w-64">
                         <li class="mb-2">
                             <p>
@@ -123,13 +123,27 @@ export default {
 </script>
 
 <style scoped>
-.fade-enter-active,
-.fade-leave-active {
+.slide-from-left-enter-active,
+.slide-from-left-leave-active {
     transition: all 0.2s ease;
 }
 
-.fade-enter-from,
-.fade-leave-to {
+.slide-from-left-enter-from,
+.slide-from-left-leave-to {
+    transform: translateX(-200px);
     opacity: 0;
+}
+.slide-from-right-enter-active,
+.slide-from-right-leave-active {
+    transition: all 0.2s ease;
+}
+
+.slide-from-right-enter-from,
+.slide-from-right-leave-to {
+    transform: translateX(200px);
+    opacity: 0;
+}
+.menu {
+    width: calc(100vw - 20px);
 }
 </style>
