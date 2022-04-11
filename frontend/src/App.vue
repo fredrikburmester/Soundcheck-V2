@@ -71,13 +71,14 @@ input:focus,
 select:focus,
 textarea:focus,
 button:focus {
-    outline: none;
+    outline: none !important;
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
     -webkit-appearance: none;
 }
 
 input {
-    box-shadow: none;
+    box-shadow: none !important;
+    outline: none !important;
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
     -webkit-appearance: none;
 }
@@ -88,5 +89,7 @@ input {
     max-width: 700px;
     position: fixed;
     bottom: 40px;
+    animation: none !important;
+    transition: none;
 }
 </style>

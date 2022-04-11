@@ -4,12 +4,12 @@
         <label for="my-modal-6" class="btn btn-sm btn-success modal-button mb-4">Create playlist</label>
         <input id="my-modal-6" type="checkbox" class="modal-toggle" />
         <div class="modal modal-bottom sm:modal-middle">
-            <div class="modal-box bg-zinc-900">
-                <h3 class="font-bold text-lg">Create a Spotify playlist from the songs in the game!</h3>
+            <div class="modal-box bg-zinc-900 mb-12">
+                <h3 class="font-bold text-lg">Create a Spotify playlist with the songs from the game</h3>
                 <hr class="my-4 opacity-10" />
                 <div class="form-control w-full max-w-xs">
                     <label class="label">
-                        <span class="label-text">Playlist name</span>
+                        <span class="label-text opacity-60">Playlist name</span>
                     </label>
                     <input v-model="playlistName" type="text" class="input input-bordered w-full max-w-xs bg-black" />
                 </div>
