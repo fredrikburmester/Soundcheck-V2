@@ -72,13 +72,13 @@ export default {
 }
 
 .fixed-center-button {
-    left: 50%;
-    transform: translate(-50%, 0);
-    width: calc(100vw - 5em);
-    max-width: 700px;
-    position: fixed;
-    bottom: 40px;
+    left: 50% !important;
+    transform: translate(-50%, 0) !important;
+    width: calc(100vw - 5em) !important;
+    max-width: 700px !important;
+    position: fixed !important;
+    bottom: 40px !important;
     animation: none !important;
-    transition: none;
+    transition: none !important;
 }
 </style>
