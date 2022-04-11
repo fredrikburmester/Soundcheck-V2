@@ -17,7 +17,7 @@ export default {
         return {}
     },
     computed: {
-        ...mapWritableState(useUserStore, ['authenticated', 'key', 'id', 'name', 'notification']),
+        ...mapWritableState(useUserStore, ['authenticated', 'key', 'id', 'name', 'notification', 'notificationType']),
     },
     methods: {
         ...mapActions(useUserStore, ['logout', 'getUser']),
@@ -27,6 +27,7 @@ export default {
         error({ status, msg }) {
             console.log(status, msg)
             this.notification = msg
+            this.notificationType = 'error'
             if (status != 200) {
                 this.$router.push(`/`)
             }
@@ -35,6 +36,7 @@ export default {
             if (!route) route = '/'
             console.log(status, msg)
             this.notification = msg
+            this.notificationType = 'success'
             if (status != 200) {
                 this.$router.push(route)
             }
@@ -42,6 +44,7 @@ export default {
         logout({ status, msg }) {
             console.log(status, msg)
             this.notification = msg
+            this.notificationType = 'success'
             this.logout()
             this.$router.push(`/login`)
         },
@@ -67,6 +70,7 @@ export default {
     height: 100%;
     width: 100%;
 }
+
 .fixed-center-button {
     left: 50%;
     transform: translate(-50%, 0);

@@ -1,9 +1,9 @@
 <template>
     <transition name="fade" mode="out-in">
         <div v-if="notification" class="fixed bottom-0 left-0 p-8 animate-none">
-            <div class="alert alert-warning shadow-lg flex flex-wrap flex-row">
+            <div id="notificationBackground" :class="notificationClasses">
                 <div>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-black flex-shrink-0 w-6 h-6">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" :class="iconClasses">
                         <path
                             stroke-linecap="round"
                             stroke-linejoin="round"
@@ -14,7 +14,7 @@
                     <span>{{ notification }}</span>
                 </div>
                 <div class="flex-none">
-                    <button class="btn btn-sm btn-primary" @click="notification = ''">Close</button>
+                    <button :class="buttonClasses" @click="notification = ''">Close</button>
                 </div>
             </div>
         </div>
@@ -29,13 +29,43 @@ export default {
         return {}
     },
     computed: {
-        ...mapWritableState(useUserStore, ['notification']),
+        ...mapWritableState(useUserStore, ['notification', 'notificationType']),
+        notificationClasses() {
+            return {
+                alert: true,
+                'bg-zinc-900': this.notificationType === 'success' || false,
+                'alert-warning': this.notificationType == 'error' || false,
+                'shadow-lg': true,
+                flex: true,
+                'flex-wrap': true,
+                'flex-row': true,
+                'min-w-64': true,
+            }
+        },
+        buttonClasses() {
+            return {
+                btn: true,
+                'btn-sm': true,
+                'btn-success': this.notificationType === 'success' || false,
+                'btn-warning': this.notificationType === 'error' || false,
+                'shadow-lg': true,
+            }
+        },
+        iconClasses() {
+            return {
+                'stroke-white': this.notificationType === 'success' || false,
+                'stroke-black': this.notificationType === 'error' || false,
+                'flex-shrink-0': true,
+                'w-6': true,
+                'h-6': true,
+            }
+        },
     },
     mounted() {
         // self destruct after 5 seconds
-        setTimeout(() => {
-            this.notification = ''
-        }, 5000)
+        // setTimeout(() => {
+        //     this.notification = ''
+        // }, 3000)
     },
     sockets: {},
     methods: {},
@@ -52,5 +82,8 @@ export default {
 .fade-leave-to {
     transform: translateX(-500px);
     opacity: 0;
+}
+#notificationBackground {
+    min-width: 250px;
 }
 </style>

@@ -11,7 +11,7 @@
                 :host="room_.host.id == p.id"
                 :img="p.img"
                 :display-name="p.name"
-                :class="makePlayerGuessId == p.id ? 'animate-pulse outline outline-orange-500 outline-offset-4' : ''"
+                :class="makePlayerGuessId == p.id ? 'animate-pulse ring ring-primary' : ''"
                 @click="makePlayerGuess(p.id)"
             />
         </div>
