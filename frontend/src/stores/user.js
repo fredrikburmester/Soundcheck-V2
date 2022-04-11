@@ -14,6 +14,7 @@ export const useUserStore = defineStore({
         avatar: useLocalStorage('avatar', ''),
         top_items: useLocalStorage('top_items', {}),
         roomCode: useLocalStorage('roomCode', ''),
+        notification: useLocalStorage('notification', ''),
     }),
     hydrate(storeState) {
         storeState.authenticated = useLocalStorage('authenticated', false)
@@ -25,6 +26,7 @@ export const useUserStore = defineStore({
         storeState.avatar = useLocalStorage('avatar', '')
         storeState.top_items = useLocalStorage('top_items', {})
         storeState.roomCode = useLocalStorage('roomCode', '')
+        storeState.notification = useLocalStorage('notification', '')
     },
     getters: {
         isAuthenticated: (state) => state.authenticated,
@@ -44,6 +46,7 @@ export const useUserStore = defineStore({
             this.avatar = ''
             this.top_items = {}
             this.roomCode = ''
+            this.notification = ''
 
             localStorage.setItem('authenticated', false)
             localStorage.setItem('token', '')
@@ -53,6 +56,7 @@ export const useUserStore = defineStore({
             localStorage.setItem('avatar', '')
             localStorage.setItem('top_items', {})
             localStorage.setItem('roomCode', '')
+            localStorage.setItem('notification', '')
 
             this.$router.push({ name: 'Login' })
         },
@@ -102,11 +106,16 @@ export const useUserStore = defineStore({
                 },
             })
                 .then((response) => {
+                    console.log(response)
+                    if (response.status === 201) {
+                        this.notification = 'Playlist created!'
+                    }
                     return response.json()
                 })
                 .then((data) => {
                     result = data
                 })
+            console.log(result)
             return result
         },
         async getTopSongs(time_range, limit, type) {
