@@ -15,6 +15,7 @@ export const useUserStore = defineStore({
         top_items: useLocalStorage('top_items', {}),
         roomCode: useLocalStorage('roomCode', ''),
         notification: useLocalStorage('notification', ''),
+        notificationType: useLocalStorage('notificationType', 'error'),
     }),
     hydrate(storeState) {
         storeState.authenticated = useLocalStorage('authenticated', false)
@@ -27,6 +28,7 @@ export const useUserStore = defineStore({
         storeState.top_items = useLocalStorage('top_items', {})
         storeState.roomCode = useLocalStorage('roomCode', '')
         storeState.notification = useLocalStorage('notification', '')
+        storeState.notificationType = useLocalStorage('notificationType', 'error')
     },
     getters: {
         isAuthenticated: (state) => state.authenticated,
@@ -47,6 +49,7 @@ export const useUserStore = defineStore({
             this.top_items = {}
             this.roomCode = ''
             this.notification = ''
+            this.notificationType = 'error'
 
             localStorage.setItem('authenticated', false)
             localStorage.setItem('token', '')
@@ -57,6 +60,7 @@ export const useUserStore = defineStore({
             localStorage.setItem('top_items', {})
             localStorage.setItem('roomCode', '')
             localStorage.setItem('notification', '')
+            localStorage.setItem('notificationType', 'error')
 
             this.$router.push({ name: 'Login' })
         },
@@ -108,7 +112,8 @@ export const useUserStore = defineStore({
                 .then((response) => {
                     console.log(response)
                     if (response.status === 201) {
-                        this.notification = 'Playlist created!'
+                        this.notification = 'The playlist has been created and added to your account!'
+                        this.notificationType = 'success'
                     }
                     return response.json()
                 })
