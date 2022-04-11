@@ -19,7 +19,7 @@
                 </div>
             </div>
         </div>
-        <!-- <div v-for="p in sortedUsers" :key="p.id" tabindex="0" class="collapse" :style="cssVars">
+        <div v-for="p in sortedUsers" :key="p.id" tabindex="0" class="collapse" :style="cssVars">
             <UserCard :img="p.img" :display-name="p.name" class="collapse-title" />
             <input id="checkbox" type="checkbox" class="peer" />
             <div class="rounded-b-2xl m-0 px-4 collapse-content bg-secondary text-primary-content">
@@ -31,7 +31,7 @@
                     <p class="text-white ml-2 opacity-70">Correct answer: {{ getCorrectAnswerName(song.id) }}</p>
                 </div>
             </div>
-        </div> -->
+        </div>
         <div v-if="sortedUsers.length == 0">
             <hr class="my-4 opacity-20" />
             <p class="my-4 text-left text-xl italic text-white">Hmm i guess no one even played this one? Maybe everyone left before it even started.</p>
