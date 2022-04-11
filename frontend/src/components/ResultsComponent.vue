@@ -117,7 +117,22 @@ export default {
 </script>
 <style scoped>
 * {
-    border: none !important;
+    outline: none !important;
+}
+input:focus,
+select:focus,
+textarea:focus,
+button:focus {
+    outline: none !important;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0) !important;
+    -webkit-appearance: none !important;
+}
+
+input {
+    box-shadow: none !important;
+    outline: none !important;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0) !important;
+    -webkit-appearance: none !important;
 }
 .collapse-content {
     transform: translateY(-20px);
