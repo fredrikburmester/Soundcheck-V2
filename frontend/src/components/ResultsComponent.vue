@@ -4,7 +4,7 @@
         <label for="my-modal-6" class="btn btn-sm btn-success modal-button mb-4">Create playlist</label>
         <input id="my-modal-6" type="checkbox" class="modal-toggle" />
         <div class="modal modal-bottom sm:modal-middle">
-            <div class="modal-box bg-zinc-900 mb-12">
+            <div class="modal-box bg-zinc-900">
                 <h3 class="font-bold text-lg">Create a Spotify playlist with the songs from the game</h3>
                 <hr class="my-4 opacity-10" />
                 <div class="form-control w-full max-w-xs">
@@ -13,7 +13,7 @@
                     </label>
                     <input v-model="playlistName" type="text" class="input input-bordered w-full max-w-xs bg-black" />
                 </div>
-                <div class="modal-action">
+                <div class="modal-action mb-12">
                     <label for="my-modal-6" class="btn btn-primary">Close</label>
                     <label for="my-modal-6" class="btn btn-success" @click="compileAndCreatePlaylist">Create</label>
                 </div>
