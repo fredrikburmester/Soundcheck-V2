@@ -145,5 +145,6 @@ export default {
 }
 .menu {
     width: calc(100vw - 20px);
+    max-width: 400px;
 }
 </style>
