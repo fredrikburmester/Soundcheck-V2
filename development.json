@@ -1,0 +1,22 @@
+{
+	"apps": [
+		{
+			"name": "s-v2-frontend",
+			"script": "cd ./frontend && npm run dev",
+			"watch": true,
+			"env": {
+				"NODE_ENV": "development"
+			}
+		},
+		{
+			"name": "s-v2-backend",
+			"script": "cd ./backend && npm run start",
+			"watch": true,
+			"env": {
+				"NODE_ENV": "development",
+				"CALLBACK_URL": "http://localhost:8080/logincallback",
+				"PORT": 5000
+			}
+		}
+	]
+}
