@@ -41,7 +41,7 @@
         </div>
     </div>
 
-    <div class="tabs tabs-boxed z-100 bg-primary">
+    <div class="tabs tabs-boxed z-100 bg-base-100">
         <a class="tab bg-base-100 rounded-l-lg" @click="toggleActive($event, 'short_term')">Month</a>
         <a class="tab tab-active bg-base-100" @click="toggleActive($event, 'medium_term')">Half Year</a>
         <a class="tab bg-base-100 rounded-r-lg" @click="toggleActive($event, 'long_term')">Over a year</a>
@@ -50,7 +50,7 @@
 <script>
 import { useUserStore } from '@/stores/user'
 import { mapWritableState, mapActions } from 'pinia'
-import SongCard from '../components/SongCard.vue'
+import SongCard from '../components/SongCardComponent.vue'
 
 export default {
     components: { SongCard },
@@ -125,7 +125,7 @@ export default {
 <style scoped>
 .tabs {
     position: fixed;
-    bottom: 30px;
+    bottom: 50px;
     left: 50%;
     transform: translateX(-50%);
     width: 278px;

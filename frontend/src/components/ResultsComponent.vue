@@ -42,7 +42,7 @@
 <script>
 import UserCard from './UserCard.vue'
 import PageTitle from './PageTitle.vue'
-import SongCard from './SongCard.vue'
+import SongCard from './SongCardComponent.vue'
 
 import { useUserStore } from '@/stores/user'
 import { mapActions } from 'pinia'

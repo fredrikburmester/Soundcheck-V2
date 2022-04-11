@@ -1,6 +1,6 @@
 <script>
 import { RouterView } from 'vue-router'
-import NavBar from './components/NavBar.vue'
+import NavBar from './components/NavBarComponent.vue'
 
 import { useUserStore } from '@/stores/user'
 import { mapWritableState, mapActions } from 'pinia'
