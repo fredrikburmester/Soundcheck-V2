@@ -52,7 +52,9 @@ io.on('connection', (socket) => {
 	})
 
 	socket.on('getInvitablePlayers', () => {
-		let invitablePlayers = USERS.filter((user) => true == true)
+		let invitablePlayers = USERS.filter(
+			(user) => user.socketid !== socket.id
+		)
 		socket.emit('invitablePlayers', invitablePlayers)
 	})
 
