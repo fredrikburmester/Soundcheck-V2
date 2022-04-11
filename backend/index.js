@@ -171,11 +171,13 @@ io.on('connection', (socket) => {
 		// Check if user is alredy logged in
 		let user = USERS.find((user) => user.id === id)
 
-		if (user && user.socketid != socket.id) {
-			io.to(user.socketid).emit('logout', {
-				status: 303,
-				msg: 'You have switched to another client',
-			})
+		if (user) {
+			if (user.socketid != socket.id) {
+				io.to(user.socketid).emit('logout', {
+					status: 303,
+					msg: 'You have switched to another client',
+				})
+			}
 
 			user.id = id
 			user.img = img
