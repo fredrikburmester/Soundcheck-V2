@@ -116,6 +116,9 @@ export default {
 }
 </script>
 <style scoped>
+* {
+    border: none !important;
+}
 .collapse-content {
     transform: translateY(-20px);
     z-index: 1;

@@ -67,21 +67,6 @@ export default {
     height: 100%;
     width: 100%;
 }
-input:focus,
-select:focus,
-textarea:focus,
-button:focus {
-    outline: none !important;
-    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-    -webkit-appearance: none;
-}
-
-input {
-    box-shadow: none !important;
-    outline: none !important;
-    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-    -webkit-appearance: none;
-}
 .fixed-center-button {
     left: 50%;
     transform: translate(-50%, 0);
