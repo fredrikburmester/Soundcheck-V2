@@ -11,7 +11,7 @@ import { User } from './user.js'
 import { Song } from './song.js'
 import { loginStep2 } from './auth.js'
 import { createLoginUrl } from './auth.js'
-import { Notification, Invite } from './notification.js'
+import { Notification, Invite } from './Notification.js'
 
 const app = express()
 const httpServer = createServer()
