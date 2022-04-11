@@ -2,7 +2,7 @@
 	"apps": [
 		{
 			"name": "s-v2-frontend",
-			"script": "cd ./frontend && npm i && npm run build && npm run preview",
+			"script": "cd ./frontend && npm run build && npm run preview",
 			"watch": true,
 			"env": {
 				"NODE_ENV": "production"
@@ -10,7 +10,7 @@
 		},
 		{
 			"name": "s-v2-backend",
-			"script": "cd ./backend && npm i && npm run start",
+			"script": "cd ./backend && npm run start",
 			"watch": true,
 			"env": {
 				"NODE_ENV": "production",
