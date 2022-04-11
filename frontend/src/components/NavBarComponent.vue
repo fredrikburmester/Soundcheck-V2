@@ -1,8 +1,8 @@
 <template>
-    <div class="w-screen h-16 backdrop-blur-sm fixed top-0 z-100"></div>
-    <div v-if="authenticated" class="navbar bg-transparent fixed top-0 z-100">
-        <div :key="$route.path" class="navbar-start">
-            <div ref="target" class="dropdown">
+    <div class="w-screen h-16 bg-base-100 fixed top-0 z-100"></div>
+    <div v-if="authenticated" ref="target" :key="$route.path" class="navbar bg-transparent fixed top-0 z-100">
+        <div class="navbar-start">
+            <div class="dropdown">
                 <div class="indicator" @click="toggleNavBar">
                     <label class="btn btn-ghost btn-circle">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -34,15 +34,15 @@
             </div>
         </div>
         <div class="fixed top-2 right-2">
-            <div class="dropdown dropdown-end">
+            <div>
                 <label class="btn btn-ghost btn-circle avatar" @click="toggleProfile">
                     <div class="w-10 rounded-full">
                         <img :src="avatar" />
                     </div>
                 </label>
                 <transition name="fade">
-                    <ul v-if="profileOpen" class="mt-3 p-2 shadow menu menu-compact fixed top-14 right-2 bg-base-300 rounded-box w-52">
-                        <li>
+                    <ul v-if="profileOpen" class="mt-3 p-2 shadow menu menu-compact fixed top-14 right-2 bg-base-300 rounded-box w-64">
+                        <li class="mb-2">
                             <p>
                                 Logged in as:
                                 <br />
@@ -51,12 +51,6 @@
                                 {{ id }}
                             </p>
                         </li>
-                        <li>
-                            <p>
-                                {{ $socket.connected ? 'Connected' : 'Disconnected' }}
-                            </p>
-                        </li>
-
                         <li><a class="bg-red-600 text-black font-bold" @click="logout">Logout</a></li>
                     </ul>
                 </transition>
@@ -92,7 +86,7 @@ export default {
             navbarOpen.value = false
         }
 
-        return { target, navbarOpen, toggleNavBar, toggleProfile, profileOpen }
+        return { target, navbarOpen, profileOpen, toggleNavBar, toggleProfile }
     },
     data() {
         return {}
