@@ -6,7 +6,7 @@ export const loginStep2 = async (socket, code) => {
 	const redirect_uri = process.env.CALLBACK_URL
 	const client_secret = process.env.CLIENT_SECRET
 	const scope =
-		'user-top-read user-read-email user-read-private user-library-read user-modify-playback-state user-read-playback-state user-read-currently-playing streaming app-remote-control'
+		'playlist-modify-public playlist-modify-private user-top-read user-read-email user-read-private user-library-read user-modify-playback-state user-read-playback-state user-read-currently-playing streaming app-remote-control'
 
 	if (code === null) {
 		socket.emit('error', {
@@ -57,7 +57,7 @@ export const createLoginUrl = () => {
 			response_type: 'code',
 			client_id: client_id,
 			redirect_uri: redirect_uri,
-			scope: 'user-top-read user-read-email user-read-private user-library-read user-modify-playback-state user-read-playback-state user-read-currently-playing streaming app-remote-control',
+			scope: 'playlist-modify-public playlist-modify-private user-top-read user-read-email user-read-private user-library-read user-modify-playback-state user-read-playback-state user-read-currently-playing streaming app-remote-control',
 		})
 
 	return auth_url

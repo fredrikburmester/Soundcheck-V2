@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { useLocalStorage } from '@vueuse/core'
+import queryString from 'query-string'
 
 export const useUserStore = defineStore({
     id: 'user',
@@ -55,6 +56,59 @@ export const useUserStore = defineStore({
 
             this.$router.push({ name: 'Login' })
         },
+        async createPlaylist(tracks, roomCode, name) {
+            const url = `https://api.spotify.com/v1/users/${this.id}/playlists`
+            const body = {
+                collaborative: false,
+                description: 'All the songs from your recent Soundcheck game!',
+                name: name,
+                public: true,
+            }
+            let result
+
+            await fetch(url, {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${this.token}`,
+                },
+                body: JSON.stringify(body),
+            })
+                .then((response) => {
+                    return response.json()
+                })
+                .then((data) => {
+                    result = data
+                })
+
+            let playlistId = result.id
+
+            // create string from tracks array
+            let trackString = ''
+            for (let i = 0; i < tracks.length; i++) {
+                trackString += `spotify:track:${tracks[i].id}`
+                if (i !== tracks.length - 1) {
+                    trackString += ','
+                }
+            }
+
+            await fetch(`https://api.spotify.com/v1/playlists/${playlistId}/tracks?uris=${trackString}`, {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${this.token}`,
+                },
+            })
+                .then((response) => {
+                    return response.json()
+                })
+                .then((data) => {
+                    result = data
+                })
+            return result
+        },
         async getTopSongs(time_range, limit, type) {
             this.top_items = {
                 tracks: {
@@ -100,6 +154,7 @@ export const useUserStore = defineStore({
                     return response.json()
                 })
                 .then((data) => {
+                    console.log(data)
                     if (data.error) {
                         this.logout()
                         return

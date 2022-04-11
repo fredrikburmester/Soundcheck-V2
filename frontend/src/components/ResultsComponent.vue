@@ -1,7 +1,24 @@
 <template>
     <div id="results" class="px-8">
         <PageTitle :title="$route.params.id" subtitle="Check out the results by pressing a user below!" />
-
+        <label for="my-modal-6" class="btn btn-sm btn-success modal-button mb-4">Create playlist</label>
+        <input id="my-modal-6" type="checkbox" class="modal-toggle" />
+        <div class="modal modal-bottom sm:modal-middle">
+            <div class="modal-box bg-zinc-900">
+                <h3 class="font-bold text-lg">Create a Spotify playlist from the songs in the game!</h3>
+                <hr class="my-4 opacity-10" />
+                <div class="form-control w-full max-w-xs">
+                    <label class="label">
+                        <span class="label-text">Playlist name</span>
+                    </label>
+                    <input v-model="playlistName" type="text" class="input input-bordered w-full max-w-xs bg-black" />
+                </div>
+                <div class="modal-action">
+                    <label for="my-modal-6" class="btn btn-primary">Close</label>
+                    <label for="my-modal-6" class="btn btn-success" @click="compileAndCreatePlaylist">Create</label>
+                </div>
+            </div>
+        </div>
         <div v-for="p in sortedUsers" :key="p.id" tabindex="0" class="collapse" :style="cssVars">
             <UserCard :img="p.img" :display-name="p.name" class="collapse-title" />
             <input id="checkbox" type="checkbox" class="peer" />
@@ -26,6 +43,9 @@
 import UserCard from './UserCard.vue'
 import PageTitle from './PageTitle.vue'
 import SongCard from './SongCard.vue'
+
+import { useUserStore } from '@/stores/user'
+import { mapActions } from 'pinia'
 export default {
     components: { UserCard, PageTitle, SongCard },
     props: {
@@ -40,6 +60,7 @@ export default {
             room_: this.room,
             device_id: '',
             player: null,
+            playlistName: 'Soundcheck: ' + this.$route.params.id,
         }
     },
     computed: {
@@ -53,11 +74,12 @@ export default {
             }
         },
     },
-    mounted() {
-        console.log(this.room)
-        console.log(this.room.songs.length)
-    },
+    mounted() {},
     methods: {
+        ...mapActions(useUserStore, ['createPlaylist']),
+        compileAndCreatePlaylist() {
+            this.createPlaylist(this.room.songs, this.room.code, this.playlistName)
+        },
         getCorrectAnswerName(songId) {
             let users = null
             // ger users from songs.users
@@ -81,7 +103,6 @@ export default {
         },
         getGuessName(guesses, songId) {
             // find name of user where songId is in guesses
-            console.log(guesses, songId)
             for (let i = 0; i < guesses.length; i++) {
                 if (guesses[i].songId == songId) {
                     let userId = guesses[i].userId
