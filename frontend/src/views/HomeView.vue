@@ -39,7 +39,7 @@
                     <h2 class="card-title">My top artists</h2>
                     <p>See who your top artists are!</p>
                     <div class="card-actions justify-end">
-                        <router-link to="/my-top/tracks">
+                        <router-link to="/my-top/artists">
                             <button class="btn btn-primary">enter</button>
                         </router-link>
                     </div>
