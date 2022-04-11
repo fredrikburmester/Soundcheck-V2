@@ -22,7 +22,7 @@ const io = new Server(httpServer, {
 	path: '/ws',
 })
 
-const PORT = process.env.PORT
+const PORT = process.env.PORT || 5005
 
 console.log(`PORT: ${process.env.PORT}`)
 console.log(`Callback URL: ${process.env.CALLBACK_URL}`)
