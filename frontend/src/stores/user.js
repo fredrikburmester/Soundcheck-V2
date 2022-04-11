@@ -16,6 +16,8 @@ export const useUserStore = defineStore({
         roomCode: useLocalStorage('roomCode', ''),
         notification: useLocalStorage('notification', ''),
         notificationType: useLocalStorage('notificationType', 'error'),
+        notifications: useLocalStorage('notifications', []),
+        socketid: useLocalStorage('socketid', ''),
     }),
     hydrate(storeState) {
         storeState.authenticated = useLocalStorage('authenticated', false)
@@ -29,6 +31,8 @@ export const useUserStore = defineStore({
         storeState.roomCode = useLocalStorage('roomCode', '')
         storeState.notification = useLocalStorage('notification', '')
         storeState.notificationType = useLocalStorage('notificationType', 'error')
+        storeState.notifications = useLocalStorage('notifications', [])
+        storeState.socketid = useLocalStorage('socketid', '')
     },
     getters: {
         isAuthenticated: (state) => state.authenticated,
@@ -50,6 +54,8 @@ export const useUserStore = defineStore({
             this.roomCode = ''
             this.notification = ''
             this.notificationType = 'error'
+            this.notifications = []
+            this.socketid = ''
 
             localStorage.setItem('authenticated', false)
             localStorage.setItem('token', '')
@@ -61,6 +67,8 @@ export const useUserStore = defineStore({
             localStorage.setItem('roomCode', '')
             localStorage.setItem('notification', '')
             localStorage.setItem('notificationType', 'error')
+            localStorage.setItem('notifications', [])
+            localStorage.setItem('socketid', '')
 
             this.$router.push({ name: 'Login' })
         },

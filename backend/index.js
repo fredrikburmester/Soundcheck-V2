@@ -11,6 +11,7 @@ import { User } from './user.js'
 import { Song } from './song.js'
 import { loginStep2 } from './auth.js'
 import { createLoginUrl } from './auth.js'
+import { Notification, Invite } from './notification.js'
 
 const app = express()
 const httpServer = createServer()
@@ -41,7 +42,19 @@ const broadcastRoomUpdates = (room) => {
 
 io.on('connection', (socket) => {
 	ACTIVE_USERS++
-	socket.emit('connected')
+	socket.emit('connected', socket.id)
+
+	socket.on('updateUser', (userId) => {
+		let user = USERS.find((user) => user.id === userId)
+		if (user) {
+			user.socketid = socket.id
+		}
+	})
+
+	socket.on('getInvitablePlayers', () => {
+		let invitablePlayers = USERS.filter((user) => true == true)
+		socket.emit('invitablePlayers', invitablePlayers)
+	})
 
 	socket.on('disconnect', () => {
 		console.log(`User disconnected`)
@@ -59,6 +72,22 @@ io.on('connection', (socket) => {
 			activeUsers: ACTIVE_USERS,
 			activeGames: activeGames,
 		})
+	})
+
+	socket.on('invite', ({ from, to, roomCode }) => {
+		let room = ROOMS.find((r) => r.code == roomCode)
+		// if (room) {
+		let invite = new Invite(from, to, roomCode)
+		let user = USERS.find((u) => u.id == to)
+		if (user) {
+			// TODO: implement storing of notifications
+			// user.notifications.push(invite)
+
+			io.to(user.socketid).emit('invite', invite)
+		} else {
+			console.log('user not found')
+		}
+		// }
 	})
 
 	socket.on(

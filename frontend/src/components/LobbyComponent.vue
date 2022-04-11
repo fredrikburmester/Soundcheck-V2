@@ -2,7 +2,30 @@
     <div id="lobby" class="flex w-screen md:max-w-3xl flex-col px-8 h-full">
         <div>
             <PageTitle :title="$route.params.id" subtitle="Welcome to the game room!" />
-            <button class="btn btn-error btn-sm mb-4" @click="$emit('leaveRoom')">Leave room</button>
+            <button class="btn btn-error btn-sm mb-4 mr-4" @click="$emit('leaveRoom')">Leave room</button>
+            <label for="my-modal-6" class="btn btn-sm btn-success modal-button mb-4" @click="getInvitablePlayers">Invite player</label>
+            <input id="my-modal-6" type="checkbox" class="modal-toggle" />
+            <div class="modal modal-bottom sm:modal-middle">
+                <div class="modal-box bg-zinc-900">
+                    <h3 class="font-bold text-lg">Invite others to play with!</h3>
+                    <hr class="my-4 opacity-10" />
+                    <div class="form-control w-full">
+                        <div
+                            v-for="p in invitablePlayers"
+                            :key="p.id"
+                            class="flex flex-row w-full mb-4 bg-zinc-800 text-white pl-4 py-2 pr-2 rounded-lg items-center"
+                        >
+                            <span>
+                                {{ p.name }}
+                            </span>
+                            <button class="btn btn-sm ml-auto" @click="invite($event, p.id)">Invite</button>
+                        </div>
+                    </div>
+                    <div class="modal-action mb-12">
+                        <label for="my-modal-6" class="btn btn-primary">Close</label>
+                    </div>
+                </div>
+            </div>
             <h1 v-if="players.length == 1" class="font-bold text-xl italic mb-4">{{ players.length }} Player</h1>
             <h1 v-else class="font-bold text-xl italic mb-4">{{ players.length }} Players</h1>
         </div>
@@ -33,13 +56,34 @@ export default {
         },
     },
     emits: ['leaveRoom', 'startGame'],
+    data() {
+        return {
+            invitablePlayers: [],
+        }
+    },
     computed: {
         ...mapWritableState(useUserStore, ['id']),
     },
+    sockets: {
+        invitablePlayers(data) {
+            this.invitablePlayers = data
+        },
+    },
     methods: {
         isHost() {
-            console.log('Is host: ', this.room.host.id == this.id)
             return this.room.host.id == this.id
+        },
+        getInvitablePlayers() {
+            this.$socket.client.emit('getInvitablePlayers')
+        },
+        invite(e, playerId) {
+            e.target.innerHTML = 'Inviting...'
+            let invite = {
+                from: this.id,
+                to: playerId,
+                roomCode: this.room.code,
+            }
+            this.$socket.client.emit('invite', invite)
         },
     },
 }

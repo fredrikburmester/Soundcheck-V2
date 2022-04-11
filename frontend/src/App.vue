@@ -17,13 +17,16 @@ export default {
         return {}
     },
     computed: {
-        ...mapWritableState(useUserStore, ['authenticated', 'key', 'id', 'name', 'notification', 'notificationType']),
+        ...mapWritableState(useUserStore, ['authenticated', 'key', 'id', 'name', 'notification', 'notificationType', 'notifications', 'socketid']),
     },
     methods: {
         ...mapActions(useUserStore, ['logout', 'getUser']),
     },
     sockets: {
-        connected() {},
+        connected(socketid) {
+            this.socketid = socketid
+            this.$socket.client.emit('updateUser', this.id)
+        },
         error({ status, msg }) {
             console.log(status, msg)
             this.notification = msg
@@ -47,6 +50,10 @@ export default {
             this.notificationType = 'success'
             this.logout()
             this.$router.push(`/login`)
+        },
+        invite(data) {
+            console.log('invite:', data)
+            this.notifications.push(data)
         },
     },
 }

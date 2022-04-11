@@ -74,7 +74,7 @@ export default {
         }
     },
     computed: {
-        ...mapWritableState(useUserStore, ['display_name', 'avatar']),
+        ...mapWritableState(useUserStore, ['display_name', 'avatar', 'id']),
     },
     mounted() {
         // run function every second

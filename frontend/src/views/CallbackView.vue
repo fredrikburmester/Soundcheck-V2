@@ -22,7 +22,6 @@ export default {
     methods: {
         ...mapActions(useUserStore, ['logout']),
         async getUserInformation() {
-            console.log('[1] getUserInformation')
             const url = 'https://api.spotify.com/v1/me'
             const headers = {
                 Authorization: `Bearer ${this.token}`,

@@ -33,6 +33,38 @@
                 </transition>
             </div>
         </div>
+        <div class="fixed top-2 right-16">
+            <div>
+                <label class="btn btn-ghost btn-circle avatar" @click="toggleNotificationPanel">
+                    <div class="indicator">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                            />
+                        </svg>
+                        <span v-if="notifications.length > 0" class="badge badge-xs badge-primary indicator-item"></span>
+                    </div>
+                </label>
+                <transition name="slide-from-right">
+                    <ul v-if="notificationPanelOpen" class="mt-3 p-4 shadow menu menu-compact fixed top-14 right-2 bg-base-300 rounded-box w-64">
+                        <p class="ml-2 mb-2 font-bold">Notifications:</p>
+                        <li v-for="n in notifications" :key="n.message" class="mb-4">
+                            <div class="flex flex-col items-start p-4">
+                                <p>{{ n.message }}</p>
+                                <div class="flex flex-row">
+                                    <button class="btn btn-sm btn-primary mr-2" @click="$router.push(`/room/${n.roomCode}`)">Accept</button>
+                                    <button class="btn btn-sm btn-error" @click="notifications.pop(n)">Decline</button>
+                                </div>
+                            </div>
+                        </li>
+                        <button class="btn btn-sm btn-primary" @click="clearAllNotifications">Clear all</button>
+                    </ul>
+                </transition>
+            </div>
+        </div>
         <div class="fixed top-2 right-2">
             <div>
                 <label class="btn btn-ghost btn-circle avatar" @click="toggleProfile">
@@ -70,14 +102,22 @@ export default {
         const target = ref(null)
         let navbarOpen = ref(false)
         let profileOpen = ref(false)
+        let notificationPanelOpen = ref(false)
 
         onClickOutside(target, () => {
             navbarOpen.value = false
             profileOpen.value = false
+            notificationPanelOpen.value = false
         })
 
         const toggleNavBar = () => {
             navbarOpen.value = !navbarOpen.value
+            profileOpen.value = false
+        }
+
+        const toggleNotificationPanel = () => {
+            notificationPanelOpen.value = !notificationPanelOpen.value
+            navbarOpen.value = false
             profileOpen.value = false
         }
 
@@ -86,13 +126,13 @@ export default {
             navbarOpen.value = false
         }
 
-        return { target, navbarOpen, profileOpen, toggleNavBar, toggleProfile }
+        return { target, navbarOpen, profileOpen, notificationPanelOpen, toggleNavBar, toggleProfile, toggleNotificationPanel }
     },
     data() {
         return {}
     },
     computed: {
-        ...mapWritableState(useUserStore, ['refresh_token', 'token', 'avatar', 'authenticated', 'display_name', 'email', 'id', 'roomCode']),
+        ...mapWritableState(useUserStore, ['refresh_token', 'token', 'avatar', 'authenticated', 'display_name', 'email', 'id', 'roomCode', 'notifications']),
     },
     watch: {
         $route: {
@@ -109,6 +149,9 @@ export default {
         // toggleNavbar() {
         //     this.navbarOpen = !this.navbarOpen
         // },
+        clearAllNotifications() {
+            this.notifications = []
+        },
         logout() {
             this.refresh_token = ''
             this.token = ''
