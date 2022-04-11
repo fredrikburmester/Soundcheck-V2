@@ -4,7 +4,7 @@
 			"name": "s-v2-frontend",
 			"script": "cd ./frontend && npm run build && npm run preview",
 			"watch": true,
-			"ignore_watch": ["frontend/node_modules", "frontend/dist"],
+			"ignore_watch": ["./frontend/node_modules", "./frontend/dist"],
 			"env": {
 				"NODE_ENV": "production"
 			}
