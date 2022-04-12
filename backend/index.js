@@ -48,18 +48,24 @@ io.on('connection', (socket) => {
 		let user = USERS.find((user) => user.id === userId)
 		if (user) {
 			user.socketid = socket.id
+			user.online = true
 		}
 	})
 
 	socket.on('getInvitablePlayers', () => {
 		let invitablePlayers = USERS.filter(
-			(user) => user.socketid !== socket.id
+			(user) => user.socketid !== socket.id && user.online
 		)
+
+		for (let u of USERS) {
+			console.log(u)
+		}
 		socket.emit('invitablePlayers', invitablePlayers)
 	})
 
 	socket.on('disconnect', () => {
-		console.log(`User disconnected`)
+		let user = USERS.find((user) => user.socketid === socket.id)
+		if (user) user.online = false
 		ACTIVE_USERS--
 	})
 
@@ -183,8 +189,10 @@ io.on('connection', (socket) => {
 			user.img = img
 			user.name = name
 			user.socketid = socket.id
+			user.online = true
 		} else {
 			user = new User(id, img, name, socket.id)
+			user.online = true
 			USERS.push(user)
 		}
 
@@ -221,7 +229,7 @@ io.on('connection', (socket) => {
 		if (!user) {
 			socket.emit('error', {
 				status: 404,
-				msg: 'The user does not exist',
+				msg: 'Could not find this user. Please log in again.',
 			})
 			return
 		}

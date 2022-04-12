@@ -8,6 +8,7 @@ export class User {
 		this.songs = []
 		this.guesses = []
 		this.points = 0
+		this.online = 0
 	}
 
 	makeGuess(songId, userId) {
