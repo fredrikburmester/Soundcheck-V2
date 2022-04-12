@@ -20,9 +20,7 @@ pinia.use(({ store }) => {
 
 app.use(pinia)
 
-var socket
-
-socket = io(socket_url, {
+const socket = io(socket_url, {
     path: '/ws',
     autoConnect: true,
 })
@@ -30,7 +28,6 @@ socket = io(socket_url, {
 import { registerSW } from 'virtual:pwa-register'
 
 if ('serviceWorker' in navigator) {
-    // && !/localhost/.test(window.location)) {
     registerSW()
 }
 
