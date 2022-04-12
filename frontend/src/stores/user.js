@@ -76,7 +76,7 @@ export const useUserStore = defineStore({
             const url = `https://api.spotify.com/v1/users/${this.id}/playlists`
             const body = {
                 collaborative: false,
-                description: 'All the songs from your recent Soundcheck game!',
+                description: 'From Soundcheck!',
                 name: name,
                 public: true,
             }
