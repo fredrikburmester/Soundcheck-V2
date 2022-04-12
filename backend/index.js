@@ -56,10 +56,6 @@ io.on('connection', (socket) => {
 		let invitablePlayers = USERS.filter(
 			(user) => user.socketid !== socket.id && user.online
 		)
-
-		for (let u of USERS) {
-			console.log(u)
-		}
 		socket.emit('invitablePlayers', invitablePlayers)
 	})
 
