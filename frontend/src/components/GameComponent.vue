@@ -104,7 +104,6 @@ export default {
     },
     watch: {
         room: function (newVal, oldVal) {
-            console.log('room changed', newVal.currentQuestion, oldVal.currentQuestion)
             this.room_ = JSON.parse(JSON.stringify(this.room))
 
             if (newVal.currentQuestion != oldVal.currentQuestion) {
@@ -140,7 +139,6 @@ export default {
             this.$emit('leaveRoom')
         },
         makePlayerGuess(id) {
-            console.log('guess', id)
             this.$socket.client.emit('makePlayerGuess', {
                 roomId: this.$route.params.id,
                 userId: this.id,
@@ -170,8 +168,6 @@ export default {
         async getPlayerState() {
             let state = await this.player.getCurrentState()
 
-            console.log('getPlayerState', state)
-
             if (state == null || state == undefined) {
                 return false
             } else {
@@ -179,11 +175,9 @@ export default {
             }
         },
         isHost() {
-            console.log('is host 2', this.room_.host.id, this.id)
             return this.room_.host.id == this.id
         },
         connectToSpotifyPlayer() {
-            console.log('connecting to spotify player')
             this.connectionLoading = true
             let recaptchaScript = document.createElement('script')
             recaptchaScript.setAttribute('src', 'https://sdk.scdn.co/spotify-player.js')
@@ -201,7 +195,6 @@ export default {
                 })
 
                 player.addListener('ready', ({ device_id }) => {
-                    console.log('Ready with Device ID', device_id)
                     this.player = player
                     this.device_id = device_id
                     this.connected = true

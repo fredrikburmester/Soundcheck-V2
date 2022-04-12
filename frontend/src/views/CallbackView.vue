@@ -59,7 +59,6 @@ export default {
     },
     sockets: {
         loginData(data) {
-            console.log(data)
             if (data.access_token) {
                 this.token = data.access_token
                 this.authenticated = true

@@ -118,7 +118,6 @@ export const useUserStore = defineStore({
                 },
             })
                 .then((response) => {
-                    console.log(response)
                     if (response.status === 201) {
                         this.notification = 'The playlist has been created and added to your account!'
                         this.notificationType = 'success'
@@ -128,7 +127,6 @@ export const useUserStore = defineStore({
                 .then((data) => {
                     result = data
                 })
-            console.log(result)
             return result
         },
         async getTopSongs(time_range, limit, type) {
@@ -145,7 +143,6 @@ export const useUserStore = defineStore({
                 },
             }
 
-            console.log(time_range, limit, type)
             if (!time_range) {
                 time_range = 'medium_term'
             }
@@ -172,11 +169,9 @@ export const useUserStore = defineStore({
                 },
             })
                 .then((response) => {
-                    console.log('res: ', response)
                     return response.json()
                 })
                 .then((data) => {
-                    console.log(data)
                     if (data.error) {
                         this.logout()
                         return
