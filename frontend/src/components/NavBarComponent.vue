@@ -53,7 +53,9 @@
                         <p class="ml-2 mb-2 font-bold">Notifications:</p>
                         <li v-for="n in notifications" :key="n.message" class="mb-4">
                             <div class="flex flex-col items-start p-4">
-                                <p>{{ n.message }}</p>
+                                <p>
+                                    <span class="capitalize font-bold">{{ n.type }}:</span> {{ n.message }}
+                                </p>
                                 <div class="flex flex-row">
                                     <button class="btn btn-sm btn-primary mr-2" @click="$router.push(`/room/${n.roomCode}`)">Accept</button>
                                     <button class="btn btn-sm btn-error" @click="notifications.pop(n)">Decline</button>
