@@ -3,7 +3,7 @@
         <div>
             <PageTitle :title="$route.params.id" subtitle="Welcome to the game room!" />
             <button class="btn btn-error btn-sm mb-4 mr-4" @click="$emit('leaveRoom')">Leave room</button>
-            <label for="my-modal-6" class="btn btn-sm btn-success modal-button mb-4" @click="getInvitablePlayers">Invite player</label>
+            <label for="my-modal-6" class="btn btn-sm btn-success modal-button mb-4" @click="getInvitablePlayers">Invite friends</label>
             <input id="my-modal-6" type="checkbox" class="modal-toggle" />
             <div class="modal modal-bottom sm:modal-middle">
                 <div class="modal-box bg-zinc-900">
@@ -20,8 +20,9 @@
                             </span>
                             <button class="btn btn-sm ml-auto" @click="invite($event, p.id)">Invite</button>
                         </div>
+                        <p v-if="invitablePlayers.length == 0">No one online... Come back later!</p>
                     </div>
-                    <div class="modal-action mb-12">
+                    <div class="modal-action mb-12 lg:mb-2">
                         <label for="my-modal-6" class="btn btn-primary">Close</label>
                     </div>
                 </div>
