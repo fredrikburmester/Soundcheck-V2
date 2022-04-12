@@ -1,7 +1,7 @@
 <template>
     <transition name="fade" mode="out-in">
         <div v-if="notification" class="fixed bottom-0 left-0 p-8 animate-none">
-            <div id="notificationBackground" :class="notificationClasses">
+            <div id="popupBackground" :class="backgroundClasses">
                 <div>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" :class="iconClasses">
                         <path
@@ -30,7 +30,7 @@ export default {
     },
     computed: {
         ...mapWritableState(useUserStore, ['notification', 'notificationType']),
-        notificationClasses() {
+        backgroundClasses() {
             return {
                 alert: true,
                 'bg-zinc-900': this.notificationType === 'success' || false,
@@ -62,10 +62,9 @@ export default {
         },
     },
     mounted() {
-        // self destruct after 5 seconds
-        // setTimeout(() => {
-        //     this.notification = ''
-        // }, 3000)
+        setTimeout(() => {
+            this.notification = ''
+        }, 5000)
     },
     sockets: {},
     methods: {},
@@ -83,7 +82,7 @@ export default {
     transform: translateX(-500px);
     opacity: 0;
 }
-#notificationBackground {
+#popupBackground {
     min-width: 250px;
 }
 </style>

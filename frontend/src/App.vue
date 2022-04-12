@@ -4,14 +4,14 @@ import NavBar from './components/NavBarComponent.vue'
 
 import { useUserStore } from '@/stores/user'
 import { mapWritableState, mapActions } from 'pinia'
-import NotificationComponent from './components/NotificationComponent.vue'
+import PopupComponent from './components/PopupComponent.vue'
 
 export default {
     name: 'App',
     components: {
         NavBar,
         RouterView,
-        NotificationComponent,
+        PopupComponent,
     },
     data() {
         return {}
@@ -64,7 +64,7 @@ export default {
     <div class="flex flex-col pt-16 items-center h-full">
         <RouterView />
     </div>
-    <NotificationComponent class="z-100" />
+    <PopupComponent class="z-100" />
 </template>
 
 <style>

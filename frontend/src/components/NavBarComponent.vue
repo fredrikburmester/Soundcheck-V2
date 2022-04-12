@@ -35,8 +35,8 @@
         </div>
         <div class="fixed top-2 right-16">
             <div>
-                <label class="btn btn-ghost btn-circle avatar" @click="toggleNotificationPanel">
-                    <div class="indicator">
+                <label class="btn btn-ghost btn-circle avatar overflow-visible" @click="toggleNotificationPanel">
+                    <div :class="notifications.length > 0 ? 'indicator animate-bounce' : 'indicator'">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path
                                 stroke-linecap="round"
@@ -191,5 +191,8 @@ export default {
 .menu {
     width: calc(100vw - 20px);
     max-width: 400px;
+}
+.indicator {
+    overflow: visible !important;
 }
 </style>
