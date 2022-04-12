@@ -1,6 +1,6 @@
 <template>
     <Transition appear name="fade" mode="out-in">
-        <div v-show="loaded" class="card max-w-3xl bg-base-100 shadow-xl image-full" :style="style" @click="expand">
+        <div v-show="loaded" class="card max-w-2xl bg-base-100 shadow-xl image-full" :style="style" @click="expand">
             <img :src="img" class="w-100" alt="album cover" @load="loaded = true" />
 
             <div class="card-body flex flex-row items-center" :style="style">

@@ -7,8 +7,7 @@
             <input id="my-modal-6" type="checkbox" class="modal-toggle" />
             <div class="modal modal-bottom sm:modal-middle">
                 <div class="modal-box bg-zinc-900">
-                    <h3 class="font-bold text-lg">Invite others to play with!</h3>
-                    <hr class="my-4 opacity-10" />
+                    <h3 class="font-bold text-lg mb-2">Invite others to play with!</h3>
                     <div class="form-control w-full">
                         <div
                             v-for="p in invitablePlayers"
@@ -20,7 +19,7 @@
                             </span>
                             <button class="btn btn-sm ml-auto" @click="invite($event, p.id)">Invite</button>
                         </div>
-                        <p v-if="invitablePlayers.length == 0">No one online... Come back later!</p>
+                        <p v-if="invitablePlayers.length == 0" class="font-bold italic">Hmm... Very empty, come back later!</p>
                     </div>
                     <div class="modal-action mb-12 lg:mb-2">
                         <label for="my-modal-6" class="btn btn-primary">Close</label>
