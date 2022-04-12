@@ -1,5 +1,5 @@
 <template>
-    <div :key="item_type" class="flex flex-col px-8 pb-8 w-screen items-center">
+    <div :key="item_type" class="flex flex-col px-8 pb-24 w-screen items-center">
         <div class="pb-8 max-w-2xl w-full">
             <h1 class="text-3xl text-start">Your top {{ item_type }}</h1>
             <p class="text-start">Choose the time range at the bottom.</p>
@@ -59,10 +59,10 @@
         </div>
     </div>
 
-    <div class="tabs tabs-boxed z-100 bg-base-100">
-        <a class="tab bg-base-100 rounded-l-lg" @click="toggleActive($event, 'short_term')">Month</a>
-        <a class="tab tab-active bg-base-100" @click="toggleActive($event, 'medium_term')">Half Year</a>
-        <a class="tab bg-base-100 rounded-r-lg" @click="toggleActive($event, 'long_term')">Over a year</a>
+    <div class="tabs tabs-boxed z-100 bg-zinc-900 shadow-lg">
+        <a class="tab bg-zinc-900 rounded-l-lg" @click="toggleActive($event, 'short_term')">Month</a>
+        <a class="tab tab-active bg-zinc-900" @click="toggleActive($event, 'medium_term')">Half Year</a>
+        <a class="tab bg-zinc-900 rounded-r-lg" @click="toggleActive($event, 'long_term')">Over a year</a>
     </div>
 </template>
 <script>
