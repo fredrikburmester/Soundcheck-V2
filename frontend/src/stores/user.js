@@ -72,7 +72,7 @@ export const useUserStore = defineStore({
 
             this.$router.push({ name: 'Login' })
         },
-        async createPlaylist(tracks, roomCode, name) {
+        async createPlaylist(tracks, name) {
             const url = `https://api.spotify.com/v1/users/${this.id}/playlists`
             const body = {
                 collaborative: false,

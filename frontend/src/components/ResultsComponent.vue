@@ -78,7 +78,7 @@ export default {
     methods: {
         ...mapActions(useUserStore, ['createPlaylist']),
         compileAndCreatePlaylist() {
-            this.createPlaylist(this.room.songs, this.room.code, this.playlistName)
+            this.createPlaylist(this.room.songs, this.playlistName)
         },
         getCorrectAnswerName(songId) {
             let users = null
