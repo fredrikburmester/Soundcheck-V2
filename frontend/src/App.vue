@@ -14,7 +14,9 @@ export default {
         PopupComponent,
     },
     data() {
-        return {}
+        return {
+            route: this.$route,
+        }
     },
     computed: {
         ...mapWritableState(useUserStore, ['authenticated', 'key', 'id', 'name', 'notification', 'notificationType', 'notifications', 'socketid']),
@@ -61,7 +63,13 @@ export default {
 <template>
     <NavBar />
     <div class="flex flex-col pt-16 items-center h-full">
-        <RouterView />
+        <RouterView v-slot="{ Component }">
+            <template v-if="Component">
+                <Transition name="fade" mode="out-in">
+                    <component :is="Component"></component>
+                </Transition>
+            </template>
+        </RouterView>
     </div>
     <PopupComponent class="z-100" />
     <div id="chat-target"></div>
@@ -87,5 +95,14 @@ export default {
     bottom: 40px !important;
     animation: none !important;
     transition: none !important;
+}
+.fade-enter-active,
+.fade-leave-active {
+    transition: all 0.15s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
 }
 </style>

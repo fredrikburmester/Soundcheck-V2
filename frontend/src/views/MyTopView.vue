@@ -1,68 +1,70 @@
 <template>
-    <div :key="item_type" class="flex flex-col px-8 pb-24 w-screen items-center">
-        <div class="pb-8 max-w-2xl w-full">
-            <h1 class="text-3xl text-start">Your top {{ item_type }}</h1>
-            <p class="text-start">Choose the time range at the bottom.</p>
-            <div v-if="item_type == 'tracks'">
-                <label for="my-modal-6" class="btn btn-sm btn-success modal-button mt-4" @click="setPlaylistName">Create playlist</label>
-                <input id="my-modal-6" type="checkbox" class="modal-toggle" />
-                <div class="modal modal-bottom sm:modal-middle">
-                    <div class="modal-box bg-zinc-900">
-                        <h3 class="font-bold text-lg">Create a Spotify playlist with your top songs!</h3>
-                        <hr class="my-4 opacity-10" />
-                        <div class="form-control w-full max-w-xs">
-                            <label class="label">
-                                <span class="label-text opacity-60">Playlist name</span>
-                            </label>
-                            <input v-model="playlistName" type="text" class="input input-bordered w-full max-w-xs bg-black" />
-                        </div>
-                        <div class="modal-action mb-12">
-                            <label for="my-modal-6" class="btn btn-primary">Close</label>
-                            <label for="my-modal-6" class="btn btn-success" @click="compileAndCreatePlaylist">Create</label>
+    <div>
+        <div :key="item_type" class="flex flex-col px-8 pb-24 w-screen items-center">
+            <div class="pb-8 max-w-2xl w-full">
+                <h1 class="text-3xl text-start">Your top {{ item_type }}</h1>
+                <p class="text-start">Choose the time range at the bottom.</p>
+                <div v-if="item_type == 'tracks'">
+                    <label for="my-modal-6" class="btn btn-sm btn-success modal-button mt-4" @click="setPlaylistName">Create playlist</label>
+                    <input id="my-modal-6" type="checkbox" class="modal-toggle" />
+                    <div class="modal modal-bottom sm:modal-middle">
+                        <div class="modal-box bg-zinc-900">
+                            <h3 class="font-bold text-lg">Create a Spotify playlist with your top songs!</h3>
+                            <hr class="my-4 opacity-10" />
+                            <div class="form-control w-full max-w-xs">
+                                <label class="label">
+                                    <span class="label-text opacity-60">Playlist name</span>
+                                </label>
+                                <input v-model="playlistName" type="text" class="input input-bordered w-full max-w-xs bg-black" />
+                            </div>
+                            <div class="modal-action mb-12">
+                                <label for="my-modal-6" class="btn btn-primary">Close</label>
+                                <label for="my-modal-6" class="btn btn-success" @click="compileAndCreatePlaylist">Create</label>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div v-if="!loading && items[item_type][time_range].length > 0" class="flex flex-col place-items-center w-full max-w-2xl">
-            <div v-if="item_type == 'tracks'">
-                <SongCard
-                    v-for="(item, index) in items[item_type][time_range]"
-                    :key="item.id"
-                    :img="item.album.images[0].url"
-                    :artist="item.artists[0].name"
-                    :index="index"
-                    :title="item.name"
-                    class="mb-4"
-                ></SongCard>
+            <div v-if="!loading && items[item_type][time_range].length > 0" class="flex flex-col place-items-center w-full max-w-2xl">
+                <div v-if="item_type == 'tracks'">
+                    <SongCard
+                        v-for="(item, index) in items[item_type][time_range]"
+                        :key="item.id"
+                        :img="item.album.images[0].url"
+                        :artist="item.artists[0].name"
+                        :index="index"
+                        :title="item.name"
+                        class="mb-4"
+                    ></SongCard>
+                </div>
+                <div v-if="item_type == 'artists'">
+                    <SongCard
+                        v-for="(item, index) in items[item_type][time_range]"
+                        :key="item.id"
+                        :title="item.name"
+                        :index="index"
+                        :img="item.images[0].url"
+                        class="mb-4"
+                    ></SongCard>
+                </div>
             </div>
-            <div v-if="item_type == 'artists'">
-                <SongCard
-                    v-for="(item, index) in items[item_type][time_range]"
-                    :key="item.id"
-                    :title="item.name"
-                    :index="index"
-                    :img="item.images[0].url"
-                    class="mb-4"
-                ></SongCard>
+            <div v-else class="flex flex-col p-8">
+                <p>
+                    You have no {{ item_type }} for this period.
+                    <br />
+                    Try another period at the bottom.
+                </p>
+            </div>
+            <div v-if="loading" class="flex flex-col items-center place-content-center mt-32">
+                <div class="radial-progress text-primary animate-spin" style="--value: 70"></div>
             </div>
         </div>
-        <div v-else class="flex flex-col p-8">
-            <p>
-                You have no {{ item_type }} for this period.
-                <br />
-                Try another period at the bottom.
-            </p>
-        </div>
-        <div v-if="loading" class="flex flex-col items-center place-content-center mt-32">
-            <div class="radial-progress text-primary animate-spin" style="--value: 70"></div>
-        </div>
-    </div>
 
-    <div class="tabs tabs-boxed z-100 bg-zinc-900 shadow-lg">
-        <a class="tab bg-zinc-900 rounded-l-lg" @click="toggleActive($event, 'short_term')">Month</a>
-        <a class="tab tab-active bg-zinc-900" @click="toggleActive($event, 'medium_term')">Half Year</a>
-        <a class="tab bg-zinc-900 rounded-r-lg" @click="toggleActive($event, 'long_term')">Over a year</a>
+        <div class="tabs tabs-boxed z-100 bg-zinc-900 shadow-lg">
+            <a class="tab bg-zinc-900 rounded-l-lg" @click="toggleActive($event, 'short_term')">Month</a>
+            <a class="tab tab-active bg-zinc-900" @click="toggleActive($event, 'medium_term')">Half Year</a>
+            <a class="tab bg-zinc-900 rounded-r-lg" @click="toggleActive($event, 'long_term')">Over a year</a>
+        </div>
     </div>
 </template>
 <script>
@@ -97,11 +99,13 @@ export default {
     },
     watch: {
         $route(oldVal, newVal) {
-            if (newVal.params.id == 'artists' || newVal.params.id == 'tracks') {
-                this.item_type = this.$route.params.id
-                this.time_range = 'medium_term'
-                this.getItems()
-                this.loading = false
+            if (this.$route.name == 'MyTop') {
+                if (newVal.params.id == 'artists' || newVal.params.id == 'tracks') {
+                    this.item_type = this.$route.params.id
+                    this.time_range = 'medium_term'
+                    this.getItems()
+                    this.loading = false
+                }
             }
         },
     },
