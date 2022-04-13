@@ -51,7 +51,7 @@
                 <transition name="slide-from-right">
                     <ul v-if="notificationPanelOpen" class="mt-3 p-4 shadow menu menu-compact fixed top-14 right-2 bg-base-300 rounded-box w-64">
                         <p class="ml-2 mb-2 font-bold">Notifications:</p>
-                        <li v-for="n in notifications" :key="n.message" class="mb-4">
+                        <li v-for="n in notifications.slice().reverse()" :key="n.message" class="mb-4">
                             <div class="flex flex-col items-start p-4">
                                 <p>
                                     <span class="capitalize font-bold">{{ n.type }}:</span> {{ n.message }}
