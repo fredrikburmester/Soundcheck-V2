@@ -25,7 +25,7 @@
         <Transition appear name="slide">
             <div v-show="chatOpen" class="chat-input flex flex-row">
                 <input v-model="message" type="text" placeholder="Type here" class="input w-full max-w-xs" @keyup.enter="sendMessage" />
-                <button class="btn btn-success" @click="sendMessage">Send</button>
+                <button class="btn btn-success w-full flex-grow" @click="sendMessage">Send</button>
             </div>
         </Transition>
     </div>
@@ -61,6 +61,18 @@ export default {
                 this.scrollToBottom()
             },
             deep: true,
+        },
+        chatOpen(newVal, oldVal) {
+            let roomContainer = document.getElementById('room')
+            if (newVal) {
+                if (roomContainer) {
+                    roomContainer.classList.add('fixed')
+                }
+            } else if (oldVal) {
+                if (roomContainer) {
+                    roomContainer.classList.remove('fixed')
+                }
+            }
         },
     },
     sockets: {
@@ -112,23 +124,23 @@ export default {
 .chat-window {
     position: fixed;
     width: 100vw;
-    max-height: calc(100vh - 120px);
+    max-height: calc(100vh - 170px);
     top: 0;
     z-index: 3;
-    height: calc(100vh - 120px);
+    height: calc(100vh - 170px);
 }
 .chat-input {
     background-color: white;
     padding: 2em 2em 2em 2em;
     position: fixed;
     width: 100vw;
-    height: 120px;
+    height: 110px;
     bottom: 0;
     z-index: 4;
     border-radius: 10px 10px 0 0;
 }
 .messages-container {
-    max-height: calc(100vh - 120px);
+    max-height: calc(100vh - 110px);
     overflow: auto;
 }
 .chat-input input {
@@ -156,7 +168,7 @@ export default {
 
 .fadeSlow-enter-active,
 .fadeSlow-leave-active {
-    transition: all 1s ease;
+    transition: all 0.7s ease;
 }
 
 .fadeSlow-enter-from,
@@ -166,7 +178,7 @@ export default {
 
 .slide-enter-active,
 .slide-leave-active {
-    transition: all 0.5s ease;
+    transition: all 0.3s ease;
 }
 
 .slide-enter-from {
