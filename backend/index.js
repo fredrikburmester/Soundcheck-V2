@@ -59,7 +59,7 @@ io.on('connection', (socket) => {
 		if (user) {
 			let newMessage = new Message(message, user)
 			room.messages.push(newMessage)
-			broadcastRoomUpdates(room)
+			io.to(room.code).emit('newMessage', newMessage)
 		}
 	})
 
