@@ -27,15 +27,17 @@
             </div>
             <div v-if="!loading && items[item_type][time_range].length > 0" class="flex flex-col place-items-center w-full max-w-2xl">
                 <div v-if="item_type == 'tracks'">
-                    <SongCard
-                        v-for="(item, index) in items[item_type][time_range]"
-                        :key="item.id"
-                        :img="item.album.images[0].url"
-                        :artist="item.artists[0].name"
-                        :index="index"
-                        :title="item.name"
-                        class="mb-4"
-                    ></SongCard>
+                    <TransitionGroup name="list" tag="div">
+                        <SongCard
+                            v-for="(item, index) in items[item_type][time_range]"
+                            :key="item"
+                            :img="item.album.images[0].url"
+                            :artist="item.artists[0].name"
+                            :index="index"
+                            :title="item.name"
+                            class="mb-4"
+                        ></SongCard>
+                    </TransitionGroup>
                 </div>
                 <div v-if="item_type == 'artists'">
                     <SongCard
@@ -182,5 +184,23 @@ export default {
     left: 50%;
     transform: translateX(-50%);
     width: 278px;
+}
+
+.list-move, /* apply transition to moving elements */
+.list-enter-active,
+.list-leave-active {
+    transition: all 0.5s ease;
+}
+
+.list-enter-from,
+.list-leave-to {
+    opacity: 0;
+    transform: translateX(30px);
+}
+
+/* ensure leaving items are taken out of layout flow so that moving
+   animations can be calculated correctly. */
+.list-leave-active {
+    position: absolute;
 }
 </style>
