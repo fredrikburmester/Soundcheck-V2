@@ -237,7 +237,7 @@ export default {
                         Authorization: `Bearer ${self.token}`,
                     },
                 })
-                    .then((res) => {
+                    .then(() => {
                         this.playerInitiated = true
                     })
                     .catch((err) => {

@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
 import { useLocalStorage } from '@vueuse/core'
-import queryString from 'query-string'
 
 export const useUserStore = defineStore({
     id: 'user',
