@@ -35,6 +35,14 @@ export default {
     computed: {
         ...mapWritableState(useUserStore, ['id', 'roomCode']),
     },
+    watch: {
+        $route: {
+            handler() {
+                this.joinRoom()
+            },
+            immediate: true,
+        },
+    },
     mounted() {
         this.joinRoom()
     },
