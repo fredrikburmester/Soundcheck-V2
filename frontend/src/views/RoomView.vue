@@ -10,7 +10,9 @@
             @next-question="nextQuestion"
         />
         <ResultsComponent v-if="gameState == 'finished'" :players="players" :room="room" />
-        <ChatComponent :messages="room.messages" />
+        <Teleport to="#chat-target">
+            <ChatComponent :initial-messages="room.messages" />
+        </Teleport>
     </div>
 </template>
 

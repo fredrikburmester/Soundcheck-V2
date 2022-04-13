@@ -1,32 +1,34 @@
 <template>
-    <transition name="fade">
-        <Teleport to="#chat-target">
-            <div class="chat-open-button cursor-pointer" @click="openChat">
-                <vue-feather type="message-square" class="w-5 h-5"></vue-feather>
-            </div>
-            <div v-show="chatOpen" class="chat">
-                <div class="background backdrop-blur-sm"></div>
-
-                <div class="chat-close-button fixed top-8 right-8" @click="chatOpen = false">
-                    <button class="btn btn-circle bg-red-600 border-0 hover:bg-red-400 shadow-xl">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="white">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
-                </div>
-
-                <div class="flex flex-col justify-end chat-window">
-                    <div id="messages-container" class="messages-container p-8">
-                        <ChatMessageComponent v-for="m in messages" :key="m.datetime" :message="m" />
-                    </div>
-                </div>
-                <div class="chat-input flex flex-row">
-                    <input v-model="message" type="text" placeholder="Type here" class="input w-full max-w-xs" @keyup.enter="sendMessage" />
-                    <button class="btn btn-success" @click="sendMessage">Send</button>
+    <div class="chat-open-button cursor-pointer" @click="openChat">
+        <vue-feather type="message-square" class="w-5 h-5"></vue-feather>
+    </div>
+    <div class="chat">
+        <Transition appear name="fadeSlow">
+            <div v-show="chatOpen" class="background backdrop-blur-sm"></div>
+        </Transition>
+        <div v-show="chatOpen" class="chat-close-button fixed top-8 right-8" @click="chatOpen = false">
+            <button class="btn btn-circle bg-red-600 border-0 hover:bg-red-400 shadow-xl">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="white">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+        <Transition appear name="fade">
+            <div v-show="chatOpen" class="flex flex-col justify-end chat-window">
+                <div id="messages-container" class="messages-container p-8">
+                    <transition-group name="list">
+                        <ChatMessageComponent v-for="m in messages" :key="m" :message="m" />
+                    </transition-group>
                 </div>
             </div>
-        </Teleport>
-    </transition>
+        </Transition>
+        <Transition appear name="slide">
+            <div v-show="chatOpen" class="chat-input flex flex-row">
+                <input v-model="message" type="text" placeholder="Type here" class="input w-full max-w-xs" @keyup.enter="sendMessage" />
+                <button class="btn btn-success" @click="sendMessage">Send</button>
+            </div>
+        </Transition>
+    </div>
 </template>
 
 <script>
@@ -38,7 +40,7 @@ export default {
     name: 'ChatComponent',
     components: { ChatMessageComponent },
     props: {
-        messages: {
+        initialMessages: {
             type: Array,
             default: () => [],
         },
@@ -47,6 +49,7 @@ export default {
         return {
             message: '',
             chatOpen: false,
+            messages: this.initialMessages,
         }
     },
     computed: {
@@ -58,6 +61,11 @@ export default {
                 this.scrollToBottom()
             },
             deep: true,
+        },
+    },
+    sockets: {
+        newMessage(message) {
+            this.messages.push(message)
         },
     },
     methods: {
@@ -138,11 +146,49 @@ export default {
 }
 .fade-enter-active,
 .fade-leave-active {
-    transition: all 1s ease;
+    transition: all 0.5s ease;
 }
 
 .fade-enter-from,
 .fade-leave-to {
     opacity: 0;
+}
+
+.fadeSlow-enter-active,
+.fadeSlow-leave-active {
+    transition: all 1s ease;
+}
+
+.fadeSlow-enter-from,
+.fadeSlow-leave-to {
+    opacity: 0;
+}
+
+.slide-enter-active,
+.slide-leave-active {
+    transition: all 0.5s ease;
+}
+
+.slide-enter-from {
+    transform: translateY(120px);
+}
+.slide-leave-to {
+    transform: translateY(120px);
+}
+
+.list-move,
+.list-enter-active,
+.list-leave-active {
+    transition: all 0.5s ease;
+}
+
+.list-enter-from,
+.list-leave-to {
+    opacity: 0;
+    transform: translateY(30px);
+}
+
+.list-leave-active {
+    position: absolute;
 }
 </style>
