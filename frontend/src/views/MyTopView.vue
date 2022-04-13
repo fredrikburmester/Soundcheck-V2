@@ -40,14 +40,16 @@
                     </TransitionGroup>
                 </div>
                 <div v-if="item_type == 'artists'">
-                    <SongCard
-                        v-for="(item, index) in items[item_type][time_range]"
-                        :key="item.id"
-                        :title="item.name"
-                        :index="index"
-                        :img="item.images[0].url"
-                        class="mb-4"
-                    ></SongCard>
+                    <TransitionGroup name="list" tag="div">
+                        <SongCard
+                            v-for="(item, index) in items[item_type][time_range]"
+                            :key="item.id"
+                            :title="item.name"
+                            :index="index"
+                            :img="item.images[0].url"
+                            class="mb-4"
+                        ></SongCard>
+                    </TransitionGroup>
                 </div>
             </div>
             <div v-if="items[item_type][time_range].length == 0" class="flex flex-col p-8">
