@@ -52,7 +52,6 @@ export default {
             this.$router.push(`/login`)
         },
         invite(data) {
-            console.log('invite:', data)
             this.notifications.push(data)
         },
     },
