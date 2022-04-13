@@ -10,6 +10,7 @@
             @next-question="nextQuestion"
         />
         <ResultsComponent v-if="gameState == 'finished'" :players="players" :room="room" />
+        <ChatComponent :messages="room.messages" />
     </div>
 </template>
 
@@ -19,9 +20,10 @@ import { useUserStore } from '@/stores/user'
 import LobbyComponent from '../components/LobbyComponent.vue'
 import GameComponent from '../components/GameComponent.vue'
 import ResultsComponent from '../components/ResultsComponent.vue'
+import ChatComponent from '../components/ChatComponent.vue'
 
 export default {
-    components: { LobbyComponent, GameComponent, ResultsComponent },
+    components: { LobbyComponent, GameComponent, ResultsComponent, ChatComponent },
     data() {
         return {
             loading: true,
@@ -45,7 +47,7 @@ export default {
 
             this.loading = false
         },
-        startGame(settings) {
+        startGame() {
             this.gameState = 'playing'
         },
     },

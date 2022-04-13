@@ -12,6 +12,7 @@ import { Song } from './song.js'
 import { loginStep2 } from './auth.js'
 import { createLoginUrl } from './auth.js'
 import { Notification, Invite } from './Notification.js'
+import { Message } from './Message.js'
 
 const app = express()
 const httpServer = createServer()
@@ -49,6 +50,16 @@ io.on('connection', (socket) => {
 		if (user) {
 			user.socketid = socket.id
 			user.online = true
+		}
+	})
+
+	socket.on('newMessage', (message) => {
+		let user = USERS.find((user) => user.socketid === socket.id)
+		let room = ROOMS.find((room) => room.code === user.room)
+		if (user) {
+			let newMessage = new Message(message, user)
+			room.messages.push(newMessage)
+			broadcastRoomUpdates(room)
 		}
 	})
 

@@ -35,9 +35,6 @@ export default defineConfig(({ mode }) => {
                         },
                     ],
                 },
-                devOptions: {
-                    enabled: true,
-                },
             }),
         ],
         resolve: {

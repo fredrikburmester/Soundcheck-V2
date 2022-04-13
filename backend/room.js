@@ -21,6 +21,7 @@ export class Room {
 		this.host = host
 		this.songs = []
 		this.currentQuestion = 0
+		this.messages = []
 	}
 
 	compileSongList() {

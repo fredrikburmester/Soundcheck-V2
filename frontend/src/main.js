@@ -9,6 +9,8 @@ import router from './router'
 
 import './index.css'
 
+import VueFeather from 'vue-feather'
+
 const app = createApp(App)
 const socket_url = import.meta.env.VITE_SOCKET_URL
 
@@ -32,7 +34,7 @@ if ('serviceWorker' in navigator) {
 }
 
 app.use(VueSocketIOExt, socket)
-
 app.use(router)
+app.component(VueFeather.name, VueFeather)
 
 app.mount('#app')

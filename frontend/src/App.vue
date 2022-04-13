@@ -65,6 +65,7 @@ export default {
         <RouterView />
     </div>
     <PopupComponent class="z-100" />
+    <div id="chat-target"></div>
 </template>
 
 <style>
