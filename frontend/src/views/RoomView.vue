@@ -38,7 +38,9 @@ export default {
     watch: {
         $route: {
             handler() {
-                this.joinRoom()
+                if (this.$route.name == 'Room') {
+                    this.joinRoom()
+                }
             },
             immediate: true,
         },
