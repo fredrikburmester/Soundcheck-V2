@@ -35,13 +35,23 @@
                     @mousedown="stopProgress"
                 />
             </div>
-            <div v-if="connected || spotifyConnectionError" class="mt-4">
+            <div class="flex flex-row mt-8 space-x-8">
+                <div v-if="connected && !spotifyConnectionError" class="flex flex-grow">
+                    <button v-if="!playing" class="flex flex-grow btn btn-success" @click="playSong">Play</button>
+                    <button v-else class="flex flex-grow btn btn-error" @click="pauseSong">plause</button>
+                </div>
+                <div v-else class="flex-grow">
+                    <button v-if="!connectionLoading" class="btn btn-success animate-pulse w-full" @click="connectToSpotifyPlayer">Connect</button>
+                    <button v-else class="btn btn-success loading w-full"></button>
+                </div>
+                <button v-if="isHost()" class="flex flex-grow btn btn-primary" @click="nextQuestion">Next song</button>
+            </div>
+            <!-- <div v-if="connected || spotifyConnectionError" class="mt-4">
                 <div v-if="isHost()" class="flex flex-row mt-8 space-x-8">
                     <div v-if="!spotifyConnectionError" class="flex flex-grow">
                         <button v-if="!playing" class="flex flex-grow btn btn-success" @click="playSong">Play</button>
                         <button v-else class="flex flex-grow btn btn-error" @click="pauseSong">plause</button>
                     </div>
-                    <button class="flex flex-grow btn btn-primary" @click="nextQuestion">Next song</button>
                 </div>
                 <div v-else>
                     <div v-if="!spotifyConnectionError" class="flex flex-grow">
@@ -53,7 +63,7 @@
             <div v-else class="mt-4">
                 <button v-if="!connectionLoading" class="btn btn-success animate-pulse w-full" @click="connectToSpotifyPlayer">Connect</button>
                 <button v-else class="btn btn-success loading w-full"></button>
-            </div>
+            </div> -->
         </div>
     </div>
 </template>
@@ -215,6 +225,8 @@ export default {
                     console.error('Failed to validate Spotify account', message)
                     this.notification = 'You need a premium account to play music'
                     this.spotifyConnectionError = true
+                    this.connected = false
+                    this.connectionLoading = false
                 })
 
                 player.connect()
