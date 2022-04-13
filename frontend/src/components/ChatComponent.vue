@@ -2,7 +2,7 @@
     <transition name="fade">
         <Teleport to="#chat-target">
             <div class="chat-open-button cursor-pointer" @click="openChat">
-                <vue-feather type="message-square"></vue-feather>
+                <vue-feather type="message-square" class="w-5 h-5"></vue-feather>
             </div>
             <div v-show="chatOpen" class="chat">
                 <div class="background backdrop-blur-sm"></div>
@@ -22,7 +22,7 @@
                 </div>
                 <div class="chat-input flex flex-row">
                     <input v-model="message" type="text" placeholder="Type here" class="input w-full max-w-xs" @keyup.enter="sendMessage" />
-                    <button class="btn btn-primary" @click="sendMessage">Send</button>
+                    <button class="btn btn-success" @click="sendMessage">Send</button>
                 </div>
             </div>
         </Teleport>
@@ -84,7 +84,7 @@ export default {
 .chat-open-button {
     position: fixed;
     left: 80px;
-    top: 21px;
+    top: 22px;
     z-index: 100;
 }
 .background {
@@ -99,34 +99,35 @@ export default {
 .chat {
     z-index: 100;
     width: 100vw;
+    display: flex;
 }
 .chat-window {
     position: fixed;
     width: 100vw;
-    height: calc(100vh - 150px);
-    max-height: calc(100vh - 150px);
+    max-height: calc(100vh - 120px);
     top: 0;
     z-index: 3;
+    height: calc(100vh - 120px);
 }
 .chat-input {
-    background-color: rgb(41, 41, 41);
+    background-color: white;
     padding: 2em 2em 2em 2em;
     position: fixed;
     width: 100vw;
-    height: 150px;
+    height: 120px;
     bottom: 0;
     z-index: 4;
     border-radius: 10px 10px 0 0;
 }
 .messages-container {
-    height: 100%;
-    max-height: calc(100vh - 150px);
+    max-height: calc(100vh - 120px);
     overflow: auto;
 }
 .chat-input input {
     max-width: 70vw;
     width: 70vw !important;
-    background-color: rgb(78, 78, 78);
+    background-color: rgb(202 202 202);
+    color: black;
 }
 .chat-input button {
     margin-left: 20px;
