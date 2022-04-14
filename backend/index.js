@@ -100,7 +100,7 @@ io.on('connection', (socket) => {
 
 			io.to(user.socketid).emit('invite', invite)
 		} else {
-			console.log('user not found')
+			console.log('[Error] User was not found...')
 		}
 		// }
 	})

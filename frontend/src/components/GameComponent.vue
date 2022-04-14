@@ -134,7 +134,6 @@ export default {
     },
     sockets: {
         playerGuessed: function (userId) {
-            console.log(userId)
             // check if user in playersGuessed and if not add
             if (!this.playersGuessed.includes(userId)) {
                 this.playersGuessed.push(userId)
