@@ -22,7 +22,7 @@
         <div v-for="p in sortedUsers" :key="p.id" tabindex="0" class="collapse" :style="cssVars">
             <UserCard :img="p.img" :display-name="p.name" class="collapse-title" />
             <input id="checkbox" type="checkbox" class="peer" />
-            <div class="rounded-b-2xl m-0 px-4 collapse-content bg-secondary text-primary-content">
+            <div class="rounded-b-2xl m-0 px-4 collapse-content bg-primary text-primary-content">
                 <h1 class="text-white mt-4 text-2xl font-bold">Points: {{ p.points * 10 }}</h1>
                 <p class="text-white opacity-70">Per song answers for {{ p.name }}</p>
                 <div v-for="(song, index) in room.songs" :key="song.id" class="mt-6">
