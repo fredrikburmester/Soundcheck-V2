@@ -21,6 +21,19 @@ module.exports = {
         logs: true,
         rtl: false,
         prefix: '',
-        themes: ['halloween'],
+        themes: [
+            {
+                forest: {
+                    ...require('daisyui/src/colors/themes')['[data-theme=forest]'],
+                    'base-100': '#1F1F1E',
+                    'base-300': '#282828',
+                    'neutral-content': '#e8e8e8',
+                    success: '#1EB854',
+                    primary: '#1EB854',
+                    secondary: '#F77F00',
+                    error: '#D62828',
+                },
+            },
+        ],
     },
 }
