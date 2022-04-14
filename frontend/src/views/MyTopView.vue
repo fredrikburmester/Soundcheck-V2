@@ -3,7 +3,15 @@
         <div :key="item_type" class="flex flex-col px-8 pb-24 w-screen items-center">
             <div class="pb-8 max-w-2xl w-full">
                 <h1 class="text-3xl text-start">Your top {{ item_type }}</h1>
-                <p class="text-start">Choose the time range at the bottom.</p>
+                <p v-if="item_type == 'tracks'" class="text-start">
+                    Here you can see your favorite Spotify songs the last month, half year and more than a year.
+                </p>
+                <p v-if="item_type == 'artists'" class="text-start">
+                    Here you can see your favorite Spotify artists the last month, half year and more than a year.
+                </p>
+                <br />
+                <p>Make sure to change the time range at the bottom!</p>
+
                 <div v-if="item_type == 'tracks'">
                     <label for="my-modal-6" class="btn btn-sm btn-success modal-button mt-4" @click="setPlaylistName">Create playlist</label>
                     <input id="my-modal-6" type="checkbox" class="modal-toggle" />
@@ -60,7 +68,12 @@
                 </p>
             </div>
             <div v-if="loading" class="flex flex-col items-center place-content-center mt-32">
-                <div class="radial-progress text-primary animate-spin" style="--value: 70"></div>
+                <!-- <div class="radial-progress text-primary animate-spin" style="--value: 70"></div> -->
+                <div class="hollow-dots-spinner" :style="spinnerStyle">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
             </div>
         </div>
 
@@ -115,7 +128,6 @@ export default {
     },
     async mounted() {
         await this.getItems()
-        this.loading = false
     },
     methods: {
         getTimeRangePrettyString(time_range) {
@@ -204,5 +216,47 @@ export default {
    animations can be calculated correctly. */
 .list-leave-active {
     position: absolute;
+}
+.hollow-dots-spinner,
+.hollow-dots-spinner * {
+    box-sizing: border-box;
+}
+
+.hollow-dots-spinner {
+    height: 15px;
+    width: calc(30px * 3);
+}
+
+.hollow-dots-spinner .dot {
+    width: 15px;
+    height: 15px;
+    margin: 0 calc(15px / 2);
+    border: calc(15px / 5) solid #1eb854;
+    border-radius: 50%;
+    float: left;
+    transform: scale(0);
+    animation: hollow-dots-spinner-animation 1000ms ease infinite 0ms;
+}
+
+.hollow-dots-spinner .dot:nth-child(1) {
+    animation-delay: calc(300ms * 1);
+}
+
+.hollow-dots-spinner .dot:nth-child(2) {
+    animation-delay: calc(300ms * 2);
+}
+
+.hollow-dots-spinner .dot:nth-child(3) {
+    animation-delay: calc(300ms * 3);
+}
+
+@keyframes hollow-dots-spinner-animation {
+    50% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
 }
 </style>
