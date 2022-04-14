@@ -22,6 +22,7 @@ export class Room {
 		this.songs = []
 		this.currentQuestion = 0
 		this.messages = []
+		this.usersGuessedOnCurrentQuestion = []
 	}
 
 	compileSongList() {
@@ -123,6 +124,8 @@ export class Room {
 	}
 
 	nextQuestion() {
+		this.usersGuessedOnCurrentQuestion = []
+		this.nrOfGuesses = 0
 		this.currentQuestion++
 		if (this.currentQuestion >= this.songs.length) {
 			this.status = roomStatus[2]

@@ -214,7 +214,6 @@ io.on('connection', (socket) => {
 				route: `/room/${user.room}`,
 			})
 		}
-
 		return
 	})
 
@@ -225,6 +224,12 @@ io.on('connection', (socket) => {
 		if (room && user) {
 			if (room.status === roomStatus[1]) {
 				user.makeGuess(songId, guess)
+				// add user.id to room.usersGuessedOnCurrentQuestion if they don't exist
+				if (!room.usersGuessedOnCurrentQuestion.includes(user.id)) {
+					room.usersGuessedOnCurrentQuestion.push(user.id)
+				}
+
+				io.to(room.code).emit('playerGuessed', user.id)
 			}
 		}
 	})

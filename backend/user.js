@@ -22,7 +22,9 @@ export class User {
 				userId,
 				correct: null,
 			})
+			return true
 		}
+		return false
 	}
 
 	clearGuesses() {

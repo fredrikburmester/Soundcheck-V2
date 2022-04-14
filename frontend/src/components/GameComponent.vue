@@ -2,8 +2,11 @@
     <div class="flex w-screen md:max-w-3xl flex-col px-8 h-full">
         <PageTitle :title="$route.params.id" subtitle="Click the player you think this song belongs to! Who's favorite song is it?" />
         <button class="btn btn-error btn-sm mb-4" @click="leaveRoom">Leave room</button>
-        <h1 v-if="players.length == 1" class="font-bold text-xl italic mb-4">{{ players.length }} Player</h1>
-        <h1 v-else class="font-bold text-xl italic mb-4">{{ players.length }} Players</h1>
+        <div class="flex-row flex place-content-between mb-4">
+            <h1 v-if="players.length == 1" class="font-bold text-xl italic">{{ players.length }} Player</h1>
+            <h1 v-else class="font-bold text-xl italic mb-4">{{ players.length }} Players</h1>
+            <h1 class="font-bold text-xl">{{ playersGuessed.length }}/{{ room.users.length }} Guessed</h1>
+        </div>
         <div id="player-view">
             <UserCard
                 v-for="p in players"
@@ -12,6 +15,7 @@
                 :img="p.img"
                 :display-name="p.name"
                 :class="makePlayerGuessId == p.id ? 'animate-pulse ring ring-primary' : ''"
+                :description="hasGuessed(p.id) ? 'Done' : ''"
                 @click="makePlayerGuess(p.id)"
             />
         </div>
@@ -46,24 +50,6 @@
                 </div>
                 <button v-if="isHost()" class="flex flex-grow btn btn-primary" @click="nextQuestion">Next song</button>
             </div>
-            <!-- <div v-if="connected || spotifyConnectionError" class="mt-4">
-                <div v-if="isHost()" class="flex flex-row mt-8 space-x-8">
-                    <div v-if="!spotifyConnectionError" class="flex flex-grow">
-                        <button v-if="!playing" class="flex flex-grow btn btn-success" @click="playSong">Play</button>
-                        <button v-else class="flex flex-grow btn btn-error" @click="pauseSong">plause</button>
-                    </div>
-                </div>
-                <div v-else>
-                    <div v-if="!spotifyConnectionError" class="flex flex-grow">
-                        <button v-if="!playing" class="flex flex-grow btn btn-success" @click="playSong">Play</button>
-                        <button v-else class="flex flex-grow btn btn-error" @click="pauseSong">plause</button>
-                    </div>
-                </div>
-            </div>
-            <div v-else class="mt-4">
-                <button v-if="!connectionLoading" class="btn btn-success animate-pulse w-full" @click="connectToSpotifyPlayer">Connect</button>
-                <button v-else class="btn btn-success loading w-full"></button>
-            </div> -->
         </div>
     </div>
 </template>
@@ -73,6 +59,7 @@ import PageTitle from './PageTitle.vue'
 import { mapWritableState } from 'pinia'
 import { useUserStore } from '@/stores/user'
 import SongCard from './SongCardComponent.vue'
+
 export default {
     components: { UserCard, PageTitle, SongCard },
     props: {
@@ -107,6 +94,7 @@ export default {
             duration: 0,
             makePlayerGuessId: null,
             spotifyConnectionError: false,
+            playersGuessed: this.room.usersGuessedOnCurrentQuestion,
         }
     },
     computed: {
@@ -123,6 +111,7 @@ export default {
                 this.duration = 0
                 this.currentQuestion = newVal.currentQuestion
                 this.makePlayerGuessId = null
+                this.playersGuessed = []
 
                 if (this.player) {
                     this.player.pause()
@@ -143,7 +132,19 @@ export default {
 
         clearInterval(this.timer)
     },
+    sockets: {
+        playerGuessed: function (userId) {
+            console.log(userId)
+            // check if user in playersGuessed and if not add
+            if (!this.playersGuessed.includes(userId)) {
+                this.playersGuessed.push(userId)
+            }
+        },
+    },
     methods: {
+        hasGuessed(userId) {
+            return this.playersGuessed.includes(userId)
+        },
         leaveRoom() {
             this.stopProgress()
             this.$emit('leaveRoom')
@@ -234,6 +235,7 @@ export default {
         },
         nextQuestion() {
             this.makePlayerGuessId = null
+            this.playersGuessed = []
             this.$emit('nextQuestion')
         },
         async playSong() {

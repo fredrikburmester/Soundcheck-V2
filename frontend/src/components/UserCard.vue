@@ -14,8 +14,11 @@
                     <span class="text-3xl">{{ displayName[0] }}</span>
                 </div>
             </div>
-            <div class="card-body">
-                <h2 class="card-title">{{ displayName }}</h2>
+            <div class="card-body flex flex-col">
+                <span class="card-title">{{ displayName }}</span>
+                <transition appear name="slide">
+                    <span v-if="description.length > 0" class="text-xs text-primary -mt-2">{{ description }}</span>
+                </transition>
             </div>
         </div>
     </Transition>
@@ -35,6 +38,11 @@ export default {
             type: Boolean,
             required: false,
             default: false,
+        },
+        description: {
+            type: String,
+            required: false,
+            default: '',
         },
     },
     data() {
@@ -63,5 +71,17 @@ export default {
 .fade-leave-to {
     transform: translateY(20px);
     opacity: 0;
+}
+
+.slide-enter-active,
+.slide-leave-active {
+    transition: all 0.3s ease;
+}
+
+.slide-enter-from {
+    transform: translateX(20px);
+}
+.slide-leave-to {
+    transform: translateX(20px);
 }
 </style>

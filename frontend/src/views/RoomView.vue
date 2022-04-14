@@ -119,10 +119,10 @@ export default {
 
 <style>
 #room {
-    margin-bottom: 200px;
+    margin-bottom: 250px;
     min-height: calc(100vh - 100px);
 }
 #player-view {
-    padding-bottom: 250px;
+    padding-bottom: 300px;
 }
 </style>
