@@ -57,8 +57,8 @@
                                     <span class="capitalize font-bold">{{ n.type }}:</span> {{ n.message }}
                                 </p>
                                 <div class="flex flex-row">
-                                    <button class="btn btn-sm btn-primary mr-2" @click="$router.push(`/room/${n.roomCode}`)">Accept</button>
-                                    <button class="btn btn-sm btn-error" @click="notifications.pop(n)">Decline</button>
+                                    <button class="btn btn-sm btn-primary mr-2" @click="acceptInvitation(n)">Accept</button>
+                                    <button class="btn btn-sm btn-error" @click="declineInvitation(n)">Decline</button>
                                 </div>
                             </div>
                         </li>
@@ -151,6 +151,15 @@ export default {
         // toggleNavbar() {
         //     this.navbarOpen = !this.navbarOpen
         // },
+        acceptInvitation(n) {
+            this.$router.push(`/room/${n.roomCode}`)
+            this.notifications.pop(n)
+            this.notificationPanelOpen = false
+        },
+        declineInvitation(n) {
+            this.notifications.pop(n)
+            this.notificationPanelOpen = false
+        },
         clearAllNotifications() {
             this.notifications = []
         },
