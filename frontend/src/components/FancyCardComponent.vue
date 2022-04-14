@@ -1,6 +1,6 @@
 <template>
     <Transition appear name="slide">
-        <div ref="card" class="fancy-card flex flex-col bg-opacity-80 bg-gradient-to-r bg-primary text-neutral-content rounded-xl p-8">
+        <div ref="card" class="fancy-card flex flex-col bg-opacity-80 bg-gradient-to-r from-primary to-green-900 text-neutral-content rounded-xl p-8">
             <h1 class="font-bold text-2xl"><slot name="header"></slot></h1>
             <p><slot name="body"></slot></p>
             <router-link :to="link" class="place-self-end">
@@ -44,9 +44,8 @@ export default {
 
 <style>
 .fancy-card {
-    background: linear-gradient(-45deg, #18ba18, #2388d5);
     background-size: 400% 400%;
-    animation: gradient 15s ease infinite;
+    animation: gradient 10s ease infinite;
 }
 
 @keyframes gradient {
@@ -67,9 +66,9 @@ export default {
 }
 
 .slide-enter-from {
-    transform: translateX(40px);
+    transform: translateX(30px);
 }
 .slide-leave-to {
-    transform: translateX(40px);
+    transform: translateX(30px);
 }
 </style>
