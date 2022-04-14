@@ -1,6 +1,6 @@
 <template>
     <div class="flex flex-col w-screen justify-start px-8 pb-12 md:px-32 md:mt-16">
-        <div class="flex flex-row space-x-8 items-center">
+        <div class="flex flex-row space-x-8 items-center mb-12">
             <div class="avatar pt-2">
                 <div class="w-24 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
                     <img :src="avatar" />
@@ -8,46 +8,26 @@
             </div>
             <p class="text-2xl">{{ display_name }}</p>
         </div>
-        <div class="flex flex-col md:flex-row flex-wrap">
-            <div class="h-56 card bg-base-100 shadow-xl image-full mt-12 md:mr-12">
-                <figure id="bg1"></figure>
-                <div class="card-body">
-                    <h2 class="card-title">Soundcheck!?</h2>
-                    <p>Can you guess your friends favorite songs?</p>
-                    <div class="card-actions justify-end">
-                        <router-link to="/play">
-                            <button class="btn btn-primary">Play now</button>
-                        </router-link>
-                    </div>
-                </div>
-            </div>
-            <div class="h-56 card bg-base-100 shadow-xl image-full md:mr-12 mt-12">
-                <figure id="bg2"></figure>
-                <div class="card-body">
-                    <h2 class="card-title">My top songs</h2>
-                    <p>Check out your top songs!</p>
-                    <div class="card-actions justify-end">
-                        <router-link to="/my-top/tracks">
-                            <button class="btn btn-primary">enter</button>
-                        </router-link>
-                    </div>
-                </div>
-            </div>
-            <div class="h-56 card bg-base-100 shadow-xl image-full md:mr-12 mt-12">
-                <figure id="bg2"></figure>
-                <div class="card-body">
-                    <h2 class="card-title">My top artists</h2>
-                    <p>See who your top artists are!</p>
-                    <div class="card-actions justify-end">
-                        <router-link to="/my-top/artists">
-                            <button class="btn btn-primary">enter</button>
-                        </router-link>
-                    </div>
-                </div>
-            </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 auto-cols-max gap-4 md:flex-row flex-wrap">
+            <FancyCardComponent link="/play">
+                <template #header>Soundcheck!</template>
+                <template #body>Can you guess your friends favorite songs?</template>
+                <template #action>Play</template>
+            </FancyCardComponent>
+            <hr class="md:hidden opacity-10 my-8" />
+            <FancyCardComponent link="/my-top/tracks">
+                <template #header>My top songs</template>
+                <template #body>Check out your top songs!</template>
+                <template #action>Check it out</template>
+            </FancyCardComponent>
+            <FancyCardComponent link="/my-top/artists">
+                <template #header>My top artists</template>
+                <template #body>Check out your top songs!</template>
+                <template #action>Check it out</template>
+            </FancyCardComponent>
         </div>
-        <hr class="my-12 opacity-20" />
-        <div class="stats shadow bg-secondary">
+        <hr class="my-12 opacity-10" />
+        <div class="stats shadow-lg bg-base-300">
             <div class="stat">
                 <div class="stat-title">Active users</div>
                 <div class="stat-value">{{ activeUsers }}</div>
@@ -65,6 +45,7 @@
 <script>
 import { useUserStore } from '@/stores/user'
 import { mapWritableState } from 'pinia'
+import FancyCardComponent from '../components/FancyCardComponent.vue'
 export default {
     props: {},
     data() {
@@ -93,6 +74,7 @@ export default {
             this.$socket.client.emit('getStats')
         },
     },
+    components: { FancyCardComponent },
 }
 </script>
 
@@ -110,5 +92,8 @@ export default {
 }
 .stats {
     max-width: 300px;
+}
+.fancy-card {
+    max-height: fit-content;
 }
 </style>
