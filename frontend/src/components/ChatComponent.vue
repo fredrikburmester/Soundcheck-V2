@@ -7,7 +7,7 @@
             <div v-show="chatOpen" class="background backdrop-blur-sm"></div>
         </Transition>
         <div v-show="chatOpen" class="chat-close-button fixed top-8 right-8" @click="chatOpen = false">
-            <button class="btn btn-circle bg-red-600 border-0 hover:bg-red-400 shadow-xl">
+            <button class="btn btn-circle bg-red-600 border-0 shadow-xl">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="white">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
