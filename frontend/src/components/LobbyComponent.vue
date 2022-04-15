@@ -1,7 +1,10 @@
 <template>
     <div id="lobby" class="flex w-screen md:max-w-3xl flex-col px-8 h-full">
         <div>
-            <PageTitle :title="$route.params.id" subtitle="Welcome to the game room!" />
+            <PageTitle
+                :title="$route.params.id"
+                subtitle="Others can join by entering the code or by you inviting them to the room. While wating, write something in the chat! Who's gonna win?"
+            />
             <button class="btn btn-error btn-sm mb-4 mr-4" @click="$emit('leaveRoom')">Leave room</button>
             <label for="my-modal-6" class="btn btn-sm btn-success modal-button mb-4" @click="getInvitablePlayers">Invite friends</label>
             <input id="my-modal-6" type="checkbox" class="modal-toggle" />
