@@ -25,7 +25,7 @@
         <Transition appear name="slide">
             <div v-show="chatOpen" class="chat-input flex flex-row">
                 <input v-model="message" type="text" placeholder="Type here" class="input w-full max-w-xs" @keyup.enter="sendMessage" />
-                <button class="btn btn-success w-full flex-grow" @click="sendMessage">Send</button>
+                <button class="btn btn-success w-full flex-grow text-white" @click="sendMessage">Send</button>
             </div>
         </Transition>
     </div>
@@ -92,7 +92,7 @@ export default {
         },
         sendMessage() {
             if (this.message.length > 0) {
-                this.$socket.client.emit('newMessage', this.message)
+                this.$socket.client.emit('newMessage', this.message, this.$route.params.id)
                 this.message = ''
             }
         },
@@ -101,6 +101,9 @@ export default {
 </script>
 
 <style scoped>
+button {
+    color: white;
+}
 .chat-open-button {
     position: fixed;
     left: 80px;

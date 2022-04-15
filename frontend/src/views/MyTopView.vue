@@ -60,7 +60,7 @@
                     </TransitionGroup>
                 </div>
             </div>
-            <div v-if="items[item_type][time_range].length == 0" class="flex flex-col p-8">
+            <div v-if="!loading && items[item_type][time_range].length == 0" class="flex flex-col p-8">
                 <p>
                     You have no {{ item_type }} for this period.
                     <br />
@@ -127,6 +127,7 @@ export default {
         },
     },
     async mounted() {
+        this.loading = true
         await this.getItems()
     },
     methods: {
