@@ -23,6 +23,8 @@ Here are some features that are available.
 ## 📈 New features
 Here are some added features not present in the old version of the game
 - A whole new way of playing music, utilizing spotifys web sdk
+  - Seeking in a song
+  - Disable or enable seeking for a game
 - Invite online players to a room 
 - Check out your favorite tracks and artists on Spotify
   - Save a playlist containing those favorite songs
