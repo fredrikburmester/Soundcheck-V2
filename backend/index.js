@@ -45,21 +45,35 @@ io.on('connection', (socket) => {
 	ACTIVE_USERS++
 	socket.emit('connected', socket.id)
 
-	socket.on('updateUser', (userId) => {
-		let user = USERS.find((user) => user.id === userId)
-		if (user) {
-			user.socketid = socket.id
-			user.online = true
+	socket.on('updateUser', ({ id, name, img }) => {
+		if (id && name && img) {
+			let user = USERS.find((user) => user.id === id)
+			if (user) {
+				user.socketid = socket.id
+				user.online = true
+			} else {
+				let new_user = new User(id, img, name, socket.id)
+				USERS.push(new_user)
+			}
 		}
 	})
 
-	socket.on('newMessage', (message) => {
+	socket.on('newMessage', (message, roomCode) => {
 		let user = USERS.find((user) => user.socketid === socket.id)
-		let room = ROOMS.find((room) => room.code === user.room)
-		if (user) {
-			let newMessage = new Message(message, user)
-			room.messages.push(newMessage)
-			io.to(room.code).emit('newMessage', newMessage)
+		let room = ROOMS.find((room) => room.code === roomCode)
+
+		if (user && room) {
+			if (room.users.find((u) => u.id === user.id)) {
+				let newMessage = new Message(message, user)
+				room.messages.push(newMessage)
+				io.to(room.code).emit('newMessage', newMessage)
+			} else {
+				socket.emit('warning', {
+					msg: 'You are not permitted to send messages in this room',
+				})
+			}
+		} else {
+			console.log('[message error]', user, room)
 		}
 	})
 
@@ -254,6 +268,8 @@ io.on('connection', (socket) => {
 			return
 		}
 
+		// Make sure the user object has nothing left from old games
+		// TODO: Implement database later
 		if (room.status === roomStatus[0]) {
 			user.clearGuesses()
 		}
@@ -267,6 +283,8 @@ io.on('connection', (socket) => {
 		}
 
 		if (room.status === roomStatus[2]) {
+			// Add user to socket room, for chat
+			socket.join(room.code)
 			callback({
 				status: 200,
 				room: room,
