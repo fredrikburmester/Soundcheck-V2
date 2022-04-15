@@ -1,6 +1,6 @@
 # Soundcheck V2 - A Music Game for Friends!
 
-A remake of my (and friends) original [Soundcheck game](https://github.com/fredrikburmester/Soundcheck).
+A remake of me and my friends original [Soundcheck game](https://github.com/fredrikburmester/Soundcheck).
 
 ![Soundcheck Logo](https://raw.githubusercontent.com/fredrikburmester/Soundcheck/master/frontend/src/assets/soundcheck-logo.png)
 
