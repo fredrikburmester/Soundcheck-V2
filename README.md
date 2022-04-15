@@ -26,5 +26,5 @@ Here are some added features not present in the old version of the game
 - Invite online players to a room 
 - Check out your favorite tracks and artists on Spotify
   - Save a playlist containing those favorite songs
-- See who has guessed on a player 
+- See who has guessed on a player duing the game
 - A new fresh design using Tailwind and DaisyUI
