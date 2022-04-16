@@ -68,8 +68,7 @@
                 </p>
             </div>
             <div v-if="loading" class="flex flex-col items-center place-content-center mt-32">
-                <!-- <div class="radial-progress text-primary animate-spin" style="--value: 70"></div> -->
-                <div class="hollow-dots-spinner" :style="spinnerStyle">
+                <div class="hollow-dots-spinner">
                     <div class="dot"></div>
                     <div class="dot"></div>
                     <div class="dot"></div>
