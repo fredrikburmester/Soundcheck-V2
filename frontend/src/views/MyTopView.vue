@@ -67,13 +67,7 @@
                     Try another period at the bottom.
                 </p>
             </div>
-            <div v-if="loading" class="flex flex-col items-center place-content-center mt-32">
-                <div class="hollow-dots-spinner">
-                    <div class="dot"></div>
-                    <div class="dot"></div>
-                    <div class="dot"></div>
-                </div>
-            </div>
+            <LoadingComponent v-if="loading" />
         </div>
 
         <div class="tabs tabs-boxed z-100 bg-zinc-900 shadow-lg">
@@ -87,9 +81,10 @@
 import { useUserStore } from '@/stores/user'
 import { mapWritableState, mapActions } from 'pinia'
 import SongCard from '../components/SongCardComponent.vue'
+import LoadingComponent from '../components/LoadingComponent.vue'
 
 export default {
-    components: { SongCard },
+    components: { SongCard, LoadingComponent },
     data() {
         return {
             item_type: this.$route.params.id,
@@ -216,47 +211,5 @@ export default {
    animations can be calculated correctly. */
 .list-leave-active {
     position: absolute;
-}
-.hollow-dots-spinner,
-.hollow-dots-spinner * {
-    box-sizing: border-box;
-}
-
-.hollow-dots-spinner {
-    height: 15px;
-    width: calc(30px * 3);
-}
-
-.hollow-dots-spinner .dot {
-    width: 15px;
-    height: 15px;
-    margin: 0 calc(15px / 2);
-    border: calc(15px / 5) solid #1eb854;
-    border-radius: 50%;
-    float: left;
-    transform: scale(0);
-    animation: hollow-dots-spinner-animation 1000ms ease infinite 0ms;
-}
-
-.hollow-dots-spinner .dot:nth-child(1) {
-    animation-delay: calc(300ms * 1);
-}
-
-.hollow-dots-spinner .dot:nth-child(2) {
-    animation-delay: calc(300ms * 2);
-}
-
-.hollow-dots-spinner .dot:nth-child(3) {
-    animation-delay: calc(300ms * 3);
-}
-
-@keyframes hollow-dots-spinner-animation {
-    50% {
-        transform: scale(1);
-        opacity: 1;
-    }
-    100% {
-        opacity: 0;
-    }
 }
 </style>
