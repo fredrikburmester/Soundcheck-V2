@@ -24,7 +24,7 @@
         </Transition>
         <Transition appear name="slide">
             <div v-show="chatOpen" class="chat-input flex flex-row">
-                <input v-model="message" type="text" placeholder="Type here" class="input w-full max-w-xs" @keyup.enter="sendMessage" />
+                <input ref="input" v-model="message" type="text" placeholder="Type here" class="input w-full max-w-xs" @keyup.enter="sendMessage" />
                 <button class="btn btn-success w-full flex-grow text-white" @click="sendMessage">Send</button>
             </div>
         </Transition>
@@ -35,6 +35,8 @@
 import ChatMessageComponent from './ChatMessageComponent.vue'
 import { mapWritableState } from 'pinia'
 import { useUserStore } from '@/stores/user'
+import { onStartTyping } from '@vueuse/core'
+import { ref } from 'vue'
 
 export default {
     name: 'ChatComponent',
@@ -44,6 +46,17 @@ export default {
             type: Array,
             default: () => [],
         },
+    },
+    setup() {
+        const input = ref(null)
+
+        onStartTyping(() => {
+            if (!input.value.active) input.value.focus()
+        })
+
+        return {
+            input,
+        }
     },
     data() {
         return {
