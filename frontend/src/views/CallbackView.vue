@@ -1,12 +1,13 @@
 <template>
     <div class="w-screen h-full pb-20 flex place-content-center items-center">
-        <div class="radial-progress animate-spin" style="--value: 70"></div>
+        <LoadingComponent />
     </div>
 </template>
 
 <script>
 import { useUserStore } from '@/stores/user'
 import { mapWritableState, mapActions } from 'pinia'
+import LoadingComponent from '../components/LoadingComponent.vue'
 
 export default {
     data() {
@@ -38,22 +39,18 @@ export default {
                     this.$router.push('/login')
                     return
                 })
-
             this.id = user.id
             this.display_name = user.display_name
             this.email = user.email
             this.avatar =
                 user.images[0]?.url ||
                 'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8MXx8fGVufDB8fHx8&w=1000&q=80'
-
             this.$socket.client.emit('login', {
                 id: this.id,
                 img: this.avatar,
                 name: this.display_name,
             })
-
             this.$router.push('/')
-
             return
         },
     },
@@ -67,5 +64,6 @@ export default {
             }
         },
     },
+    components: { LoadingComponent },
 }
 </script>
