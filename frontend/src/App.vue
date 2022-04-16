@@ -6,6 +6,8 @@ import { useUserStore } from '@/stores/user'
 import { mapWritableState, mapActions } from 'pinia'
 import PopupComponent from './components/PopupComponent.vue'
 
+import { useWebNotification } from '@vueuse/core'
+
 export default {
     name: 'App',
     components: {
@@ -19,7 +21,18 @@ export default {
         }
     },
     computed: {
-        ...mapWritableState(useUserStore, ['authenticated', 'key', 'id', 'name', 'notification', 'notificationType', 'notifications', 'socketid']),
+        ...mapWritableState(useUserStore, [
+            'authenticated',
+            'key',
+            'id',
+            'name',
+            'notification',
+            'notificationType',
+            'notifications',
+            'socketid',
+            'display_name',
+            'avatar',
+        ]),
     },
     methods: {
         ...mapActions(useUserStore, ['logout', 'getUser']),
@@ -27,7 +40,16 @@ export default {
     sockets: {
         connected(socketid) {
             this.socketid = socketid
-            this.$socket.client.emit('updateUser', this.id)
+            this.$socket.client.emit('updateUser', {
+                id: this.id,
+                name: this.display_name,
+                img: this.avatar,
+            })
+        },
+        warning({ status, msg }) {
+            console.log(status, msg)
+            this.notification = msg
+            this.notificationType = 'error'
         },
         error({ status, msg }) {
             console.log(status, msg)
@@ -55,6 +77,22 @@ export default {
         },
         invite(data) {
             this.notifications.push(data)
+
+            console.log('notification', data)
+
+            const options = {
+                title: 'New invite',
+                body: data.message,
+                dir: 'auto',
+                lang: 'en',
+                renotify: true,
+            }
+
+            const { isSupported, show } = useWebNotification(options)
+
+            if (isSupported) {
+                show()
+            }
         },
     },
 }
@@ -71,8 +109,8 @@ export default {
             </template>
         </RouterView>
     </div>
-    <PopupComponent class="z-100" />
     <div id="chat-target"></div>
+    <PopupComponent class="z-100" />
 </template>
 
 <style>

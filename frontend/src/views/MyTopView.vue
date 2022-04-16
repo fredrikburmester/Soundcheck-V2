@@ -60,7 +60,7 @@
                     </TransitionGroup>
                 </div>
             </div>
-            <div v-if="items[item_type][time_range].length == 0" class="flex flex-col p-8">
+            <div v-if="!loading && items[item_type][time_range].length == 0" class="flex flex-col p-8">
                 <p>
                     You have no {{ item_type }} for this period.
                     <br />
@@ -68,8 +68,7 @@
                 </p>
             </div>
             <div v-if="loading" class="flex flex-col items-center place-content-center mt-32">
-                <!-- <div class="radial-progress text-primary animate-spin" style="--value: 70"></div> -->
-                <div class="hollow-dots-spinner" :style="spinnerStyle">
+                <div class="hollow-dots-spinner">
                     <div class="dot"></div>
                     <div class="dot"></div>
                     <div class="dot"></div>
@@ -127,6 +126,7 @@ export default {
         },
     },
     async mounted() {
+        this.loading = true
         await this.getItems()
     },
     methods: {
