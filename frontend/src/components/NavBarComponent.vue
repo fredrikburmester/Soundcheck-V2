@@ -1,7 +1,7 @@
 <script setup>
 import { useUserStore } from '@/stores/user'
 import { useRoute, useRouter } from 'vue-router'
-import { ref, watch, onUpdated } from 'vue'
+import { ref, watch } from 'vue'
 import { OnClickOutside } from '@vueuse/components'
 
 const userStore = useUserStore()
