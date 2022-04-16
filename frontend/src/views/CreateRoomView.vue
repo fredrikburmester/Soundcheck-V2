@@ -1,16 +1,11 @@
 <template>
     <div class="hero min-h-8/10">
-        <div class="hero-content flex-col items-center lg:flex-row-reverse pb-12">
+        <div class="hero-content flex-col items-center lg:flex-row-reverse pb-12 lg:mt-20">
             <div class="text-left lg:ml-24 px-8">
                 <h1 class="text-5xl font-bold">Create game room</h1>
                 <p class="py-6">
-                    Create a game room and invite your friends to join!
-                    <br />
-                    <br />
-                    Each player will have to enter a unique room code.
-                    <br />
-                    <br />
-                    Choose the number of top songs should be picked from each player and select if you want to see the correct answer after each question.
+                    Create a game room and invite your friends to join! Choose the number of top songs that should be picked from each player, the time range
+                    for those songs, and some additional settings. The more songs you pick, the more fun it will be!
                 </p>
             </div>
             <div class="card flex-shrink-0 w-full max-w-sm shadow-md bg-base-300">
