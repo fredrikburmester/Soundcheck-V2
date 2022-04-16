@@ -151,25 +151,25 @@ io.on('connection', (socket) => {
 					if (room.status === roomStatus[0]) {
 						socket.emit('redirect', {
 							status: 303,
-							msg: '',
-							id: room.code,
+							msg: 'The room already exists and was not created by you. Redirecting you to the active room',
+							route: `/room/${room.code}`,
 						})
 					} else if (room.status === roomStatus[1]) {
 						socket.emit('error', {
 							status: 401,
-							msg: 'Game already started. Try creating a new room!',
+							msg: 'The room already exists and is in progress. Try creating a new room!',
 						})
 					} else if (room.status === roomStatus[2]) {
 						// socket redirect to result page
 						socket.emit('redirect', {
 							status: 303,
 							msg: 'Game has ended. Check out the results!',
-							id: room.code,
+							route: `/room/${room.code}`,
 						})
 					}
 				} else {
 					// create new room
-					let room = new Room(roomCode, user)
+					let room = new Room(roomCode)
 					room.settings.timeRange = timeRange
 					room.settings.nrOfSongs = nrOfSongs
 					room.settings.showCorrectGuesses = showCorrectGuesses
@@ -182,7 +182,7 @@ io.on('connection', (socket) => {
 					socket.emit('redirect', {
 						status: 303,
 						msg: '',
-						id: room.code,
+						route: `/room/${room.code}`,
 					})
 				}
 			} else {
@@ -224,7 +224,7 @@ io.on('connection', (socket) => {
 		) {
 			socket.emit('redirect', {
 				status: 303,
-				msg: 'Game created',
+				msg: 'You have an active game, redirecting you now.',
 				route: `/room/${user.room}`,
 			})
 		}
@@ -264,6 +264,7 @@ io.on('connection', (socket) => {
 			socket.emit('redirect', {
 				status: 404,
 				msg: 'This room does not exist',
+				route: '/',
 			})
 			return
 		}
@@ -271,7 +272,7 @@ io.on('connection', (socket) => {
 		// Make sure the user object has nothing left from old games
 		// TODO: Implement database later
 		if (room.status === roomStatus[0]) {
-			user.clearGuesses()
+			user.clearUser()
 		}
 
 		if (room.status === roomStatus[1] && user.room != room.code) {
@@ -282,24 +283,10 @@ io.on('connection', (socket) => {
 			return
 		}
 
-		if (room.status === roomStatus[2]) {
-			// Add user to socket room, for chat
-			socket.join(room.code)
-			callback({
-				status: 200,
-				room: room,
-			})
-			return
-		}
-
-		if (room.hasUser(user)) {
-			room.switchUserClient(user, socket)
-			broadcastRoomUpdates(room)
-			return
-		}
-
 		// Add room to user object
-		user.room = room.code
+		if (room.status !== roomStatus[2]) {
+			user.room = room.code
+		}
 
 		// Add user in list of users in the room
 		room.addUserToRoom(user, socket)
@@ -307,6 +294,7 @@ io.on('connection', (socket) => {
 		// Update everyone in the room that a new user has joined
 		broadcastRoomUpdates(room)
 
+		// Send a callback to the client with the room object, telling the client that they have joined the room
 		callback({
 			status: 200,
 			room: room,
@@ -329,6 +317,7 @@ io.on('connection', (socket) => {
 			socket.emit('redirect', {
 				status: 404,
 				msg: 'This room does not exist',
+				route: '/',
 			})
 			return
 		}
@@ -399,9 +388,13 @@ io.on('connection', (socket) => {
 	socket.on('topSongs', ({ userId, songs }) => {
 		let user = USERS.find((user) => user.id === userId)
 		let room = ROOMS.find((room) => room.code === user.room)
-		user.songs = songs
 
-		broadcastRoomUpdates(room)
+		if (user && room) {
+			user.songs = songs
+			broadcastRoomUpdates(room)
+		} else {
+			console.log('[top songs] user or room not found', user, room)
+		}
 	})
 
 	socket.on('nextQuestion', ({ roomCode }) => {
