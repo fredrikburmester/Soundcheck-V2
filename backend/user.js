@@ -8,7 +8,8 @@ export class User {
 		this.songs = []
 		this.guesses = []
 		this.points = 0
-		this.online = 0
+		this.online = false
+		this.leftGame = false
 	}
 
 	makeGuess(songId, userId) {
@@ -27,8 +28,13 @@ export class User {
 		return false
 	}
 
-	clearGuesses() {
+	clearUser() {
 		this.guesses = []
 		this.points = 0
+		this.host = false
+		this.songs = []
+		this.guesses = []
+		this.points = 0
+		this.leftGame = false
 	}
 }
