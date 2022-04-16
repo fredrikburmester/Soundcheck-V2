@@ -47,6 +47,7 @@ import { useUserStore } from '@/stores/user'
 import { mapWritableState } from 'pinia'
 import FancyCardComponent from '../components/FancyCardComponent.vue'
 export default {
+    components: { FancyCardComponent },
     props: {},
     data() {
         return {
@@ -74,7 +75,6 @@ export default {
             this.$socket.client.emit('getStats')
         },
     },
-    components: { FancyCardComponent },
 }
 </script>
 
