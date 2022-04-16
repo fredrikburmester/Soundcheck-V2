@@ -2,7 +2,7 @@
     <div class="hero min-h-screen min-h-8/10">
         <div class="hero-content flex-col lg:flex-row-reverse w-full">
             <div class="text-center lg:text-left lg:ml-8">
-                <h1 class="text-5xl font-bold">Soundcheck</h1>
+                <h1 class="text-5xl font-bold text-center">Soundcheck</h1>
                 <p class="py-6 max-w-md text-center">
                     <span class="text-primary">Soundcheck</span>
                     is a game to play with your friends! Create a room, invite your friends, and guess each others favorite songs.
