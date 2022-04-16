@@ -60,11 +60,16 @@ export default {
             }
         },
         redirect({ status, msg, route }) {
-            if (!route) route = '/'
-            console.log(status, msg)
-            this.notification = msg
-            this.notificationType = 'success'
-            if (status != 200) {
+            console.log(status, msg, route)
+            if (!route || route === undefined || route === null || route.length == 0) {
+                console.log('Invalid redirect. No route provided')
+                return
+            } else {
+                console.log('[redirect]', status, msg)
+                if (msg && msg.length > 0) {
+                    this.notification = msg
+                    this.notificationType = 'success'
+                }
                 this.$router.push(route)
             }
         },
@@ -85,6 +90,7 @@ export default {
                 body: data.message,
                 dir: 'auto',
                 lang: 'en',
+                tag: 'invite',
                 renotify: true,
             }
 
