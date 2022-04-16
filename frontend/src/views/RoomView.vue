@@ -52,6 +52,7 @@ export default {
     },
     sockets: {
         roomStatus(room) {
+            console.log('[room status]', room)
             this.room = room
             this.players = room.users
             this.gameState = this.room.status
@@ -90,6 +91,7 @@ export default {
         },
         async sendTopSongs(time_range, limit) {
             const songs = await this.getTopSongs(time_range, limit)
+            console.log('sending top songs', songs)
             this.$socket.client.emit('topSongs', {
                 userId: this.id,
                 songs: songs,

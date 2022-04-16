@@ -1,23 +1,23 @@
 <template>
     <Transition appear name="fade" mode="out-in">
         <div v-show="loaded" id="usercard" class="card mb-4 flex flex-row items-center pl-8 max-w-96 bg-base-300 shadow-xl h-20 flex-shrink-0">
-            <div v-if="img" class="avatar">
-                <div v-if="host" class="w-12 h-12 rounded-full ring ring-primary animate">
-                    <img :src="img" @load="loaded = true" />
+            <div v-if="user.img" class="avatar">
+                <div v-if="user.host" class="w-12 h-12 rounded-full ring ring-primary animate">
+                    <img :src="user.img" @load="loaded = true" />
                 </div>
                 <div v-else class="w-12 h-12 rounded-full">
-                    <img :src="img" @load="loaded = true" />
+                    <img :src="user.img" @load="loaded = true" />
                 </div>
             </div>
             <div v-else class="avatar placeholder">
                 <div class="bg-neutral-focus text-neutral-content rounded-full w-12 h-12">
-                    <span class="text-3xl">{{ displayName[0] }}</span>
+                    <span class="text-3xl">{{ user.name[0] }}</span>
                 </div>
             </div>
             <div class="card-body flex flex-col">
-                <span class="card-title">{{ displayName }}</span>
+                <span class="card-title">{{ user.name }}</span>
                 <transition appear name="slide">
-                    <span v-if="description.length > 0" class="text-xs text-primary -mt-2">{{ description }}</span>
+                    <span v-if="description.length > 0" class="text-xs text-primary -mt-2" :style="descriptionStyle">{{ description }}</span>
                 </transition>
             </div>
         </div>
@@ -26,34 +26,76 @@
 <script>
 export default {
     props: {
-        img: {
-            type: String,
-            required: false,
-        },
-        displayName: {
-            type: String,
+        user: {
+            type: Object,
             required: true,
         },
-        host: {
-            type: Boolean,
-            required: false,
-            default: false,
-        },
-        description: {
-            type: String,
-            required: false,
-            default: '',
-        },
+        // img: {
+        //     type: String,
+        //     required: false,
+        // },
+        // displayName: {
+        //     type: String,
+        //     required: true,
+        // },
+        // host: {
+        //     type: Boolean,
+        //     required: false,
+        //     default: false,
+        // },
+        // description: {
+        //     type: String,
+        //     required: false,
+        //     default: '',
+        // },
     },
     data() {
         return {
             loaded: false,
+            description: '',
+            descriptionStyle: {
+                opacity: 0,
+            },
         }
     },
     computed: {},
+    // watch: {
+    //     user: {
+    //         handler(newVal, oldVal) {},
+    //         deep: true,
+    //     },
+    // },
     mounted() {
-        if (!this.img) {
+        if (!this.user.img) {
             this.loaded = true
+        }
+
+        if (this.user.host) {
+            this.description = 'Host'
+            this.descriptionStyle = {
+                opacity: 1,
+            }
+        }
+
+        if (this.user.leftGame) {
+            this.description = 'Left the game'
+            this.descriptionStyle = {
+                color: 'red',
+            }
+        } else {
+            this.description = ''
+            this.descriptionStyle = {}
+        }
+    },
+    updated() {
+        if (this.user.leftGame) {
+            this.description = 'Left the game'
+            this.descriptionStyle = {
+                color: 'red',
+            }
+        } else {
+            this.description = ''
+            this.descriptionStyle = {}
         }
     },
     sockets: {},
@@ -79,9 +121,11 @@ export default {
 }
 
 .slide-enter-from {
+    opacity: 0;
     transform: translateX(20px);
 }
 .slide-leave-to {
+    opacity: 0;
     transform: translateX(20px);
 }
 </style>

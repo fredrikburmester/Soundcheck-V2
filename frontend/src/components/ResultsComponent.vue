@@ -19,16 +19,21 @@
                 </div>
             </div>
         </div>
-        <div v-for="p in sortedUsers" :key="p.id" tabindex="0" class="collapse" :style="cssVars">
-            <UserCard :img="p.img" :display-name="p.name" class="collapse-title" />
-            <input id="checkbox" type="checkbox" class="peer" />
-            <div class="rounded-b-2xl m-0 px-4 collapse-content bg-primary text-primary-content">
-                <h1 class="text-white mt-4 text-2xl font-bold">Points: {{ p.points * 10 }}</h1>
-                <p class="text-white opacity-70">Per song answers for {{ p.name }}</p>
-                <div v-for="(song, index) in room.songs" :key="song.id" class="mt-6">
-                    <SongCard :index="index" :title="song.name" :img="song.img" :artist="song.artist" />
-                    <p class="text-white mt-2 ml-2 opacity-70">Your guess: {{ getGuessName(p.guesses, song.id) }}</p>
-                    <p class="text-white ml-2 opacity-70">Correct answer: {{ getCorrectAnswerName(song.id) }}</p>
+        <div v-for="(p, i) in sortedUsers" :key="p.id">
+            <p v-if="i == 0" class="text-xl font-bold mb-2 text-orange-500 italic">Winner</p>
+            <p v-else-if="i > 0 && p.points == sortedUsers[i - 1].points"></p>
+            <hr v-else class="opacity-10 mt-2 mb-4" />
+            <div tabindex="0" class="collapse" :style="cssVars">
+                <UserCard :user="p" class="collapse-title" />
+                <input id="checkbox" type="checkbox" class="peer" />
+                <div class="rounded-b-2xl m-0 px-4 collapse-content bg-primary text-primary-content">
+                    <h1 class="text-white mt-4 text-2xl font-bold">Points: {{ p.points * 10 }}</h1>
+                    <p class="text-white opacity-70">Per song answers for {{ p.name }}</p>
+                    <div v-for="(song, index) in room.songs" :key="song.id" class="mt-6">
+                        <SongCard :index="index" :title="song.name" :img="song.img" :artist="song.artist" />
+                        <p class="text-white mt-2 ml-2 opacity-70">Your guess: {{ getGuessName(p.guesses, song.id) }}</p>
+                        <p class="text-white ml-2 opacity-70">Correct answer: {{ getCorrectAnswerName(song.id) }}</p>
+                    </div>
                 </div>
             </div>
         </div>

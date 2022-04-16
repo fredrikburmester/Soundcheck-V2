@@ -10,12 +10,9 @@
         <div id="player-view">
             <UserCard
                 v-for="p in players"
-                :key="p.id"
-                :host="room_.host.id == p.id"
-                :img="p.img"
-                :display-name="p.name"
+                :key="p"
+                :user="p"
                 :class="makePlayerGuessId == p.id ? 'animate-pulse ring ring-primary' : ''"
-                :description="hasGuessed(p.id) ? 'Done' : ''"
                 @click="makePlayerGuess(p.id)"
             />
         </div>

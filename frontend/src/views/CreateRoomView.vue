@@ -132,9 +132,6 @@ export default {
         error(e) {
             console.log(e)
         },
-        redirect(data) {
-            this.$router.push(`/room/${data.id}`)
-        },
     },
     methods: {
         createRoom() {

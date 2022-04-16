@@ -33,7 +33,7 @@
             <h1 v-else class="font-bold text-xl italic mb-4">{{ players.length }} Players</h1>
         </div>
         <div id="player-view">
-            <UserCard v-for="player in players" :key="player.id" :host="room.host.id == player.id" :img="player.img" :display-name="player.name" />
+            <UserCard v-for="player in players" :key="player.id" :user="player" />
         </div>
         <button v-if="isHost()" class="btn btn-success shadow-md fixed-center-button" @click="$emit('startGame')">Start game</button>
     </div>
