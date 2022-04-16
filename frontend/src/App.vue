@@ -81,14 +81,14 @@ export default {
             console.log('notification', data)
 
             const options = {
-                title: data.message,
+                title: 'New invite',
+                body: data.message,
                 dir: 'auto',
                 lang: 'en',
                 renotify: true,
-                tag: 'test',
             }
 
-            const { isSupported, show, onClick } = useWebNotification(options)
+            const { isSupported, show } = useWebNotification(options)
 
             if (isSupported) {
                 show()
