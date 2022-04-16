@@ -56,18 +56,18 @@ export const useUserStore = defineStore({
             this.notifications = []
             this.socketid = ''
 
-            localStorage.setItem('authenticated', false)
-            localStorage.setItem('token', '')
-            localStorage.setItem('refresh_token', '')
-            localStorage.setItem('name', '')
-            localStorage.setItem('email', '')
-            localStorage.setItem('avatar', '')
-            localStorage.setItem('top_items', {})
-            localStorage.setItem('roomCode', '')
-            localStorage.setItem('notification', '')
-            localStorage.setItem('notificationType', 'error')
-            localStorage.setItem('notifications', [])
-            localStorage.setItem('socketid', '')
+            // localStorage.setItem('authenticated', false)
+            // localStorage.setItem('token', '')
+            // localStorage.setItem('refresh_token', '')
+            // localStorage.setItem('name', '')
+            // localStorage.setItem('email', '')
+            // localStorage.setItem('avatar', '')
+            // localStorage.setItem('top_items', {})
+            // localStorage.setItem('roomCode', '')
+            // localStorage.setItem('notification', '')
+            // localStorage.setItem('notificationType', 'error')
+            // localStorage.setItem('notifications', [])
+            // localStorage.setItem('socketid', '')
 
             this.$router.push({ name: 'Login' })
         },

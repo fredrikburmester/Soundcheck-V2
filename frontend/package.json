@@ -10,7 +10,8 @@
         "https-preview": "serve dist"
     },
     "dependencies": {
-        "@vueuse/core": "^8.2.4",
+        "@vueuse/components": "^8.2.6",
+        "@vueuse/core": "^8.2.6",
         "daisyui": "^2.13.6",
         "feather-icons": "^4.29.0",
         "moment": "^2.29.2",
