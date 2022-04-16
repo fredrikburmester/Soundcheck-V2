@@ -1,6 +1,9 @@
 <template>
     <div class="chat-open-button cursor-pointer" @click="openChat">
-        <vue-feather type="message-square" class="w-5 h-5"></vue-feather>
+        <div class="indicator">
+            <span v-if="unread" class="indicator-item badge badge-secondary animate-bounce"></span>
+            <vue-feather type="message-square" class="w-5 h-5"></vue-feather>
+        </div>
     </div>
     <div class="chat">
         <Transition appear name="fadeSlow">
@@ -87,6 +90,7 @@ export default {
     data() {
         return {
             messages: this.initialMessages,
+            unread: false,
         }
     },
     computed: {
@@ -101,6 +105,7 @@ export default {
         },
         chatOpen(newVal, oldVal) {
             let roomContainer = document.getElementById('room')
+            this.unread = false
             if (newVal) {
                 if (roomContainer) {
                     roomContainer.classList.add('fixed')
@@ -118,6 +123,7 @@ export default {
     sockets: {
         newMessage(message) {
             this.messages.push(message)
+            this.unread = true
         },
     },
     methods: {
@@ -147,6 +153,12 @@ export default {
 <style scoped>
 button {
     color: white;
+}
+.indicator-item {
+    position: fixed;
+    top: 15px;
+    left: 90px;
+    transform: scale(0.5);
 }
 .chat-open-button {
     position: fixed;
