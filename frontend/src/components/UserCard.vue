@@ -28,6 +28,8 @@
     </Transition>
 </template>
 <script>
+import { mapWritableState } from 'pinia'
+import { useUserStore } from '@/stores/user'
 export default {
     props: {
         user: {
@@ -44,24 +46,6 @@ export default {
             default: false,
             required: false,
         },
-        // img: {
-        //     type: String,
-        //     required: false,
-        // },
-        // displayName: {
-        //     type: String,
-        //     required: true,
-        // },
-        // host: {
-        //     type: Boolean,
-        //     required: false,
-        //     default: false,
-        // },
-        // description: {
-        //     type: String,
-        //     required: false,
-        //     default: '',
-        // },
     },
     data() {
         return {
@@ -72,6 +56,9 @@ export default {
             },
             indicator: '',
         }
+    },
+    computed: {
+        ...mapWritableState(useUserStore, ['id']),
     },
     mounted() {
         if (!this.user.img) {
@@ -106,7 +93,7 @@ export default {
     },
     sockets: {
         userTyping(userId) {
-            if (userId == this.user.id) {
+            if (userId == this.user.id && userId != this.id) {
                 this.indicator = 'typing...'
             }
 

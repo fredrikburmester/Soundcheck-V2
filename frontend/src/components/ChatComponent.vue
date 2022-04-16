@@ -1,7 +1,7 @@
 <template>
     <div class="chat-open-button cursor-pointer" @click="openChat">
         <div class="indicator">
-            <span v-if="unread" class="indicator-item badge badge-secondary animate-bounce"></span>
+            <span v-if="unread" class="indicator-item badge badge-secondary animate-bounce">new message</span>
             <vue-feather type="message-square" class="w-5 h-5"></vue-feather>
         </div>
     </div>
@@ -57,8 +57,10 @@ export default {
         const message = ref('')
         const { escape } = useMagicKeys()
         const userStore = useUserStore()
-
-        const instance = getCurrentInstance()
+        const useSocket = () => getCurrentInstance().proxy.$socket
+        const useRoute = () => getCurrentInstance().proxy.$route
+        const socket = useSocket()
+        const route = useRoute()
 
         let chatOpen = ref(false)
 
@@ -73,9 +75,9 @@ export default {
         watchThrottled(
             message,
             () => {
-                instance.proxy.$socket.client.emit('typing', {
+                socket.client.emit('typing', {
                     userId: userStore.id,
-                    roomCode: instance.proxy.$route.params.id,
+                    roomCode: route.params.id,
                 })
             },
             { throttle: 1500 }
@@ -123,7 +125,9 @@ export default {
     sockets: {
         newMessage(message) {
             this.messages.push(message)
-            this.unread = true
+            if (message.from.id != this.id) {
+                this.unread = true
+            }
         },
     },
     methods: {
