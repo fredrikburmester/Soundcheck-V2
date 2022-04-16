@@ -16,7 +16,7 @@ let roomCode = ref(route.params.id)
 watch(route, () => {
     navbarOpen.value = false
     profileOpen.value = false
-    notificationPanelOpen = false
+    notificationPanelOpen.value = false
 })
 
 // This function prevents it from being called twice, since both
