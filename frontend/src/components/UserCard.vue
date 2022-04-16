@@ -30,6 +30,16 @@ export default {
             type: Object,
             required: true,
         },
+        host: {
+            type: Boolean,
+            default: false,
+            required: false,
+        },
+        guessed: {
+            type: Boolean,
+            default: false,
+            required: false,
+        },
         // img: {
         //     type: String,
         //     required: false,
@@ -58,23 +68,14 @@ export default {
             },
         }
     },
-    computed: {},
-    // watch: {
-    //     user: {
-    //         handler(newVal, oldVal) {},
-    //         deep: true,
-    //     },
-    // },
     mounted() {
         if (!this.user.img) {
             this.loaded = true
         }
 
-        if (this.user.host) {
-            this.description = 'Host'
-            this.descriptionStyle = {
-                opacity: 1,
-            }
+        if (this.guessed) {
+            this.description = 'Guessed!'
+            this.descriptionStyle.opacity = 1
         }
 
         if (this.user.leftGame) {
@@ -82,20 +83,20 @@ export default {
             this.descriptionStyle = {
                 color: 'red',
             }
-        } else {
-            this.description = ''
-            this.descriptionStyle = {}
         }
     },
     updated() {
-        if (this.user.leftGame) {
+        if (this.guessed) {
+            this.description = 'Guessed!'
+            this.descriptionStyle.opacity = 1
+        } else if (this.user.leftGame) {
             this.description = 'Left the game'
             this.descriptionStyle = {
                 color: 'red',
             }
         } else {
             this.description = ''
-            this.descriptionStyle = {}
+            this.descriptionStyle.opacity = 0
         }
     },
     sockets: {},

@@ -13,6 +13,7 @@
                 :key="p"
                 :user="p"
                 :class="makePlayerGuessId == p.id ? 'animate-pulse ring ring-primary' : ''"
+                :guessed="playersGuessed.includes(p.id)"
                 @click="makePlayerGuess(p.id)"
             />
         </div>
