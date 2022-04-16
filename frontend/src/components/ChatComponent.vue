@@ -36,7 +36,8 @@ import ChatMessageComponent from './ChatMessageComponent.vue'
 import { mapWritableState } from 'pinia'
 import { useUserStore } from '@/stores/user'
 import { onStartTyping } from '@vueuse/core'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
+import { useMagicKeys } from '@vueuse/core'
 
 export default {
     name: 'ChatComponent',
@@ -49,6 +50,13 @@ export default {
     },
     setup() {
         const input = ref(null)
+        const { escape } = useMagicKeys()
+
+        let chatOpen = ref(false)
+
+        watch(escape, (v) => {
+            if (v) chatOpen.value = false
+        })
 
         onStartTyping(() => {
             if (!input.value.active) input.value.focus()
@@ -56,12 +64,12 @@ export default {
 
         return {
             input,
+            chatOpen,
         }
     },
     data() {
         return {
             message: '',
-            chatOpen: false,
             messages: this.initialMessages,
         }
     },
