@@ -35,7 +35,7 @@ export class Room {
 				let song = songs.find((song) => song.id === s.id)
 				if (song) {
 					// Add the user to that song
-					song.users.push(u)
+					song.users.push(u.id)
 				} else {
 					// Create the song and add the user to it
 					let song = new Song(
@@ -89,10 +89,20 @@ export class Room {
 	addUserToRoom(user, socket) {
 		// Add user to socket room
 		socket.join(this.code)
+		if (this.status !== roomStatus[2]) {
+			user.leftGame = false
+		}
+
+		// Check if room in empty and if so, set the joining player to the host of the room
+		if (this.users.length == 0) {
+			this.host = user
+		}
 
 		// Check if user is already in room
 		for (let u of this.users) {
 			if (u.id === user.id || u.socketid === socket.id) {
+				// Update the socketid of the user in case the user joined from another client
+				u.socketid = socket.id
 				return
 			}
 		}
@@ -102,24 +112,14 @@ export class Room {
 	}
 
 	removeUserFromRoom(user) {
-		this.users = this.users.filter((u) => u.id !== user.id)
+		if (this.status === roomStatus[0]) {
+			this.users = this.users.filter((u) => u.id !== user.id)
+		} else if (this.status === roomStatus[1]) {
+			user.leftGame = true
+		}
 
 		if (this.users.length == 0) {
 			this.status = roomStatus[2]
-		}
-	}
-
-	switchUserClient(user, socket) {
-		for (let u of this.users) {
-			if (u.id === user.id) {
-				socket.emit('redirect', {
-					status: 200,
-					message: 'You have switched to another client',
-					id: this.code,
-				})
-				u.socketid = socket.id
-				socket.join(this.code)
-			}
 		}
 	}
 
