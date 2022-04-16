@@ -1,19 +1,23 @@
 <template>
     <Transition appear name="fade" mode="out-in">
-        <div v-show="loaded" id="usercard" class="card mb-4 flex flex-row items-center pl-8 max-w-96 bg-base-300 shadow-xl h-20 flex-shrink-0">
-            <div v-if="user.img" class="avatar">
-                <div v-if="user.host" class="w-12 h-12 rounded-full ring ring-primary animate">
-                    <img :src="user.img" @load="loaded = true" />
+        <div v-show="loaded" id="usercard" class="w-full card mb-4 flex flex-row items-center pl-8 max-w-96 bg-base-300 shadow-xl h-20 flex-shrink-0">
+            <div class="indicator">
+                <span v-if="indicator" class="indicator-item badge badge-primary">{{ indicator }}</span>
+                <div v-if="user.img" class="avatar">
+                    <div v-if="user.host" class="w-12 h-12 rounded-full ring ring-primary animate">
+                        <img :src="user.img" @load="loaded = true" />
+                    </div>
+                    <div v-else class="w-12 h-12 rounded-full">
+                        <img :src="user.img" @load="loaded = true" />
+                    </div>
                 </div>
-                <div v-else class="w-12 h-12 rounded-full">
-                    <img :src="user.img" @load="loaded = true" />
+                <div v-else class="avatar placeholder">
+                    <div class="bg-neutral-focus text-neutral-content rounded-full w-12 h-12">
+                        <span class="text-3xl">{{ user.name[0] }}</span>
+                    </div>
                 </div>
             </div>
-            <div v-else class="avatar placeholder">
-                <div class="bg-neutral-focus text-neutral-content rounded-full w-12 h-12">
-                    <span class="text-3xl">{{ user.name[0] }}</span>
-                </div>
-            </div>
+
             <div class="card-body flex flex-col">
                 <span class="card-title">{{ user.name }}</span>
                 <transition appear name="slide">
@@ -66,6 +70,7 @@ export default {
             descriptionStyle: {
                 opacity: 0,
             },
+            indicator: '',
         }
     },
     mounted() {
@@ -99,7 +104,17 @@ export default {
             this.descriptionStyle.opacity = 0
         }
     },
-    sockets: {},
+    sockets: {
+        userTyping(userId) {
+            if (userId == this.user.id) {
+                this.indicator = 'typing...'
+            }
+
+            setTimeout(() => {
+                this.indicator = ''
+            }, 3000)
+        },
+    },
     methods: {},
 }
 </script>

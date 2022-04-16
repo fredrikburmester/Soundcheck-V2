@@ -36,8 +36,9 @@ import ChatMessageComponent from './ChatMessageComponent.vue'
 import { mapWritableState } from 'pinia'
 import { useUserStore } from '@/stores/user'
 import { onStartTyping } from '@vueuse/core'
-import { ref, watch } from 'vue'
+import { ref, watch, getCurrentInstance } from 'vue'
 import { useMagicKeys } from '@vueuse/core'
+import { watchThrottled } from '@vueuse/core'
 
 export default {
     name: 'ChatComponent',
@@ -50,7 +51,11 @@ export default {
     },
     setup() {
         const input = ref(null)
+        const message = ref('')
         const { escape } = useMagicKeys()
+        const userStore = useUserStore()
+
+        const instance = getCurrentInstance()
 
         let chatOpen = ref(false)
 
@@ -62,14 +67,25 @@ export default {
             if (!input.value.active) input.value.focus()
         })
 
+        watchThrottled(
+            message,
+            () => {
+                instance.proxy.$socket.client.emit('typing', {
+                    userId: userStore.id,
+                    roomCode: instance.proxy.$route.params.id,
+                })
+            },
+            { throttle: 1500 }
+        )
+
         return {
             input,
             chatOpen,
+            message,
         }
     },
     data() {
         return {
-            message: '',
             messages: this.initialMessages,
         }
     },
@@ -96,6 +112,9 @@ export default {
             }
         },
     },
+    mounted() {
+        console.log(this)
+    },
     sockets: {
         newMessage(message) {
             this.messages.push(message)
@@ -116,6 +135,10 @@ export default {
                 this.$socket.client.emit('newMessage', this.message, this.$route.params.id)
                 this.message = ''
             }
+        },
+        typing() {
+            console.log('typing')
+            this.$socket.client.emit('typing', this.id, this.$route.params.id)
         },
     },
 }

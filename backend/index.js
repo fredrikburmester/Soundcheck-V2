@@ -381,8 +381,10 @@ io.on('connection', (socket) => {
 		room.status = roomStatus[1]
 
 		broadcastRoomUpdates(room)
+	})
 
-		// io.to(roomCode).emit('startGame', room)
+	socket.on('typing', ({ userId, roomCode }) => {
+		io.to(roomCode).emit('userTyping', userId)
 	})
 
 	socket.on('topSongs', ({ userId, songs }) => {
