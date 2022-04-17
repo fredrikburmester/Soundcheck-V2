@@ -31,8 +31,8 @@
                     <p class="text-white opacity-70">Per song answers for {{ p.name }}</p>
                     <div v-for="(song, index) in room.songs" :key="song.id" class="mt-6">
                         <SongCard :index="index" :title="song.name" :img="song.img" :artist="song.artist" />
-                        <p class="text-white mt-2 ml-2 opacity-70">Your guess: {{ getGuessName(p.guesses, song.id) }}</p>
-                        <p class="text-white ml-2 opacity-70">Correct answer: {{ getCorrectAnswerName(song.id) }}</p>
+                        <p class="text-white -mt-3 ml-3 opacity-70">Guess: {{ getGuessName(p.guesses, song.id) }}</p>
+                        <p class="text-white ml-3 opacity-70">Correct answer: {{ getCorrectAnswerName(song.id) }}</p>
                     </div>
                 </div>
             </div>
