@@ -36,6 +36,7 @@
 import { ref } from 'vue'
 const room = ref('')
 </script>
+
 <style scoped>
 .btn {
 }
