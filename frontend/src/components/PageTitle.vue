@@ -1,21 +1,14 @@
 <template>
     <div class="mb-4">
-        <h1 class="text-3xl font-bold">{{ title }}</h1>
-        <p class="italic">{{ subtitle }}</p>
+        <h1 class="text-3xl font-bold">
+            <slot name="header"></slot>
+        </h1>
+        <p class="italic">
+            <slot name="main"></slot>
+        </p>
     </div>
 </template>
 
 <script>
-export default {
-    props: {
-        title: {
-            type: String,
-            required: true,
-        },
-        subtitle: {
-            type: String,
-            default: '',
-        },
-    },
-}
+export default {}
 </script>
