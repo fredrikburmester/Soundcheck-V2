@@ -19,30 +19,19 @@
         </div>
         <div class="fixed-center-button">
             <div class="flex flex-col w-full justify-center">
-                <SongCard
-                    :key="currentQuestion"
-                    :title="songs[currentQuestion].name"
-                    :artist="songs[currentQuestion].artist"
-                    :img="songs[currentQuestion].img"
-                />
-                <input
-                    v-if="!spotifyConnectionError"
-                    v-model="playerPosition"
-                    type="range"
-                    min="0"
-                    :max="duration"
-                    class="range range-xs mt-4"
-                    :disabled="!settings.allowSongSeeking"
-                    @change="seek"
-                    @mousedown="stopProgress"
+                <MusicPlayerComponent
+                    :player-position="playerPosition"
+                    :song="songs[currentQuestion]"
+                    :connected="connected"
+                    :allow-seeking="settings.allowSongSeeking"
+                    :duration="duration"
+                    @play="playSong"
+                    @pause="pauseSong"
+                    @seek="seek"
                 />
             </div>
             <div class="flex flex-row mt-8 space-x-8">
-                <div v-if="connected && !spotifyConnectionError" class="flex flex-grow">
-                    <button v-if="!playing" class="flex flex-grow btn btn-success" @click="playSong">Play</button>
-                    <button v-else class="flex flex-grow btn btn-error" @click="pauseSong">plause</button>
-                </div>
-                <div v-else class="flex-grow">
+                <div v-if="!connected || spotifyConnectionError" class="flex-grow">
                     <button v-if="!connectionLoading" class="btn btn-success animate-pulse w-full" @click="connectToSpotifyPlayer">Connect</button>
                     <button v-else class="btn btn-success loading w-full"></button>
                 </div>
@@ -57,9 +46,10 @@ import PageTitle from './PageTitle.vue'
 import { mapWritableState } from 'pinia'
 import { useUserStore } from '@/stores/user'
 import SongCard from './SongCardComponent.vue'
+import MusicPlayerComponent from './MusicPlayerComponent.vue'
 
 export default {
-    components: { UserCard, PageTitle, SongCard },
+    components: { UserCard, PageTitle, SongCard, MusicPlayerComponent },
     props: {
         players: {
             type: Array,
@@ -155,7 +145,8 @@ export default {
             })
             this.makePlayerGuessId = id
         },
-        seek() {
+        seek(position) {
+            this.playerPosition = position
             this.player.seek(this.playerPosition)
             this.startProgress()
         },
