@@ -1,10 +1,18 @@
 <template>
     <div id="lobby" class="flex w-screen md:max-w-3xl flex-col px-8 h-full">
         <div>
-            <PageTitle
-                :title="$route.params.id"
-                subtitle="Others can join by entering the code or by you inviting them to the room. While wating, write something in the chat! Who's gonna win?"
-            />
+            <PageTitle>
+                <template #header>
+                    <p class="text-xs opacity-50">Room code:</p>
+                    <p class="gradiant-text font-bold">
+                        {{ $route.params.id }}
+                    </p>
+                </template>
+                <template #main>
+                    Invite others to play! While wating, write something in the chat!
+                    <span class="font-bold text-primary"> Who's gonna win?</span>
+                </template>
+            </PageTitle>
             <button class="btn btn-error btn-sm mb-4 mr-4" @click="$emit('leaveRoom')">Leave room</button>
             <label for="my-modal-6" class="btn btn-sm btn-success modal-button mb-4" @click="getInvitablePlayers">Invite friends</label>
             <input id="my-modal-6" type="checkbox" class="modal-toggle" />
@@ -29,8 +37,7 @@
                     </div>
                 </div>
             </div>
-            <h1 v-if="players.length == 1" class="font-bold text-xl italic mb-4">{{ players.length }} Player</h1>
-            <h1 v-else class="font-bold text-xl italic mb-4">{{ players.length }} Players</h1>
+            <h1 class="text-sm italic mb-2 opacity-50">{{ players.length }} {{ (players.length == 1) === 'player' ? 'player' : 'players' }} in this room</h1>
         </div>
         <div id="player-view">
             <UserCard v-for="player in players" :key="player.id" :user="player" :host="player.id == room.host.id" />
@@ -95,5 +102,11 @@ export default {
 <style scoped>
 #lobby {
     margin-bottom: 100px;
+}
+.gradiant-text {
+    background: linear-gradient(to right, rgb(29, 184, 83), rgba(89, 225, 175, 0.978));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font: bold;
 }
 </style>
