@@ -164,4 +164,11 @@ input {
 .collapse:not(.collapse-close) input[type='checkbox']:checked ~ .collapse-content {
     max-height: var(--max-card-height) !important;
 }
+
+.gradiant-text {
+    background: linear-gradient(to right, rgb(29, 184, 83), rgba(89, 225, 175, 0.978));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font: bold;
+}
 </style>
