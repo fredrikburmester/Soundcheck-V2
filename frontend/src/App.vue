@@ -8,12 +8,28 @@ import PopupComponent from './components/PopupComponent.vue'
 
 import { useWebNotification } from '@vueuse/core'
 
+import { useVibrate } from '@vueuse/core'
+import { watch } from 'vue'
+import { useRoute } from 'vue-router'
+
 export default {
     name: 'App',
     components: {
         NavBar,
         RouterView,
         PopupComponent,
+    },
+    setup() {
+        const { vibrate, stop, isSupported } = useVibrate({ pattern: [100] })
+        const route = useRoute()
+        watch(route, () => {
+            if (isSupported) {
+                console.log('Vibrate supported')
+                vibrate()
+            } else {
+                console.log('Vibrate not supported')
+            }
+        })
     },
     data() {
         return {
