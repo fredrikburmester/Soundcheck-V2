@@ -1,6 +1,14 @@
 <template>
     <div id="results" class="px-8">
-        <PageTitle :title="$route.params.id" subtitle="Check out the results by pressing a user below!" />
+        <PageTitle>
+            <template #header>
+                <p class="text-xs opacity-50">Room code:</p>
+                <p class="gradiant-text font-bold">
+                    {{ $route.params.id }}
+                </p>
+            </template>
+            <template #main> Check out the results by pressing a user below! </template>
+        </PageTitle>
         <label for="my-modal-6" class="btn btn-sm btn-success modal-button mb-4">Create playlist</label>
         <input id="my-modal-6" type="checkbox" class="modal-toggle" />
         <div class="modal modal-bottom sm:modal-middle">
