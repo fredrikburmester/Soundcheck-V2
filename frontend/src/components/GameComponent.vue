@@ -30,7 +30,7 @@
                     @seek="seek"
                 />
             </div>
-            <div class="flex flex-row mt-8 space-x-8">
+            <div class="flex flex-row mt-2 space-x-8">
                 <div v-if="!connected || spotifyConnectionError" class="flex-grow">
                     <button v-if="!connectionLoading" class="btn btn-success animate-pulse w-full" @click="connectToSpotifyPlayer">Connect</button>
                     <button v-else class="btn btn-success loading w-full"></button>
@@ -146,7 +146,7 @@ export default {
             this.makePlayerGuessId = id
         },
         seek(position) {
-            this.playerPosition = position
+            this.playerPosition = parseInt(position)
             this.player.seek(this.playerPosition)
             this.startProgress()
         },

@@ -1,8 +1,8 @@
 <template>
     <Transition appear name="slide" mode="out-in">
-        <div v-show="imgLoaded" class="card h-36 max-w-3xl bg-base-100 shadow-xl image-full mb-4">
+        <div v-show="imgLoaded" class="card h-28 max-w-3xl bg-base-100 shadow-xl image-full mb-4">
             <img :src="song.img" class="w-full" alt="album cover" @load="imgLoaded = true" />
-            <div class="h-36 card-body flex flex-row items-center w-full justify-between">
+            <div class="h-28 card-body flex flex-row items-center w-full justify-between">
                 <transition appear name="fade">
                     <div v-if="connected" class="avatar w-20" @click="togglePlay">
                         <div class="w-12 h-12">
@@ -25,6 +25,7 @@
                             :max="duration"
                             class="range range-xs mt-4"
                             :disabled="!allowSeeking"
+                            @change="seek"
                         />
                     </transition>
                 </div>
@@ -68,13 +69,10 @@ export default {
     },
     watch: {
         playerPosition(newVal, oldVal) {
-            console.log(newVal)
             this.seekPosition = newVal
         },
     },
-    mounted() {
-        console.log(this.song)
-    },
+    mounted() {},
     methods: {
         seek() {
             this.$emit('seek', this.seekPosition)
@@ -93,6 +91,9 @@ export default {
 </script>
 
 <style scoped>
+.card-body {
+    padding: 20px;
+}
 .slide-enter-active,
 .slide-leave-active {
     transition: all 0.3s ease;
