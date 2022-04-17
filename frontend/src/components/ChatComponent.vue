@@ -119,9 +119,7 @@ export default {
             }
         },
     },
-    mounted() {
-        console.log(this)
-    },
+    mounted() {},
     sockets: {
         newMessage(message) {
             this.messages.push(message)
@@ -147,7 +145,6 @@ export default {
             }
         },
         typing() {
-            console.log('typing')
             this.$socket.client.emit('typing', this.id, this.$route.params.id)
         },
     },
