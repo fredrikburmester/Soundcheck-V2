@@ -5,9 +5,9 @@
                 <img :src="message.from.img" />
             </div>
         </div>
-        <div :class="message.from.id == id ? 'text-right chat-body flex flex-col' : 'chat-body flex flex-col'">
+        <div :class="message.from.id == id ? 'text-right chat-body flex flex-col items-end' : 'chat-body flex flex-col'">
             <span class="text-2xs italic mb-1 ml-1 flex-none">{{ formatDateTime(message.sentAt) }}</span>
-            <span class="flex flex-1 message-bubble mb-1">
+            <span class="flex flex-1 message-bubble mb-1 max-w-max">
                 {{ message.message }}
             </span>
             <span class="text-2xs ml-1 flex-none">
