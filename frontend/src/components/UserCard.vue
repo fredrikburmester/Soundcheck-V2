@@ -1,6 +1,6 @@
 <template>
     <Transition appear name="fade" mode="out-in">
-        <div v-show="loaded" id="usercard" class="w-full card mb-4 flex flex-row items-center pl-8 max-w-96 bg-base-300 shadow-xl h-20 flex-shrink-0">
+        <div v-show="loaded" id="usercard" class="w-full card mb-4 flex flex-row items-center pl-6 max-w-96 bg-base-300 shadow-xl h-20 flex-shrink-0">
             <div class="indicator">
                 <span v-if="indicator" class="indicator-item badge badge-primary">{{ indicator }}</span>
                 <div v-if="user.img" class="avatar">
