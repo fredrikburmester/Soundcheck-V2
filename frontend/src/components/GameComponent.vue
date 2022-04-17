@@ -1,12 +1,19 @@
 <template>
     <div class="flex w-screen md:max-w-3xl flex-col px-8 h-full">
-        <PageTitle :title="$route.params.id" subtitle="Click the player you think this song belongs to! Who's favorite song is it?" />
-        <button class="btn btn-error btn-sm mb-4" @click="leaveRoom">Leave room</button>
-        <div class="flex-row flex place-content-between mb-4">
+        <PageTitle>
+            <template #main>
+                <p class="text-md">
+                    Click the player you think this song belongs to.
+                    <span class="font-bold text-primary"> Who's favorite song is it? </span>
+                </p>
+            </template>
+        </PageTitle>
+        <!-- <button class="btn btn-error btn-sm mb-4" @click="leaveRoom">Leave room</button> -->
+        <!-- <div class="flex-row flex place-content-between mb-4">
             <h1 v-if="players.length == 1" class="font-bold text-xl italic">{{ players.length }} Player</h1>
             <h1 v-else class="font-bold text-xl italic mb-4">{{ players.length }} Players</h1>
             <h1 class="font-bold text-xl">{{ playersGuessed.length }}/{{ room.users.length }} Guessed</h1>
-        </div>
+        </div> -->
         <div id="player-view">
             <UserCard
                 v-for="p in players"
