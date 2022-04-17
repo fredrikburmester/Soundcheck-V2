@@ -68,6 +68,11 @@ export default {
         }
     },
     watch: {
+        song() {
+            this.imgLoaded = false
+            this.playing = false
+            this.seekPosition = this.playerPosition
+        },
         playerPosition(newVal, oldVal) {
             this.seekPosition = newVal
         },
