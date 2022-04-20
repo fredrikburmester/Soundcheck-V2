@@ -14,8 +14,8 @@
                     </div>
                 </transition>
                 <div class="text-right flex flex-col items-end w-full">
-                    <h2 class="card-title">{{ song.name }}</h2>
-                    <p>{{ song.artist }}</p>
+                    <h2 class="card-title">{{ shortText(song.name) }}</h2>
+                    <p>{{ shortText(song.artist) }}</p>
                     <transition appear name="fade">
                         <input
                             v-if="connected"
@@ -79,6 +79,9 @@ export default {
     },
     mounted() {},
     methods: {
+        shortText(text) {
+            return text.length > 20 ? text.substring(0, 20) + '...' : text
+        },
         seek() {
             this.$emit('seek', this.seekPosition)
         },
