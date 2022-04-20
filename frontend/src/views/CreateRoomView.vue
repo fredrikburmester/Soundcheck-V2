@@ -87,7 +87,7 @@ export default {
         const showCorrectGuesses = ref(false)
         const generateRoomCodeActive = ref(true)
         const time_range = ref('medium_term')
-        const allowSongSeeking = ref(false)
+        const allowSongSeeking = ref(true)
 
         // generate random 4 letter room code
         const generateRoomCode = () => {
