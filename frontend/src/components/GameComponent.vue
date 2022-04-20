@@ -2,6 +2,10 @@
     <div class="flex w-screen md:max-w-3xl flex-col px-8 h-full">
         <PageTitle>
             <template #main>
+                <p class="text-xs mb-2">
+                    Room code:
+                    <span class="text-primary text-xs">{{ $route.params.id }}</span>
+                </p>
                 <p class="text-md">
                     Click the player you think this song belongs to.
                     <span class="font-bold text-primary"> Who's favorite song is it? </span>
@@ -37,12 +41,21 @@
                     @seek="seek"
                 />
             </div>
-            <div class="flex flex-row mt-2 space-x-8">
-                <div v-if="!connected || spotifyConnectionError" class="flex-grow">
-                    <button v-if="!connectionLoading" class="btn btn-success animate-pulse w-full" @click="connectToSpotifyPlayer">Connect</button>
-                    <button v-else class="btn btn-success loading w-full"></button>
-                </div>
-                <button v-if="isHost()" class="flex flex-grow btn btn-primary" @click="nextQuestion">Next song</button>
+            <div class="flex flex-row mt-2 space-x-8 justify-evenly">
+                <button v-if="isHost() && currentQuestion > 0" class="flex btn btn-primary flex-grow w-32" @click="previousQuestion">Previous</button>
+                <button v-if="isHost()" class="flex btn btn-primary flex-grow w-32" @click="nextQuestion">Next</button>
+            </div>
+        </div>
+    </div>
+    <input id="my-modal-6" type="checkbox" class="modal-toggle" :checked="modalOpen" />
+    <div class="modal modal-bottom sm:modal-middle">
+        <div class="modal-box">
+            <h3 class="text-lg">
+                Play the music on <span class="font-bold text-primary"> this device</span> or the <span class="font-bold text-secondary">host device</span>?
+            </h3>
+            <div class="modal-action">
+                <label for="my-modal-6" class="btn btn-primary" @click="connectToSpotifyPlayer">My device</label>
+                <label for="my-modal-6" class="btn btn-secondary">Host device</label>
             </div>
         </div>
     </div>
@@ -71,7 +84,7 @@ export default {
             required: true,
         },
     },
-    emits: ['nextQuestion', 'leaveRoom'],
+    emits: ['nextQuestion', 'leaveRoom', 'previousQuestion'],
     data() {
         return {
             room_: this.room,
@@ -90,6 +103,7 @@ export default {
             makePlayerGuessId: null,
             spotifyConnectionError: false,
             playersGuessed: this.room.usersGuessedOnCurrentQuestion,
+            modalOpen: true,
         }
     },
     computed: {
@@ -232,6 +246,11 @@ export default {
             this.makePlayerGuessId = null
             this.playersGuessed = []
             this.$emit('nextQuestion')
+        },
+        previousQuestion() {
+            this.makePlayerGuessId = null
+            this.playersGuessed = []
+            this.$emit('previousQuestion')
         },
         async playSong() {
             if (this.playerInitiated == false) {
