@@ -8,6 +8,7 @@
             :room="room"
             @leave-room="leaveRoom"
             @next-question="nextQuestion"
+            @previous-question="previousQuestion"
         />
         <ResultsComponent v-if="gameState == 'finished'" :players="players" :room="room" />
         <Teleport to="#chat-target">
@@ -110,6 +111,11 @@ export default {
         },
         nextQuestion() {
             this.$socket.client.emit('nextQuestion', {
+                roomCode: this.$route.params.id,
+            })
+        },
+        previousQuestion() {
+            this.$socket.client.emit('previousQuestion', {
                 roomCode: this.$route.params.id,
             })
         },

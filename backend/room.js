@@ -132,6 +132,14 @@ export class Room {
 		}
 	}
 
+	previousQuestion() {
+		this.usersGuessedOnCurrentQuestion = []
+		this.nrOfGuesses = 0
+		if (this.currentQuestion != 0) {
+			this.currentQuestion--
+		}
+	}
+
 	hasUser(user) {
 		for (let u of this.users) {
 			if (u.id === user.id) {

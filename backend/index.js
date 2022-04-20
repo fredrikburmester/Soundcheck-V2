@@ -410,6 +410,13 @@ io.on('connection', (socket) => {
 		broadcastRoomUpdates(room)
 	})
 
+	socket.on('previousQuestion', ({ roomCode }) => {
+		let room = ROOMS.find((room) => room.code === roomCode)
+		room.previousQuestion()
+
+		broadcastRoomUpdates(room)
+	})
+
 	socket.on('login-step-2', async (code) => {
 		let result = await loginStep2(socket, code)
 		socket.emit('loginData', result)
