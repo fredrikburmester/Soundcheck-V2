@@ -51,15 +51,13 @@ export default {
     props: {},
     data() {
         return {
-            activeUsers: 0,
             activeGames: 0,
         }
     },
     computed: {
-        ...mapWritableState(useUserStore, ['display_name', 'avatar', 'id']),
+        ...mapWritableState(useUserStore, ['display_name', 'avatar', 'id', 'activeUsers']),
     },
     mounted() {
-        // run function every second
         setInterval(() => {
             this.getStats()
         }, 1000)
