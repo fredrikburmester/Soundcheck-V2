@@ -8,6 +8,8 @@ import eslintPlugin from 'vite-plugin-eslint'
 
 import { VitePWA } from 'vite-plugin-pwa'
 
+export const hash = Math.floor(Math.random() * 90000) + 10000
+
 export default defineConfig(({ mode }) => {
     const env = loadEnv(mode, process.cwd())
     return {
@@ -45,6 +47,15 @@ export default defineConfig(({ mode }) => {
         server: {
             host: true,
             port: env.VITE_PORT,
+        },
+        build: {
+            rollupOptions: {
+                output: {
+                    entryFileNames: `[name]` + hash + `.js`,
+                    chunkFileNames: `[name]` + hash + `.js`,
+                    assetFileNames: `[name]` + hash + `.[ext]`,
+                },
+            },
         },
     }
 })
