@@ -1,5 +1,5 @@
 <template>
-    <div id="results" class="px-8">
+    <div id="results" class="px-8 max-w-3xl">
         <PageTitle>
             <template #header>
                 <p class="text-xs opacity-50">Room code:</p>
@@ -21,8 +21,8 @@
                     </label>
                     <input v-model="playlistName" type="text" class="input input-bordered w-full max-w-xs bg-black" />
                 </div>
-                <div class="modal-action mb-12">
-                    <label for="my-modal-6" class="btn btn-primary">Close</label>
+                <div class="modal-action mb-4">
+                    <label for="my-modal-6" class="btn btn-secondary">Close</label>
                     <label for="my-modal-6" class="btn btn-success" @click="compileAndCreatePlaylist">Create</label>
                 </div>
             </div>
