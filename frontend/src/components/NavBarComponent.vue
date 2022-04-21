@@ -191,7 +191,10 @@ const logout = () => {
                             </li>
                             <li><router-link class="font-bold" to="/my-top/tracks">My top tracks</router-link></li>
                             <li>
-                                <router-link class="font-bold" to="/my-top/artists">My top artists<span class="badge badge-success">New</span></router-link>
+                                <router-link class="font-bold justify-between" to="/my-top/artists">
+                                    My top artists
+                                    <span class="badge badge-success">New</span>
+                                </router-link>
                             </li>
                             <hr v-if="userStore.roomCode" class="opacity-10 my-4 mx-4" />
                             <p v-if="userStore.roomCode" class="font-bold text-md ml-4 mb-2">{{ userStore.roomCode }}</p>
