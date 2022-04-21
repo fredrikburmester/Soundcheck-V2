@@ -31,36 +31,27 @@
             <p v-if="i == 0" class="text-xl font-bold mb-2 text-orange-500 italic">Winner</p>
             <p v-else-if="i > 0 && p.points == sortedUsers[i - 1].points"></p>
             <hr v-else class="opacity-10 mt-2 mb-4" />
-            <div tabindex="0" class="collapse" :style="cssVars">
-                <UserCard :user="p" class="collapse-title" />
-                <input id="checkbox" type="checkbox" class="peer" />
-                <div class="rounded-b-2xl m-0 px-4 collapse-content bg-primary text-primary-content">
-                    <h1 class="text-white mt-4 text-2xl font-bold">Points: {{ p.points * 10 }}</h1>
-                    <p class="text-white opacity-70">Per song answers for {{ p.name }}</p>
-                    <div v-for="(song, index) in room.songs" :key="song.id" class="mt-6">
-                        <SongCard :index="index" :title="song.name" :img="song.img" :artist="song.artist" />
-                        <p class="text-white -mt-3 ml-3 opacity-70">Guess: {{ getGuessName(p.guesses, song.id) }}</p>
-                        <p class="text-white ml-3 opacity-70">Correct answer: {{ getCorrectAnswerName(song.id) }}</p>
-                    </div>
-                </div>
-            </div>
+            <UserCard :user="p" class="collapse-title" @click="openResultModal(p)" />
         </div>
         <div v-if="sortedUsers.length == 0">
             <hr class="my-4 opacity-20" />
             <p class="my-4 text-left text-xl italic text-white">Hmm i guess no one even played this one? Maybe everyone left before it even started.</p>
         </div>
+        <Teleport to="#modal-target">
+            <ResultModalComponent v-if="resultModal" :player="selectedPlayer" :room="room" @close="resultModal = false" />
+        </Teleport>
     </div>
 </template>
 
 <script>
 import UserCard from './UserCard.vue'
 import PageTitle from './PageTitle.vue'
-import SongCard from './SongCardComponent.vue'
+import ResultModalComponent from './ResultModalComponent.vue'
 
 import { useUserStore } from '@/stores/user'
 import { mapActions } from 'pinia'
 export default {
-    components: { UserCard, PageTitle, SongCard },
+    components: { UserCard, PageTitle, ResultModalComponent },
     props: {
         room: {
             type: Object,
@@ -72,8 +63,9 @@ export default {
         return {
             room_: this.room,
             device_id: '',
-            player: null,
             playlistName: 'Soundcheck: ' + this.$route.params.id,
+            resultModal: false,
+            selectedPlayer: null,
         }
     },
     computed: {
@@ -93,37 +85,9 @@ export default {
         compileAndCreatePlaylist() {
             this.createPlaylist(this.room.songs, this.playlistName)
         },
-        getCorrectAnswerName(songId) {
-            let users = null
-            // ger users from songs.users
-            for (let i = 0; i < this.room.songs.length; i++) {
-                if (this.room.songs[i].id == songId) {
-                    users = this.room.songs[i].users
-                }
-            }
-
-            // get users names from songs.users
-            let names = []
-            for (let i = 0; i < users.length; i++) {
-                for (let u of this.room.users) {
-                    if (u.id == users[i]) {
-                        names.push(u.name)
-                    }
-                }
-            }
-
-            return names.join(', ')
-        },
-        getGuessName(guesses, songId) {
-            // find name of user where songId is in guesses
-            for (let i = 0; i < guesses.length; i++) {
-                if (guesses[i].songId == songId) {
-                    let userId = guesses[i].userId
-                    let user = this.room.users.filter((u) => u.id == userId)
-                    return user[0].name
-                }
-            }
-            return 'No guess'
+        openResultModal(player) {
+            this.selectedPlayer = player
+            this.resultModal = true
         },
     },
 }

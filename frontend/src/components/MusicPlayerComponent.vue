@@ -1,7 +1,7 @@
 <template>
     <Transition appear name="slide" mode="out-in">
-        <div v-show="imgLoaded" class="card h-28 max-w-3xl bg-base-100 shadow-xl image-full mb-4">
-            <img :src="song.img" class="w-full" alt="album cover" @load="imgLoaded = true" />
+        <div class="card h-28 max-w-3xl bg-base-100 shadow-xl image-full mb-4">
+            <img v-show="imgLoaded" :src="song.img" class="w-full" alt="album cover" @load="imgLoaded = true" />
             <div class="h-28 card-body flex flex-row items-center w-full justify-between">
                 <transition appear name="fade">
                     <div v-if="connected" class="avatar w-20" @click="togglePlay">

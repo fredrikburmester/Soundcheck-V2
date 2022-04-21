@@ -12,12 +12,6 @@
                 </p>
             </template>
         </PageTitle>
-        <!-- <button class="btn btn-error btn-sm mb-4" @click="leaveRoom">Leave room</button> -->
-        <!-- <div class="flex-row flex place-content-between mb-4">
-            <h1 v-if="players.length == 1" class="font-bold text-xl italic">{{ players.length }} Player</h1>
-            <h1 v-else class="font-bold text-xl italic mb-4">{{ players.length }} Players</h1>
-            <h1 class="font-bold text-xl">{{ playersGuessed.length }}/{{ room.users.length }} Guessed</h1>
-        </div> -->
         <div id="player-view">
             <UserCard
                 v-for="p in players"
@@ -111,6 +105,7 @@ export default {
     },
     watch: {
         room: function (newVal, oldVal) {
+            console.log('room changed', newVal, oldVal)
             this.room_ = JSON.parse(JSON.stringify(this.room))
 
             if (newVal.currentQuestion != oldVal.currentQuestion) {
@@ -143,7 +138,6 @@ export default {
     },
     sockets: {
         playerGuessed: function (userId) {
-            // check if user in playersGuessed and if not add
             if (!this.playersGuessed.includes(userId)) {
                 this.playersGuessed.push(userId)
             }
@@ -243,11 +237,13 @@ export default {
             }
         },
         nextQuestion() {
+            console.log('next question')
             this.makePlayerGuessId = null
             this.playersGuessed = []
             this.$emit('nextQuestion')
         },
         previousQuestion() {
+            console.log('previous question')
             this.makePlayerGuessId = null
             this.playersGuessed = []
             this.$emit('previousQuestion')

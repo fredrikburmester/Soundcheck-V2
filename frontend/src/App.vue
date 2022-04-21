@@ -121,6 +121,7 @@ export default {
         </RouterView>
     </div>
     <div id="chat-target"></div>
+    <div id="modal-target"></div>
     <PopupComponent class="z-100" />
 </template>
 
