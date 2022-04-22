@@ -30,6 +30,7 @@
                     :connected="connected"
                     :allow-seeking="settings.allowSongSeeking"
                     :duration="duration"
+                    :loading="connectionLoading"
                     @play="playSong"
                     @pause="pauseSong"
                     @seek="seek"
@@ -105,7 +106,6 @@ export default {
     },
     watch: {
         room: function (newVal, oldVal) {
-            console.log('room changed', newVal, oldVal)
             this.room_ = JSON.parse(JSON.stringify(this.room))
 
             if (newVal.currentQuestion != oldVal.currentQuestion) {
@@ -237,13 +237,11 @@ export default {
             }
         },
         nextQuestion() {
-            console.log('next question')
             this.makePlayerGuessId = null
             this.playersGuessed = []
             this.$emit('nextQuestion')
         },
         previousQuestion() {
-            console.log('previous question')
             this.makePlayerGuessId = null
             this.playersGuessed = []
             this.$emit('previousQuestion')
@@ -266,23 +264,35 @@ export default {
                     })
                     .catch((err) => {
                         console.log(err)
+                        this.notification = "Music isn't available right now"
+                        return
                     })
-            } else {
-                this.player.resume()
-                let state = await this.getPlayerState()
-                if (state.paused) {
-                    this.player.resume()
-                }
             }
 
-            let state = await this.getPlayerState()
-            if (state.paused) {
-                this.player.resume()
-            }
-
+            await this.waitUntilPlayerLoaded()
+            this.player.resume()
             this.startProgress()
 
+            let state = await this.getPlayerState()
+
+            if (state.loading || state.paused) {
+                this.notification = "Music isn't available right now"
+                return
+            }
             this.playing = true
+        },
+        async waitUntilPlayerLoaded() {
+            return new Promise((resolve) => {
+                ;(async () => {
+                    const interval = setInterval(async () => {
+                        let state = await this.getPlayerState()
+                        if (!state.loading) {
+                            clearInterval(interval)
+                            resolve()
+                        }
+                    }, 100)
+                })()
+            })
         },
         async pauseSong() {
             this.player.pause()
