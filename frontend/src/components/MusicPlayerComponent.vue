@@ -13,6 +13,7 @@
                         </div>
                     </div>
                 </transition>
+                <div v-if="loading"><LoadingComponent color="#fff" /></div>
                 <div class="text-right flex flex-col items-end w-full">
                     <h2 class="card-title">{{ shortText(song.name) }}</h2>
                     <p>{{ shortText(song.artist) }}</p>
@@ -35,7 +36,9 @@
 </template>
 
 <script>
+import LoadingComponent from './LoadingComponent.vue'
 export default {
+    components: { LoadingComponent },
     props: {
         song: {
             type: Object,
@@ -56,6 +59,10 @@ export default {
         },
         duration: {
             type: Number,
+            required: true,
+        },
+        loading: {
+            type: Boolean,
             required: true,
         },
     },
