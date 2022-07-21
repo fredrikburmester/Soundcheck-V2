@@ -30,3 +30,6 @@ Here are some added features not present in the old version of the game
   - Save a playlist containing those favorite songs
 - See who has guessed on a player duing the game
 - A new fresh design using Tailwind and DaisyUI
+
+## 🌐 How to run
+`PM2 start production.json`
