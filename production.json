@@ -3,8 +3,8 @@
 		{
 			"name": "s-v2-frontend",
 			"script": "cd ./frontend && npm run build && npm run preview",
-			"watch": true,
-			"ignore_watch": ["./frontend/node_modules", "./frontend/dist"],
+			"watch": ["frontend"],
+			"ignore_watch": ["frontend/node_modules", "frontend/dist"],
 			"env": {
 				"NODE_ENV": "production"
 			}
@@ -12,7 +12,7 @@
 		{
 			"name": "s-v2-backend",
 			"script": "cd ./backend && npm run start",
-			"watch": true,
+			"watch": ["backend"],
 			"ignore_watch": ["backend/node_modules"],
 			"env": {
 				"NODE_ENV": "production",
