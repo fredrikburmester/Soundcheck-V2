@@ -23,6 +23,7 @@ export class Room {
 		this.currentQuestion = 0
 		this.messages = []
 		this.usersGuessedOnCurrentQuestion = []
+		this.date = ''
 	}
 
 	compileSongList() {

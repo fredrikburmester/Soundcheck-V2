@@ -37,6 +37,10 @@ var USERS = []
 var ROOMS = []
 var ACTIVE_USERS = 0
 
+function findAllRoomsForUser(userId) {
+	return ROOMS.filter((room) => room.users.find((user) => user.id === userId))
+}
+
 const broadcastRoomUpdates = (room) => {
 	io.to(room.code).emit('roomStatus', room)
 }
@@ -44,6 +48,15 @@ const broadcastRoomUpdates = (room) => {
 io.on('connection', (socket) => {
 	ACTIVE_USERS++
 	socket.emit('connected', socket.id)
+
+	socket.on('getPlayerGames', (user) => {
+		console.log(user)
+		console.log(user.userId)
+		console.log('find games for this id: ', user.userId)
+		let games = findAllRoomsForUser(user.userId)
+		console.log(games)
+		socket.emit('playerGames', games)
+	})
 
 	socket.on('updateUser', ({ id, name, img }) => {
 		if (id && name && img) {
@@ -174,6 +187,18 @@ io.on('connection', (socket) => {
 					room.settings.nrOfSongs = nrOfSongs
 					room.settings.showCorrectGuesses = showCorrectGuesses
 					room.settings.allowSongSeeking = allowSongSeeking
+
+					const today = new Date()
+					const yyyy = today.getFullYear()
+					let mm = today.getMonth() + 1 // Months start at 0!
+					let dd = today.getDate()
+
+					if (dd < 10) dd = '0' + dd
+					if (mm < 10) mm = '0' + mm
+
+					const formattedToday = `${yyyy}/${mm}/${dd}`
+
+					room.date = formattedToday
 
 					// add room to rooms
 					ROOMS.push(room)

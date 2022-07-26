@@ -7,6 +7,7 @@ import RoomView from '../views/RoomView.vue'
 import CallbackView from '../views/CallbackView.vue'
 import MyTopView from '../views/MyTopView.vue'
 import HomeView from '../views/HomeView.vue'
+import PreviousGames from '../views/PreviousGames.vue'
 
 import { useUserStore } from '@/stores/user'
 
@@ -33,6 +34,14 @@ const router = createRouter({
             path: '/create',
             name: 'Create',
             component: CreateRoomView,
+            meta: {
+                requiresAuth: true,
+            },
+        },
+        {
+            path: '/previous-games',
+            name: 'Previous Games',
+            component: PreviousGames,
             meta: {
                 requiresAuth: true,
             },

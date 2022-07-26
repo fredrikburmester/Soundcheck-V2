@@ -183,12 +183,7 @@ const logout = () => {
                         <ul v-if="navbarOpen" class="menu menu-dropdown mt-3 p-2 bg-base-300 shadow rounded-box w-72">
                             <li><router-link class="font-bold" to="/">Home</router-link></li>
                             <li><router-link class="font-bold" to="/play">Play</router-link></li>
-                            <li class="">
-                                <a class="justify-between">
-                                    Previous games
-                                    <span class="badge badge-secondary">Coming soon</span>
-                                </a>
-                            </li>
+                            <li><router-link class="font-bold" to="/previous-games">Previous Games</router-link></li>
                             <li><router-link class="font-bold" to="/my-top/tracks">My top tracks</router-link></li>
                             <li>
                                 <router-link class="font-bold justify-between" to="/my-top/artists">
