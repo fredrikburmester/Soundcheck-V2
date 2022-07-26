@@ -13,9 +13,9 @@
 			"script": "cd ./backend && npm run start",
 			"watch": true,
 			"env": {
-				"NODE_ENV": "development",
-				"CALLBACK_URL": "http://localhost:8080/logincallback",
-				"PORT": 5000
+				"NODE_ENV": "development"
+				// "CALLBACK_URL": "http://localhost:8080/logincallback",
+				// "PORT": 5000
 			}
 		}
 	]
