@@ -1,8 +1,8 @@
 <template>
     <div class="flex flex-col px-8 pb-24 w-screen items-center">
-        <div class="pb-8 max-w-2xl w-full">
+        <div class="pb-4 max-w-2xl w-full">
             <h1 class="text-3xl text-start">Your previous games</h1>
-            <p class="text-start">See previous games below</p>
+            <p class="text-start">Just click on a game to see more!</p>
             <br />
         </div>
         <div v-if="!loading" class="flex flex-col place-items-center w-full max-w-2xl">
