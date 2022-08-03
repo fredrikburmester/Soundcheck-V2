@@ -19,7 +19,13 @@
                 <h2 class="card-title">Join room</h2>
                 <p>Have your friends already created a room? Join it!</p>
                 <div class="form-control flex flex-col items-end">
-                    <input v-model="room" type="text" placeholder="Type here" class="input input-bordered input-info w-full max-w-xs" />
+                    <input
+                        v-model="room"
+                        type="text"
+                        placeholder="Type here"
+                        class="input input-bordered input-info w-full max-w-xs capitalize"
+                        style="text-transform: uppercase"
+                    />
 
                     <div class="card-actions mt-4 justify-end">
                         <router-link :to="`/room/${room}`">
