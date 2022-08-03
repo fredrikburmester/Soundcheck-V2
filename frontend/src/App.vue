@@ -76,7 +76,7 @@ export default {
                     this.notificationType = 'success'
                 }
                 // this.$router.push({ name: 'Play' })
-                location.href = '/play'
+                location.href = route
             }
         },
         logout({ status, msg }) {
