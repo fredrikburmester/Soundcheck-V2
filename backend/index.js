@@ -287,9 +287,9 @@ io.on('connection', (socket) => {
 
 		if (!room) {
 			socket.emit('redirect', {
-				status: 404,
+				status: 303,
 				msg: 'This room does not exist',
-				route: '/',
+				route: '/play',
 			})
 			return
 		}
