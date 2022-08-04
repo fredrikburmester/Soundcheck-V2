@@ -8,7 +8,7 @@ A remake of our original [Soundcheck game](https://github.com/fredrikburmester/S
 
 |Branch      |Environment|URL                           |
 |------------|-----------|------------------------------|
-|main        |prod       |<https://dev.soundcheckgame.com>|
+|main        |prod       |<https://soundcheckgame.com>|
 
 ## 🔎 Info
 

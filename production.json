@@ -16,7 +16,7 @@
 			"ignore_watch": ["backend/node_modules"],
 			"env": {
 				"NODE_ENV": "production",
-				"CALLBACK_URL": "https://dev.soundcheckgame.com/callback",
+				"CALLBACK_URL": "https://soundcheckgame.com/logincallback",
 				"PORT": 5005
 			}
 		}
