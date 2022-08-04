@@ -4,7 +4,7 @@
             <img v-show="imgLoaded" :src="song.img" class="w-full" alt="album cover" @load="imgLoaded = true" />
             <div class="h-28 card-body flex flex-row items-center w-full justify-between">
                 <transition appear name="fade">
-                    <div v-if="connected" class="avatar w-20" @click="togglePlay">
+                    <div v-if="connected" class="avatar w-20" style="transform: scale(0.8)" @click="togglePlay">
                         <div class="w-12 h-12">
                             <transition name="rotate">
                                 <vue-feather v-if="!playing" type="play-circle" class="w-12 h-12"></vue-feather>
@@ -15,8 +15,8 @@
                 </transition>
                 <div v-if="loading" style="transform: scale(0.8)"><LoadingComponent color="#fff" /></div>
                 <div class="text-right flex flex-col items-end w-full">
-                    <h2 class="card-title">{{ shortText(song.name) }}</h2>
-                    <p>{{ shortText(song.artist) }}</p>
+                    <h2 class="card-title text-sm">{{ shortText(song.name) }}</h2>
+                    <p class="text-xs">{{ shortText(song.artist) }}</p>
                     <transition appear name="fade">
                         <input
                             v-if="connected"
@@ -24,7 +24,7 @@
                             type="range"
                             min="0"
                             :max="duration"
-                            class="range range-xs mt-4"
+                            class="range range-xs mt-2"
                             :disabled="!allowSeeking"
                             @change="seek"
                         />
