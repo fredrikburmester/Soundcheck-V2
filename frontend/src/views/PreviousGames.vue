@@ -7,7 +7,7 @@
         </div>
         <div v-if="!loading" class="flex flex-col place-items-center w-full max-w-2xl">
             <TransitionGroup name="list">
-                <PreviousGameCard v-for="game in games" :key="game" :room="game" class="mb-4"></PreviousGameCard>
+                <PreviousGameCard v-for="game in games.slice().reverse()" :key="game" :room="game" class="mb-4"></PreviousGameCard>
             </TransitionGroup>
         </div>
         <LoadingComponent v-if="loading" />
