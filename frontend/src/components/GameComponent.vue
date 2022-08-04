@@ -46,11 +46,11 @@
     <div class="modal modal-bottom sm:modal-middle">
         <div class="modal-box">
             <h3 class="text-lg">
-                Play the music on <span class="font-bold text-primary"> this device</span> or the <span class="font-bold text-secondary">host device</span>?
+                Play the music on <span class="font-bold text-primary"> this device</span> or <span class="font-bold text-secondary">another device</span>?
             </h3>
             <div class="modal-action">
                 <label for="my-modal-6" class="btn btn-primary" @click="connectToSpotifyPlayer">My device</label>
-                <label for="my-modal-6" class="btn btn-secondary">Host device</label>
+                <label for="my-modal-6" class="btn btn-secondary">Another device</label>
             </div>
         </div>
     </div>
@@ -103,6 +103,9 @@ export default {
     },
     computed: {
         ...mapWritableState(useUserStore, ['token', 'id', 'notification']),
+        userIsHost() {
+            return this.room.host.id == this.id
+        },
     },
     watch: {
         room: function (newVal, oldVal) {

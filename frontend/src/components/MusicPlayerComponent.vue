@@ -13,7 +13,7 @@
                         </div>
                     </div>
                 </transition>
-                <div v-if="loading"><LoadingComponent color="#fff" /></div>
+                <div v-if="loading" style="transform: scale(0.8)"><LoadingComponent color="#fff" /></div>
                 <div class="text-right flex flex-col items-end w-full">
                     <h2 class="card-title">{{ shortText(song.name) }}</h2>
                     <p>{{ shortText(song.artist) }}</p>
