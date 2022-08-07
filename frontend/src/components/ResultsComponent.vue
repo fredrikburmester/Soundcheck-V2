@@ -1,5 +1,5 @@
 <template>
-    <div id="results" class="px-8 max-w-3xl">
+    <div id="results" class="px-4">
         <PageTitle>
             <template #header>
                 <p class="text-xs opacity-50">Room code:</p>
@@ -13,7 +13,7 @@
         <input id="my-modal-6" type="checkbox" class="modal-toggle" />
         <div class="modal modal-bottom sm:modal-middle">
             <div class="modal-box bg-zinc-900">
-                <h3 class="font-bold text-lg">Create a Spotify playlist with the songs from the game</h3>
+                <h3 class="text-lg">Add a playlist to your Spotify account with all the songs from this game!</h3>
                 <hr class="my-4 opacity-10" />
                 <div class="form-control w-full max-w-xs">
                     <label class="label">
@@ -31,7 +31,7 @@
             <p v-if="i == 0" class="text-xl font-bold mb-2 text-orange-500 italic">Winner</p>
             <p v-else-if="i > 0 && p.points == sortedUsers[i - 1].points"></p>
             <hr v-else class="opacity-10 mt-2 mb-4" />
-            <UserCard :user="p" class="collapse-title" @click="openResultModal(p)" />
+            <UserCard :user="p" class="collapse-title w-full" @click="openResultModal(p)" />
         </div>
         <div v-if="sortedUsers.length == 0">
             <hr class="my-4 opacity-20" />

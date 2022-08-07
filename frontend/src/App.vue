@@ -140,7 +140,7 @@ export default {
 .fixed-center-button {
     left: 50% !important;
     transform: translate(-50%, 0) !important;
-    width: calc(100vw - 5em) !important;
+    width: calc(100vw - 3em) !important;
     max-width: 700px !important;
     position: fixed !important;
     bottom: 40px !important;

@@ -3,21 +3,21 @@
         <div :key="item_type" class="flex flex-col px-8 pb-24 w-screen items-center">
             <div class="pb-8 max-w-2xl w-full">
                 <h1 class="text-3xl text-start">Your top {{ item_type }}</h1>
-                <p v-if="item_type == 'tracks'" class="text-start">
-                    Here you can see your favorite Spotify songs the last month, half year and more than a year.
-                </p>
+                <p v-if="item_type == 'tracks'" class="text-start">Check your top Spotify tracks the last month, half year and more than a year!</p>
                 <p v-if="item_type == 'artists'" class="text-start">
                     Here you can see your favorite Spotify artists the last month, half year and more than a year.
                 </p>
                 <br />
-                <p>Make sure to change the time range at the bottom!</p>
+                <p>
+                    <i class="text-gray-400"> Make sure to change the time range! </i>
+                </p>
 
                 <div v-if="item_type == 'tracks'">
                     <label for="my-modal-6" class="btn btn-sm btn-success modal-button mt-4" @click="setPlaylistName">Create playlist</label>
                     <input id="my-modal-6" type="checkbox" class="modal-toggle" />
                     <div class="modal modal-bottom sm:modal-middle">
                         <div class="modal-box bg-zinc-900">
-                            <h3 class="font-bold text-lg">Create a Spotify playlist with your top songs!</h3>
+                            <h3 class="font-bold text-lg">Save these 25 songs to a new Spotify playlist!</h3>
                             <hr class="my-4 opacity-10" />
                             <div class="form-control w-full max-w-xs">
                                 <label class="label">
@@ -26,11 +26,17 @@
                                 <input v-model="playlistName" type="text" class="input input-bordered w-full max-w-xs bg-black" />
                             </div>
                             <div class="modal-action mb-12">
-                                <label for="my-modal-6" class="btn btn-primary">Close</label>
+                                <label for="my-modal-6" class="btn btn-secondary">Close</label>
                                 <label for="my-modal-6" class="btn btn-success" @click="compileAndCreatePlaylist">Create</label>
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <div class="tabs tabs-boxed bg-zinc-900 shadow-lg mt-4">
+                    <a class="tab bg-zinc-900 rounded-l-lg" @click="toggleActive($event, 'short_term')">Month</a>
+                    <a class="tab tab-active bg-zinc-900" @click="toggleActive($event, 'medium_term')">Half Year</a>
+                    <a class="tab bg-zinc-900 rounded-r-lg" @click="toggleActive($event, 'long_term')">Over a year</a>
                 </div>
             </div>
             <div v-if="!loading && items[item_type][time_range].length > 0" class="flex flex-col place-items-center w-full max-w-2xl">
@@ -68,12 +74,6 @@
                 </p>
             </div>
             <LoadingComponent v-if="loading" />
-        </div>
-
-        <div class="tabs tabs-boxed z-100 bg-zinc-900 shadow-lg">
-            <a class="tab bg-zinc-900 rounded-l-lg" @click="toggleActive($event, 'short_term')">Month</a>
-            <a class="tab tab-active bg-zinc-900" @click="toggleActive($event, 'medium_term')">Half Year</a>
-            <a class="tab bg-zinc-900 rounded-r-lg" @click="toggleActive($event, 'long_term')">Over a year</a>
         </div>
     </div>
 </template>
@@ -188,11 +188,8 @@ export default {
 </script>
 <style scoped>
 .tabs {
-    position: fixed;
-    bottom: 50px;
-    left: 50%;
-    transform: translateX(-50%);
     width: 278px;
+    margin-left: -3px;
 }
 
 .list-move, /* apply transition to moving elements */

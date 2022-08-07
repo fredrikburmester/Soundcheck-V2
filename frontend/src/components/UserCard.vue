@@ -1,6 +1,6 @@
 <template>
     <Transition appear name="fade" mode="out-in">
-        <div v-show="loaded" id="usercard" class="w-full card mb-4 flex flex-row items-center pl-6 max-w-96 bg-base-300 shadow-xl h-20 flex-shrink-0">
+        <div v-show="loaded" id="usercard" class="pr-0 card mb-4 flex flex-row items-center pl-6 bg-base-300 shadow-xl h-20">
             <div class="indicator">
                 <span v-if="indicator" class="indicator-item badge badge-primary">{{ indicator }}</span>
                 <div v-if="user.img" class="avatar">
@@ -18,8 +18,8 @@
                 </div>
             </div>
 
-            <div class="card-body flex flex-col">
-                <span class="card-title">{{ user.name }}</span>
+            <div class="card-body flex flex-wrap flex-col">
+                <span class="card-title text-sm">{{ user.name }}</span>
                 <transition appear name="slide">
                     <span v-if="description.length > 0" class="text-xs text-primary -mt-2" :style="descriptionStyle">{{ description }}</span>
                 </transition>

@@ -1,5 +1,5 @@
 <template>
-    <div class="flex w-screen md:max-w-3xl flex-col px-8 h-full">
+    <div class="flex w-screen md:max-w-3xl flex-col px-4 h-full">
         <PageTitle>
             <template #main>
                 <p class="text-xs mb-2">
@@ -22,8 +22,8 @@
                 @click="makePlayerGuess(p.id)"
             />
         </div>
-        <div class="fixed-center-button">
-            <div class="flex flex-col w-full justify-center">
+        <div class="fixed-music-player">
+            <div class="flex flex-col">
                 <MusicPlayerComponent
                     :player-position="playerPosition"
                     :song="songs[currentQuestion]"
@@ -36,9 +36,12 @@
                     @seek="seek"
                 />
             </div>
-            <div class="flex flex-row mt-2 space-x-8 justify-evenly">
-                <button v-if="isHost() && currentQuestion > 0" class="flex btn btn-primary flex-grow w-32" @click="previousQuestion">Previous</button>
-                <button v-if="isHost()" class="flex btn btn-primary flex-grow w-32" @click="nextQuestion">Next</button>
+        </div>
+
+        <div class="fixed-center-button">
+            <div class="flex flex-row flex-wrap justify-evenly">
+                <button v-if="isHost() && currentQuestion > 0" class="flex btn btn-primary flex-shrink mr-2" @click="previousQuestion">Previous</button>
+                <button v-if="isHost()" class="flex btn btn-primary flex-grow" @click="nextQuestion">Next</button>
             </div>
         </div>
     </div>
@@ -308,3 +311,15 @@ export default {
     },
 }
 </script>
+<style>
+.fixed-music-player {
+    left: 50% !important;
+    transform: translate(-50%, 0) !important;
+    width: calc(100vw - 3em) !important;
+    max-width: 800px !important;
+    position: fixed !important;
+    bottom: 90px !important;
+    animation: none !important;
+    transition: none !important;
+}
+</style>

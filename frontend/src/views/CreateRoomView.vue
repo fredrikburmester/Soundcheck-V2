@@ -4,8 +4,8 @@
             <div class="text-left lg:ml-24 px-8">
                 <h1 class="text-5xl font-bold">Create game room</h1>
                 <p class="py-6">
-                    Create a game room and invite your friends to join! Choose the number of top songs that should be picked from each player, the time range
-                    for those songs, and some additional settings. The more songs you pick, the more fun it will be!
+                    Create a room and invite your friends! Choose the <b>number</b> of top songs picked from each player, <b>when</b>join those songs were the
+                    players favourite, and some additional settings.
                 </p>
             </div>
             <div class="card flex-shrink-0 w-full max-w-sm shadow-md bg-base-300">
@@ -34,7 +34,7 @@
                         <div class="tabs tabs-boxed flex flex-row justify-center">
                             <a class="tab" @click="changeTimeRange($event, 'short_term')">Month</a>
                             <a class="tab tab-active" @click="changeTimeRange($event, 'medium_term')">Half Year</a>
-                            <a class="tab" @click="changeTimeRange($event, 'long_term')">Over a year</a>
+                            <a class="tab" @click="changeTimeRange($event, 'long_term')">Year</a>
                         </div>
                     </div>
                     <div class="form-control mb-4">
@@ -62,6 +62,7 @@
                             type="text"
                             placeholder="Enter room code"
                             class="input input-bordered w-full max-w-xs"
+                            style="text-transform: uppercase"
                             @focus="generateRoomCodeActive = false"
                         />
                         <label class="label cursor-pointer">

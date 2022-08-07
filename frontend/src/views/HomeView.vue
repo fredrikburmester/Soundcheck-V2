@@ -14,7 +14,7 @@
                 <template #body>Can you guess your friends favorite songs?</template>
                 <template #action>Play</template>
             </FancyCardComponent>
-            <hr class="md:hidden opacity-10 my-8" />
+            <hr class="md:hidden opacity-10 my-4" />
             <FancyCardComponent link="/my-top/tracks">
                 <template #header>My top songs</template>
                 <template #body>Check out your top songs!</template>
@@ -26,7 +26,7 @@
                 <template #action>Check it out</template>
             </FancyCardComponent>
         </div>
-        <hr class="my-12 opacity-10" />
+        <hr class="my-8 opacity-10" />
         <div class="stats shadow-lg bg-base-300">
             <div class="stat">
                 <div class="stat-title">Active users</div>

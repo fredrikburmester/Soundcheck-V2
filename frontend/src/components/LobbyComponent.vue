@@ -1,5 +1,5 @@
 <template>
-    <div id="lobby" class="flex w-screen md:max-w-3xl flex-col px-8 h-full">
+    <div id="lobby" class="flex w-screen md:max-w-3xl flex-col px-4 h-full">
         <div>
             <PageTitle>
                 <template #header>

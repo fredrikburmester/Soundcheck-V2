@@ -2,7 +2,7 @@
     <transition appear name="fade">
         <div
             id="result-modal"
-            class="fixed top-0 left-0 w-screen h-screen backdrop-brightness-50 backdrop-blur-md px-4 z-100 flex flex-col items-center overflow-scroll pb-12 pt-12"
+            class="fixed top-0 left-0 w-screen h-screen backdrop-brightness-50 backdrop-blur-md px-4 z-100 flex flex-col items-center overflow-scroll pb-24 pt-12"
         >
             <h1 class="text-white mt-4 text-2xl font-bold">Points: {{ player.points * 10 }}</h1>
             <p class="text-white opacity-70">Per song answers for {{ player.name }}</p>
@@ -40,9 +40,6 @@ export default {
     emits: ['close'],
     mounted() {},
     methods: {
-        compileAndCreatePlaylist() {
-            this.createPlaylist(this.room.songs, this.playlistName)
-        },
         getCorrectAnswerName(songId) {
             let users = null
             // ger users from songs.users
