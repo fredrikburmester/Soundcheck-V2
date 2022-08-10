@@ -239,7 +239,7 @@ const logout = () => {
                                     </div>
                                 </div>
                             </li>
-                            <button class="btn btn-sm btn-primary" @click="clearAllNotifications">Clear all</button>
+                            <button class="btn btn-sm btn-secondary" @click="clearAllNotifications">Clear all</button>
                         </ul>
                     </transition>
                 </on-click-outside>

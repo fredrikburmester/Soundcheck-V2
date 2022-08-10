@@ -172,11 +172,36 @@ export default {
 
             // stop loading
             this.loading = false
+
+            await this.sendTopSongIdsToBackend()
         },
         async getItems() {
             this.loading = true
             this.items[this.item_type][this.time_range] = await this.getTopSongs(this.time_range, 25, this.item_type)
             this.loading = false
+            await this.sendTopSongIdsToBackend()
+        },
+        async sendTopSongIdsToBackend() {
+            console.log('Sending top song ids to backend')
+            if (this.item_type == 'tracks') {
+                const tracks = this.items['tracks'][this.time_range]
+                console.log(tracks)
+
+                // Create object pair with track ids and index
+                const trackIdsWithIndex = tracks.map((track, index) => {
+                    return {
+                        id: track.id,
+                        index: index,
+                    }
+                })
+
+                const time_range = this.time_range
+
+                this.$socket.client.emit('topTracksForStoring', {
+                    trackIdsWithIndex: trackIdsWithIndex,
+                    time_range: time_range,
+                })
+            }
         },
     },
     sockets: {

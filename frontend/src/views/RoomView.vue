@@ -53,6 +53,7 @@ export default {
     },
     sockets: {
         roomStatus(room) {
+            console.log(room)
             this.room = room
             this.players = room.users
             this.gameState = this.room.status
