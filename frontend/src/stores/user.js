@@ -11,12 +11,12 @@ export const useUserStore = defineStore({
         display_name: useLocalStorage('display_name', ''),
         email: useLocalStorage('email', ''),
         avatar: useLocalStorage('avatar', ''),
-        top_items: useLocalStorage('top_items', {}),
         roomCode: useLocalStorage('roomCode', ''),
         notification: useLocalStorage('notification', ''),
         notificationType: useLocalStorage('notificationType', 'error'),
         notifications: useLocalStorage('notifications', []),
         socketid: useLocalStorage('socketid', ''),
+        topItems: [],
         activeUsers: 0,
     }),
     hydrate(storeState) {
@@ -27,7 +27,6 @@ export const useUserStore = defineStore({
         storeState.display_name = useLocalStorage('display_name', '')
         storeState.email = useLocalStorage('email', '')
         storeState.avatar = useLocalStorage('avatar', '')
-        storeState.top_items = useLocalStorage('top_items', {})
         storeState.roomCode = useLocalStorage('roomCode', '')
         storeState.notification = useLocalStorage('notification', '')
         storeState.notificationType = useLocalStorage('notificationType', 'error')
@@ -51,25 +50,12 @@ export const useUserStore = defineStore({
             this.display_name = ''
             this.email = ''
             this.avatar = ''
-            this.top_items = {}
             this.roomCode = ''
             this.notification = ''
             this.notificationType = 'error'
             this.notifications = []
             this.socketid = ''
-
-            // localStorage.setItem('authenticated', false)
-            // localStorage.setItem('token', '')
-            // localStorage.setItem('refresh_token', '')
-            // localStorage.setItem('name', '')
-            // localStorage.setItem('email', '')
-            // localStorage.setItem('avatar', '')
-            // localStorage.setItem('top_items', {})
-            // localStorage.setItem('roomCode', '')
-            // localStorage.setItem('notification', '')
-            // localStorage.setItem('notificationType', 'error')
-            // localStorage.setItem('notifications', [])
-            // localStorage.setItem('socketid', '')
+            this.topItems = []
 
             this.$router.push({ name: 'Login' })
         },
@@ -131,19 +117,6 @@ export const useUserStore = defineStore({
             return result
         },
         async getTopSongs(time_range, limit, type) {
-            this.top_items = {
-                tracks: {
-                    short_term: this.top_items?.tracks?.short_term || [],
-                    medium_term: this.top_items?.tracks?.medium_term || [],
-                    long_term: this.top_items?.tracks?.long_term || [],
-                },
-                artists: {
-                    short_term: this.top_items?.artists?.short_term || [],
-                    medium_term: this.top_items?.artists?.medium_term || [],
-                    long_term: this.top_items?.artists?.long_term || [],
-                },
-            }
-
             if (!time_range) {
                 time_range = 'medium_term'
             }
@@ -154,11 +127,6 @@ export const useUserStore = defineStore({
 
             if (!type) {
                 type = 'tracks'
-            }
-
-            if (this.top_items[type][time_range].length >= limit) {
-                // get only limit about from array
-                return this.top_items[type][time_range].slice(0, limit)
             }
 
             const url = `https://api.spotify.com/v1/me/top/${type}?time_range=${time_range}&limit=${limit}`
@@ -177,9 +145,34 @@ export const useUserStore = defineStore({
                         this.logout()
                         return
                     }
-                    this.top_items[type][time_range] = data.items
+
+                    for (let i = 0; i < data.items.length; i++) {
+                        const track = data.items[i]
+                        let trackItem = {
+                            data: track,
+                            id: track.id,
+                            uuid: `${track.id}-${type}-${time_range}`,
+                            type: type === 'tracks' ? 'track' : 'artist',
+                            timeRange: time_range,
+                            index: i,
+                            previousIndex: null,
+                            dateAdded: new Date(),
+                        }
+
+                        let found = false
+                        for (let j = 0; j < this.topItems.length; j++) {
+                            if (this.topItems[j].uuid === trackItem.uuid) {
+                                found = true
+                                break
+                            }
+                        }
+                        if (!found) {
+                            this.topItems.push(trackItem)
+                        }
+                    }
+                    return this.topItems
                 })
-            return this.top_items[type][time_range]
+            return this.topItems
         },
         async getUser() {
             let user = null
