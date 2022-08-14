@@ -1,13 +1,11 @@
 <template>
     <Transition appear name="slide">
-        <div ref="card" :style="style" class="fancy-card flex flex-col bg-opacity-80 text-neutral-content rounded-xl p-6">
+        <div ref="card" :style="style" class="fancy-card flex flex-col bg-opacity-80 text-neutral-content rounded-xl p-6" @click="goToLink">
             <h1 class="font-bold text-2xl"><slot name="header"></slot></h1>
             <p><slot name="body"></slot></p>
-            <router-link :to="link" class="place-self-end">
-                <button class="btn bg-primary hover:bg-green-600 border-0 mt-4 whitespace-nowrap shadow-sm text-white">
-                    <slot name="action"></slot>
-                </button>
-            </router-link>
+            <button class="btn btn-sm btn-ghost shadow-lg border-primary border-2 border-solid w-32 hover:bg-green-600 mt-4 whitespace-nowrap text-white">
+                <slot name="action"></slot>
+            </button>
         </div>
     </Transition>
 </template>
@@ -31,16 +29,32 @@ export default {
             }
         },
         color1() {
-            return '#' + ((Math.random() * 0xffffff) << 0).toString(16).padStart(6, '0')
+            var color = '#'
+            for (var i = 0; i < 6; i++) {
+                color += Math.floor(Math.random() * 10)
+            }
+            return color
         },
         color2() {
-            return '#' + ((Math.random() * 0xffffff) << 0).toString(16).padStart(6, '0')
+            var color = '#'
+            for (var i = 0; i < 6; i++) {
+                color += Math.floor(Math.random() * 10)
+            }
+            return color
         },
         color3() {
-            return '#' + ((Math.random() * 0xffffff) << 0).toString(16).padStart(6, '0')
+            var color = '#'
+            for (var i = 0; i < 6; i++) {
+                color += Math.floor(Math.random() * 10)
+            }
+            return color
         },
         color4() {
-            return '#' + ((Math.random() * 0xffffff) << 0).toString(16).padStart(6, '0')
+            var color = '#'
+            for (var i = 0; i < 6; i++) {
+                color += Math.floor(Math.random() * 10)
+            }
+            return color
         },
     },
     mounted() {},
@@ -58,6 +72,9 @@ export default {
         },
         linearGradient() {
             return `linear-gradient(-45deg, ${this.getRandomColor()}, ${this.getRandomColor()}, ${this.getRandomColor()}, ${this.getRandomColor()});`
+        },
+        goToLink() {
+            this.$router.push(this.link)
         },
     },
 }
