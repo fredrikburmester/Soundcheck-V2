@@ -9,21 +9,21 @@
             <p class="text-2xl">{{ display_name }}</p>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 auto-cols-max gap-4 md:flex-row flex-wrap">
+            <FancyCardComponent link="/my-top/tracks">
+                <template #header>My top Spotify tracks</template>
+                <template #body> What do you listen to the most? </template>
+                <template #action>Check it out</template>
+            </FancyCardComponent>
+            <FancyCardComponent link="/my-top/artists">
+                <template #header>My top Spotify artists</template>
+                <template #body> Are you a real fan? </template>
+                <template #action>Check it out</template>
+            </FancyCardComponent>
+            <hr class="md:hidden opacity-10 my-4" />
             <FancyCardComponent link="/play">
                 <template #header>Soundcheck!</template>
                 <template #body>Can you guess your friends favorite songs?</template>
                 <template #action>Play</template>
-            </FancyCardComponent>
-            <hr class="md:hidden opacity-10 my-4" />
-            <FancyCardComponent link="/my-top/tracks">
-                <template #header>My top songs</template>
-                <template #body>Check out your top songs!</template>
-                <template #action>Check it out</template>
-            </FancyCardComponent>
-            <FancyCardComponent link="/my-top/artists">
-                <template #header>My top artists</template>
-                <template #body>Check out your top songs!</template>
-                <template #action>Check it out</template>
             </FancyCardComponent>
         </div>
         <hr class="my-8 opacity-10" />
