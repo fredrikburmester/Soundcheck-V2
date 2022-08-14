@@ -1,6 +1,6 @@
 <template>
     <div class="indicator">
-        <span v-if="newSong()" class="indicator-item indicator-top indicator-start badge badge-info mt-36">New</span>
+        <!-- <span v-if="newSong()" class="indicator-item indicator-top indicator-start badge badge-info mt-36">New</span> -->
         <span v-if="unique && !(!newSong() && oldest)" class="indicator-item badge badge-error z-100">Rare</span>
         <span v-if="!newSong() && oldest && !unique" class="indicator-item badge badge-secondary z-100">Old</span>
         <span v-if="song.previousIndex != null && song.previousIndex < song.index" class="indicator-item indicator-start badge badge-success"></span>
@@ -35,7 +35,7 @@
                         <div>
                             Top song since: <span class="opacity-50">{{ dateString(song.dateAdded) }}</span>
                         </div>
-                        <div v-if="unique" class="text-error font-bold">Unpopular top song!</div>
+                        <div v-if="unique" class="text-error font-bold">Unpopular song!</div>
                         <div v-if="!newSong() && oldest" class="text-secondary font-bold">Long time favuorite!</div>
                     </div>
                     <button class="btn btn-sm btn-success w-44 mt-2" @click="openInSpotify">Open in spotify</button>
