@@ -690,8 +690,8 @@ io.on('connection', (socket) => {
 				if (oldItem.uuid === newItem.uuid) {
 					// update the index of olditem
 					if (oldItem.index != newItem.index) {
-						oldItem.index = newItem.index
 						oldItem.previousIndex = oldItem.index
+						oldItem.index = newItem.index
 					}
 					break
 				}
