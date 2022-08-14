@@ -103,6 +103,7 @@ io.on('connection', (socket) => {
 					socketid: socket.id,
 					online: true,
 					topTracks: [],
+					topItems: [],
 				}
 				users.insert(new_user)
 			}
@@ -294,6 +295,7 @@ io.on('connection', (socket) => {
 				online: true,
 				guesses: [],
 				topTracks: [],
+				topItems: [],
 			}
 			users.insert(new_user)
 		}
@@ -644,6 +646,69 @@ io.on('connection', (socket) => {
 	socket.on('login-step-2', async (code) => {
 		let result = await loginStep2(socket, code)
 		socket.emit('loginData', result)
+	})
+
+	socket.on('getTopItemsFromBackend', ({ topItems, itemType, timeRange }) => {
+		/* 
+		Take a list of new top items (directly from spotify) sent from the frontend
+		and check if the new items are already stored, and if so, update the stored item
+
+		Go through the stored items and check if there are old items that should be removed
+
+		Go through the new list and if the item is not stored, add it to the list
+		*/
+		var db_user = users.findOne({ socketid: socket.id })
+
+		// Go though and remove all stored songs that are no longer a top song
+		for (let i = 0; i < db_user.topItems.length; i++) {
+			const storedItem = db_user.topItems[i]
+
+			// Don't remove other songs
+			if (
+				storedItem.itemType != itemType ||
+				storedItem.timeRange != timeRange
+			) {
+				continue
+			}
+
+			found = false
+			for (let j = 0; j < topItems.length; i++) {
+				const newItem = topItems[j]
+				if (newItem.uuid == storedItem.uuid) {
+					found = true
+				}
+			}
+
+			if (!found) {
+				db_user.topItems.splice(j, 1)
+			}
+		}
+
+		for (let newItem of topItems) {
+			// if item is not in db_user.topItems, add it to the list
+			for (let oldItem of db_user.topItems) {
+				if (oldItem.uuid === newItem.uuid) {
+					// update the index of olditem
+					if (oldItem.index != newItem.index) {
+						oldItem.index = newItem.index
+						oldItem.previousIndex = oldItem.index
+					}
+					break
+				}
+			}
+			db_user.topItems.push(newItem)
+		}
+
+		// Remove double items based on uuid
+		db_user.topItems = db_user.topItems.filter(
+			(item, index) =>
+				db_user.topItems.findIndex(
+					(item2) => item2.uuid === item.uuid
+				) === index
+		)
+
+		users.update(db_user)
+		socket.emit('sendTopItemsFromBackend', db_user.topItems)
 	})
 
 	socket.on('topTracksForStoring', ({ trackIdsWithIndex, time_range }) => {
