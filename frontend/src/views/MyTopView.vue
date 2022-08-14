@@ -6,7 +6,6 @@
                 <p>
                     <i class="text-gray-400"> Make sure to change the time range! </i>
                 </p>
-
                 <div v-if="item_type == 'tracks'">
                     <label for="my-modal-6" class="btn btn-sm btn-success modal-button mt-4" @click="setPlaylistName">Create playlist</label>
                     <input id="my-modal-6" type="checkbox" class="modal-toggle" />
@@ -35,7 +34,7 @@
             </div>
             <div v-if="!loading" class="flex flex-col place-items-center w-full max-w-2xl list">
                 <div v-if="item_type == 'tracks'">
-                    <TransitionGroup name="list" tag="div">
+                    <TransitionGroup name="fade" tag="div">
                         <SongCard
                             v-for="item in filteredItems(items)"
                             :key="item.uuid"
@@ -57,11 +56,8 @@
                     ></ArtistCard>
                 </div>
             </div>
-            <LoadingComponent v-if="loading" />
+            <LoadingComponent v-if="loading || loadingMore" />
             <button v-if="!loadingMore && !loading" class="btn btn-sm btn-success" @click="loadMore">Load more</button>
-
-            <!-- daisy ui spinner -->
-            <LoadingComponent v-if="loadingMore" />
         </div>
     </div>
 </template>
@@ -233,12 +229,13 @@ export default {
     width: 278px;
     margin-left: -3px;
 }
+/* 
 .list-leave-active {
     opacity: 0;
     position: absolute;
 }
 
-.list-move, /* apply transition to moving elements */
+.list-move, 
 .list-enter-active,
 .list-leave-active {
     transition: all 1s ease;
@@ -247,6 +244,18 @@ export default {
 .list-enter-from,
 .list-leave-to {
     opacity: 1;
-    transform: translateX(30px);
+    transform: translateY(20px);
+} */
+
+.fade-move,
+.fade-enter-active,
+.fade-leave-active {
+    transition: all 1s;
+}
+
+.fade-enter,
+.fade-leave-to {
+    opacity: 0;
+    transform: translateY(20px);
 }
 </style>

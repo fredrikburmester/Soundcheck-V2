@@ -1,47 +1,51 @@
 <template>
-    <div class="indicator">
-        <!-- <span v-if="newSong()" class="indicator-item indicator-top indicator-start badge badge-info mt-36">New</span> -->
-        <span v-if="unique && !(!newSong() && oldest)" class="indicator-item badge badge-error z-100">Rare</span>
-        <span v-if="!newSong() && oldest && !unique" class="indicator-item badge badge-secondary z-100">Old</span>
-        <span v-if="song.previousIndex != null && song.previousIndex < song.index" class="indicator-item indicator-start badge badge-success"></span>
-        <span v-if="song.previousIndex != null && song.previousIndex > song.index" class="indicator-item indicator-start badge badge-error"></span>
+    <div>
+        <transition name="fade" mode="out-in">
+            <div v-show="loaded" class="indicator">
+                <!-- <span v-if="newSong()" class="indicator-item indicator-top indicator-start badge badge-info mt-36">New</span> -->
+                <span v-if="unique && !(!newSong() && oldest)" class="indicator-item badge badge-error z-100">Rare</span>
+                <span v-if="!newSong() && oldest && !unique" class="indicator-item badge badge-secondary z-100">Old</span>
+                <span v-if="song.previousIndex != null && song.previousIndex < song.index" class="indicator-item indicator-start badge badge-success"></span>
+                <span v-if="song.previousIndex != null && song.previousIndex > song.index" class="indicator-item indicator-start badge badge-error"></span>
 
-        <template v-if="unique && !newSong() && oldest">
-            <span v-if="unique" class="indicator-item indicator-end badge badge-error z-100">Rare</span>
-            <span v-if="!newSong() && oldest" class="indicator-item badge badge-secondary z-100 -translate-x-8">Old</span>
-        </template>
+                <template v-if="unique && !newSong() && oldest">
+                    <span v-if="unique" class="indicator-item indicator-end badge badge-error z-100">Rare</span>
+                    <span v-if="!newSong() && oldest" class="indicator-item badge badge-secondary z-100 -translate-x-8">Old</span>
+                </template>
 
-        <div v-show="loaded" class="card max-w-2xl bg-base-100 shadow-xl image-full mb-4" @click="expand">
-            <img :src="song.data.album.images[0].url" class="w-100" alt="album cover" @load="loaded = true" />
-            <div class="card-body py-2 px-4 flex flex-row pt-6">
-                <div class="flex flex-col w-full">
-                    <div class="flex flex-row items-center">
-                        <p v-if="song.index != undefined" class="text-3xl opacity-50">#{{ song.index + 1 }}</p>
-                        <div v-if="song.index != undefined" class="text-right flex flex-col items-end">
-                            <h2 :key="expanded" class="card-title ml-4 text-sm overflow-hidden">
-                                {{ shortText(song.data.name, 23) }}
-                            </h2>
-                            <p>{{ song.data.artists[0].name }}</p>
-                        </div>
-                        <div v-else class="flex flex-col items-start">
-                            <h2 :key="expanded" class="card-title ml-4 text-sm">{{ shortText(song.data.name, 23) }}</h2>
-                            <p>{{ song.data.artists[0].name }}</p>
+                <div class="card max-w-2xl bg-base-100 shadow-xl image-full mb-4" @click="expand">
+                    <img :src="song.data.album.images[0].url" class="w-100" alt="album cover" @load="loaded = true" />
+                    <div class="card-body py-2 px-4 flex flex-row pt-6">
+                        <div class="flex flex-col w-full">
+                            <div class="flex flex-row items-center">
+                                <p v-if="song.index != undefined" class="text-3xl opacity-50">#{{ song.index + 1 }}</p>
+                                <div v-if="song.index != undefined" class="text-right flex flex-col items-end">
+                                    <h2 :key="expanded" class="card-title ml-4 text-sm overflow-hidden">
+                                        {{ shortText(song.data.name, 23) }}
+                                    </h2>
+                                    <p>{{ song.data.artists[0].name }}</p>
+                                </div>
+                                <div v-else class="flex flex-col items-start">
+                                    <h2 :key="expanded" class="card-title ml-4 text-sm">{{ shortText(song.data.name, 23) }}</h2>
+                                    <p>{{ song.data.artists[0].name }}</p>
+                                </div>
+                            </div>
+                            <div class="flex flex-col justify-start justify-self-end pt-12">
+                                <div>
+                                    Album: <span class="opacity-50">{{ shortText(song.data.album.name, 23) }}</span>
+                                </div>
+                                <div>
+                                    Top song since: <span class="opacity-50">{{ dateString(song.dateAdded) }}</span>
+                                </div>
+                                <div v-if="unique" class="text-error font-bold">Unpopular song!</div>
+                                <div v-if="!newSong() && oldest" class="text-secondary font-bold">Long time favuorite!</div>
+                            </div>
+                            <button class="btn btn-sm btn-success w-44 mt-2" @click="openInSpotify">Open in spotify</button>
                         </div>
                     </div>
-                    <div class="flex flex-col justify-start justify-self-end pt-12">
-                        <div>
-                            Album: <span class="opacity-50">{{ shortText(song.data.album.name, 23) }}</span>
-                        </div>
-                        <div>
-                            Top song since: <span class="opacity-50">{{ dateString(song.dateAdded) }}</span>
-                        </div>
-                        <div v-if="unique" class="text-error font-bold">Unpopular song!</div>
-                        <div v-if="!newSong() && oldest" class="text-secondary font-bold">Long time favuorite!</div>
-                    </div>
-                    <button class="btn btn-sm btn-success w-44 mt-2" @click="openInSpotify">Open in spotify</button>
                 </div>
             </div>
-        </div>
+        </transition>
     </div>
 </template>
 
@@ -161,5 +165,16 @@ img {
 .indicator {
     height: v-bind(height + 'px');
     transition: all 0.3s ease;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 1s;
+}
+
+.fade-enter,
+.fade-leave-to
+/* .fade-leave-active in <2.1.8 */ {
+    opacity: 0;
 }
 </style>
