@@ -5,8 +5,8 @@
                 <!-- <span v-if="newSong()" class="indicator-item indicator-top indicator-start badge badge-info mt-36">New</span> -->
                 <span v-if="unique && !(!newSong() && oldest)" class="indicator-item badge badge-error z-100">Rare</span>
                 <span v-if="!newSong() && oldest && !unique" class="indicator-item badge badge-secondary z-100">Old</span>
-                <span v-if="song.previousIndex != null && song.previousIndex < song.index" class="indicator-item indicator-start badge badge-success">↑</span>
-                <span v-if="song.previousIndex != null && song.previousIndex > song.index" class="indicator-item indicator-start badge badge-error">↓</span>
+                <span v-if="song.previousIndex != null && song.previousIndex > song.index" class="indicator-item indicator-start badge badge-success">↑</span>
+                <span v-if="song.previousIndex != null && song.previousIndex < song.index" class="indicator-item indicator-start badge badge-error">↓</span>
 
                 <template v-if="unique && !newSong() && oldest">
                     <span v-if="unique" class="indicator-item indicator-end badge badge-error z-100">Rare</span>
