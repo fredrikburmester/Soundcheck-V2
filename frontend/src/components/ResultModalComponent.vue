@@ -7,7 +7,7 @@
             <h1 class="text-white mt-4 text-2xl font-bold">Points: {{ player.points * 10 }}</h1>
             <p class="text-white opacity-70">Per song answers for {{ player.name }}</p>
             <div v-for="(song, index) in room.songs" :key="song.id" class="mt-6">
-                <SongCard :index="index" :title="song.name" :img="song.img" :artist="song.artist" />
+                <SongResultCard :index="index" :song="song" />
                 <p class="text-white -mt-3 ml-3 opacity-70">Guess: {{ getGuessName(player.guesses, song.id) }}</p>
                 <p class="text-white ml-3 opacity-70">Correct answer: {{ getCorrectAnswerName(song.id) }}</p>
             </div>
@@ -23,10 +23,10 @@
 </template>
 
 <script>
-import SongCard from './SongCardComponent.vue'
+import SongResultCard from './SongResultCardComponent.vue'
 
 export default {
-    components: { SongCard },
+    components: { SongResultCard },
     props: {
         room: {
             type: Object,
