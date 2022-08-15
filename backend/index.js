@@ -809,9 +809,9 @@ const compileSongList = (room) => {
 				// Create the song and add the user to it
 				let song = new Song(
 					s.id,
-					s.name,
-					s.artists[0].name,
-					s.album.images[0].url
+					s.data.name,
+					s.data.artists[0].name,
+					s.data.album.images[0].url
 				)
 				song.users.push(u.id)
 				songs.push(song)
