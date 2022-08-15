@@ -10,6 +10,7 @@ module.exports = {
         },
         zIndex: {
             100: 100,
+            101: 101,
         },
         extend: {},
     },
