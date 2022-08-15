@@ -659,6 +659,15 @@ io.on('connection', (socket) => {
 		*/
 		var db_user = users.findOne({ socketid: socket.id })
 
+		if (!db_user) {
+			socket.emit('logout', {
+				status: 500,
+				msg: 'Could not find your user, plase log in again.',
+			})
+			console.log('[error] user not found')
+			return
+		}
+
 		// Go though and remove all stored songs that are no longer a top song
 		for (let i = 0; i < db_user.topItems.length; i++) {
 			const storedItem = db_user.topItems[i]
