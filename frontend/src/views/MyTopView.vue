@@ -94,7 +94,6 @@ export default {
                     this.item_type = this.$route.params.id
                     this.time_range = 'medium_term'
                     const topItems = await this.getTopSongs(this.time_range, 25, this.item_type)
-                    console.log('[switched route]', topItems)
                     this.getTopItemsFromBackend(topItems, this.time_range, this.item_type)
                 }
             }
@@ -104,7 +103,6 @@ export default {
         this.loading = true
         // await this.getItems()
         const topItems = await this.getTopSongs(this.time_range, 25, this.item_type)
-        console.log('[mounted]', topItems)
         this.getTopItemsFromBackend(topItems, this.time_range, this.item_type)
     },
     methods: {
@@ -139,8 +137,12 @@ export default {
             const sortedItems = filteredItems.sort((a, b) => {
                 return a.index - b.index
             })
-            console.log('[sorted items]', sortedItems)
-            return sortedItems
+
+            // limit length of items to amount
+            const limitedItems = sortedItems.slice(0, this.amount)
+
+            console.log('[sorted, limited items]', limitedItems)
+            return limitedItems
         },
         setPlaylistName() {
             this.playlistName = `My Top ${this.getItemTypePrettyString(this.item_type)} - ${this.getTimeRangePrettyString(
@@ -213,8 +215,6 @@ export default {
             this.items = topItems
 
             console.log('[from backend]', this.items)
-            console.log('[oldest date]', oldestDate)
-            console.log('[lowest popularity]', lowestPopularity)
 
             this.loading = false
             this.loadingMore = false

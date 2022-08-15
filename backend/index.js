@@ -668,20 +668,26 @@ io.on('connection', (socket) => {
 			return
 		}
 
+		console.log(
+			`[${db_user.name}] requesting top items from backend, type: ${itemType}, time range: ${timeRange}`
+		)
+		console.log(`[${db_user.name}] top items: ${db_user.topItems.length}`)
+
 		// Go though and remove all stored songs that are no longer a top song
 		for (let i = 0; i < db_user.topItems.length; i++) {
 			const storedItem = db_user.topItems[i]
 
 			// Don't remove other songs
-			if (
-				storedItem.itemType != itemType ||
-				storedItem.timeRange != timeRange
-			) {
+			if (itemType == 'tracks') {
+				if (storedItem.type != 'track') continue
+			}
+
+			if (storedItem.timeRange != timeRange) {
 				continue
 			}
 
-			found = false
-			for (let j = 0; j < topItems.length; i++) {
+			let found = false
+			for (let j = 0; j < topItems.length; j++) {
 				const newItem = topItems[j]
 				if (newItem.uuid == storedItem.uuid) {
 					found = true
@@ -689,9 +695,11 @@ io.on('connection', (socket) => {
 			}
 
 			if (!found) {
-				db_user.topItems.splice(j, 1)
+				db_user.topItems.splice(i, 1)
 			}
 		}
+
+		users.update(db_user)
 
 		for (let newItem of topItems) {
 			// if item is not in db_user.topItems, add it to the list
@@ -718,42 +726,6 @@ io.on('connection', (socket) => {
 
 		users.update(db_user)
 		socket.emit('sendTopItemsFromBackend', db_user.topItems)
-	})
-
-	socket.on('topTracksForStoring', ({ trackIdsWithIndex, time_range }) => {
-		var db_user = users.findOne({ socketid: socket.id })
-
-		console.log(trackIdsWithIndex)
-
-		// In db_user, save each track with its index and previous index
-		for (let track of trackIdsWithIndex) {
-			// Check if track is already in db_user.topTracks
-			let trackIndex = -1
-			for (let i = 0; i < db_user.topTracks.length; i++) {
-				if (
-					db_user.topTracks[i].id == track.id &&
-					db_user.topTracks[i].time_range == time_range
-				) {
-					trackIndex = i
-					break
-				}
-			}
-
-			console.log(trackIndex)
-
-			if (trackIndex === -1) {
-				db_user.topTracks.push({
-					id: track.id,
-					index: track.index,
-					previousIndex: track.previousIndex || null,
-					time_range: time_range,
-				})
-			} else {
-				db_user.topTracks[trackIndex].previousIndex = track.index
-			}
-		}
-
-		console.log(db_user.topTracks)
 	})
 })
 

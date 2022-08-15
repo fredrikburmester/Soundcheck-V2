@@ -170,8 +170,11 @@ export const useUserStore = defineStore({
                             this.topItems.push(trackItem)
                         }
                     }
+                    console.log('[from spotify]', this.topItems)
                     return this.topItems
                 })
+            console.log('[from spotify]', this.topItems)
+
             return this.topItems
         },
         async getUser() {
