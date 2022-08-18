@@ -48,9 +48,6 @@ export default {
             }
         },
     },
-    mounted() {
-        console.log(this.song)
-    },
     sockets: {},
     methods: {
         openInSpotify() {
