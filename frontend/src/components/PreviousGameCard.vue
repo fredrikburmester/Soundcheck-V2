@@ -19,9 +19,6 @@
 export default {
     // eslint-disable-next-line vue/require-prop-types
     props: ['room'],
-    mounted() {
-        console.log(this.room)
-    },
     methods: {
         goToRoom() {
             this.$router.push(`/room/${this.room.code}`)

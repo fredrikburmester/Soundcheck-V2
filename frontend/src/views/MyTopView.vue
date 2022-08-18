@@ -231,7 +231,6 @@ export default {
                     genre = this.isGenericGenre(genre)
 
                     let getGenre = localGenres.find((g) => g.name === genre)
-                    console.log(genre)
                     if (getGenre === undefined) {
                         let genreArr = null
                         if (this.isCombinedGenre(genre)) {
@@ -267,7 +266,6 @@ export default {
                 })
                 .reverse()
 
-            console.log(localGenres)
             this.genres = localGenres
             this.genreCount = genreCount
             this.loadingStats = false
@@ -351,8 +349,6 @@ export default {
                 if (this.item_type == 'artists') {
                     this.getArtistGenres()
                 }
-
-                console.log(this.topItems)
             })
         },
         async loadMoreTopSongs() {

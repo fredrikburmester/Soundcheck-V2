@@ -5,7 +5,7 @@
     >
         <h1 class="text-white mt-4 text-2xl font-bold">Points: {{ player.points * 10 }}</h1>
         <p class="text-white opacity-70">Per song answers for {{ player.name }}</p>
-        <div v-for="(song, index) in room.songs" :key="song.id" class="mt-6">
+        <!-- <div v-for="(song, index) in room.songs" :key="song.id" class="mt-6">
             <SongResultCard :index="index" :song="song" />
             <p class="text-white -mt-3 ml-3 opacity-70">Guess: {{ getGuessName(player.guesses, song.id) }}</p>
             <p
@@ -13,6 +13,13 @@
                 :style="`color: ${getGuessName(player.guesses, song.id) == getCorrectAnswerName(song.id) ? '#1DB753' : '#D72827'}`"
             >
                 Correct answer: {{ getCorrectAnswerName(song.id) }}
+            </p>
+        </div> -->
+        <div v-for="(guess, index) in room.guesses.filter((guess) => guess.playerWhoGuessed == id)" :key="guess" class="mt-6">
+            <SongResultCard :index="index" :song="getSongById(guess.songID)" />
+            <p class="text-white -mt-3 ml-3 opacity-70">Guess: {{ guess.playerGuessedOn }}</p>
+            <p class="text-white ml-3 opacity-70" :style="`color: ${guess.correct.includes(guess.playerGuessedOn) ? '#1DB753' : '#D72827'}`">
+                Correct answer: <span v-for="user in guess.correct" :key="user">{{ user }} </span>
             </p>
         </div>
     </div>
@@ -27,6 +34,8 @@
 
 <script>
 import SongResultCard from './SongResultCardComponent.vue'
+import { mapWritableState } from 'pinia'
+import { useUserStore } from '@/stores/user'
 
 export default {
     components: { SongResultCard },
@@ -41,8 +50,17 @@ export default {
         },
     },
     emits: ['close'],
+    computed: {
+        ...mapWritableState(useUserStore, ['id']),
+    },
     mounted() {},
     methods: {
+        getSongById(id) {
+            return this.room.songs.find((song) => song.id == id)
+        },
+        getCorrectAnswerFromGuess(guess) {
+            return this.room.songs.find((song) => song.id == guess.songID).answer
+        },
         getCorrectAnswerName(songId) {
             let users = null
             // ger users from songs.users

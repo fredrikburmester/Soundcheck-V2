@@ -195,9 +195,9 @@ io.on('connection', (socket) => {
 					return
 				}
 
-				console.log(db_user)
+				const currentRoom = rooms.findOne({ code: db_user.room })
 
-				if (db_user.room) {
+				if (currentRoom && currentRoom.status != roomStatus[2]) {
 					socket.emit('redirect', {
 						status: 303,
 						msg: 'You already have a room in progress, if you want to create a new room, please leave the current room first.',
@@ -326,6 +326,59 @@ io.on('connection', (socket) => {
 			})
 		}
 		return
+	})
+
+	socket.on('makeGuess_v2', ({ roomID, guess }) => {
+		var db_user = users.findOne({ socketid: socket.id })
+		var db_room = rooms.findOne({ code: roomID })
+
+		if (!db_user || !db_room) {
+			socket.emit('error', {
+				status: 500,
+				msg: 'Missing parameters room or user',
+			})
+			return
+		}
+
+		if (
+			guess.songID &&
+			guess.questionNumber != null &&
+			guess.questionNumber != undefined &&
+			guess.playerWhoGuessed &&
+			guess.playerGuessedOn &&
+			guess.roomID &&
+			guess.timestamp
+		) {
+			const existingGuess = db_room.guesses.find((existingGuess) => {
+				if (
+					existingGuess.songID === guess.songID &&
+					existingGuess.questionNumber === guess.questionNumber &&
+					existingGuess.playerWhoGuessed === guess.playerWhoGuessed
+				) {
+					return true
+				}
+			})
+
+			if (existingGuess) {
+				// Changed guess
+				existingGuess.playerGuessedOn = guess.playerGuessedOn
+				existingGuess.timestamp = guess.timestamp
+				io.to(db_room.code).emit('playerGuessed', db_user.id)
+			} else {
+				// New guess
+				db_room.guesses.push(guess)
+				io.to(db_room.code).emit('playerGuessed', db_user.id)
+			}
+
+			rooms.update(db_room)
+			return
+		} else {
+			socket.emit('error', {
+				status: 500,
+				msg: `Missing parameters: ${missingParams.join(', ')}`,
+			})
+			return
+		}
 	})
 
 	socket.on('makePlayerGuess', ({ roomId, userId, songId, guess }) => {
@@ -825,32 +878,24 @@ const compileResults = (room) => {
 	*/
 
 	const songs = room.songs
-	let users = room.users
 
-	const getBelongingUsersBySongId = (id) => {
-		/* 
-		@input: song id
-		@output list of users
-		*/
-		for (let song of songs) {
-			if (song.id == id) return song.users
-		}
-
-		return []
-	}
-
-	for (let user of users) {
-		let guesses = user.guesses
-		for (let guess of guesses) {
-			if (
-				getBelongingUsersBySongId(guess.songId).includes(guess.userId)
-			) {
+	/*
+	For each guess in the room, check if the guess is correct, add the guess to the user and calculate the score
+	*/
+	for (let guess of room.guesses) {
+		const song = songs.find((song) => song.id == guess.songID)
+		if (song.users.includes(guess.playerGuessedOn)) {
+			const user = room.users.find(
+				(user) => user.id == guess.playerWhoGuessed
+			)
+			if (user) {
 				user.points += 1
-				guess.correct = true
+				guess['correct'] = song.users
 			}
+		} else {
+			guess['correct'] = song.users
 		}
 	}
-
 	return room
 }
 

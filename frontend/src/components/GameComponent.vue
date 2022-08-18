@@ -19,7 +19,7 @@
                 :user="p"
                 :class="makePlayerGuessId == p.id ? 'animate-pulse ring ring-primary' : ''"
                 :guessed="playersGuessed.includes(p.id)"
-                @click="makePlayerGuess(p.id)"
+                @click="guess(p.id)"
             />
         </div>
         <div :class="isHost() ? 'fixed-music-player-host' : 'fixed-music-player'">
@@ -164,6 +164,20 @@ export default {
                 guess: id,
             })
             this.makePlayerGuessId = id
+        },
+        guess(id) {
+            const guess = {
+                songID: this.room_.songs[this.currentQuestion].id,
+                questionNumber: this.currentQuestion,
+                playerWhoGuessed: this.id,
+                playerGuessedOn: id,
+                roomID: this.$route.params.id,
+                timestamp: new Date().getTime(),
+            }
+            this.$socket.client.emit('makeGuess_v2', {
+                roomID: this.$route.params.id,
+                guess: guess,
+            })
         },
         seek(position) {
             this.playerPosition = parseInt(position)

@@ -44,8 +44,6 @@ const room = ref('')
 </script>
 
 <style scoped>
-.btn {
-}
 #playview {
     min-height: 90vh;
 }
