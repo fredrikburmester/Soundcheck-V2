@@ -28,7 +28,7 @@
                     />
 
                     <div class="card-actions mt-4 justify-end">
-                        <router-link :to="`/room/${room}`">
+                        <router-link :to="`/room/${room.toUpperCase()}`">
                             <button class="btn btn-primary">Join room</button>
                         </router-link>
                     </div>

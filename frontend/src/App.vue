@@ -56,6 +56,10 @@ export default {
             this.notification = msg
             this.notificationType = 'error'
         },
+        notification({ status, msg }) {
+            this.notificationType = status
+            this.notification = msg
+        },
         error({ status, msg }) {
             console.log(status, msg)
             this.notification = msg

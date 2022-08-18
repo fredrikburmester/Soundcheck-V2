@@ -10,6 +10,7 @@ export class User {
 		this.points = 0
 		this.online = false
 		this.leftGame = false
+		this.room = null
 	}
 
 	makeGuess(songId, userId) {
@@ -36,5 +37,10 @@ export class User {
 		this.guesses = []
 		this.points = 0
 		this.leftGame = false
+		this.room = null
+	}
+
+	makeHost() {
+		this.host = true
 	}
 }

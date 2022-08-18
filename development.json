@@ -3,7 +3,6 @@
 		{
 			"name": "s-v2-frontend",
 			"script": "cd ./frontend && npm run dev",
-			"watch": true,
 			"env": {
 				"NODE_ENV": "development"
 			}

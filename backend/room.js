@@ -90,6 +90,7 @@ export class Room {
 	addUserToRoom(user, socket) {
 		// Add user to socket room
 		socket.join(this.code)
+
 		if (this.status !== roomStatus[2]) {
 			user.leftGame = false
 		}

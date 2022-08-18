@@ -163,7 +163,7 @@ button {
 }
 .chat-open-button {
     position: fixed;
-    left: 80px;
+    left: 110px;
     top: 22px;
     z-index: 100;
 }

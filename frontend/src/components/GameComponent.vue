@@ -22,7 +22,7 @@
                 @click="makePlayerGuess(p.id)"
             />
         </div>
-        <div class="fixed-music-player">
+        <div :class="isHost() ? 'fixed-music-player-host' : 'fixed-music-player'">
             <div class="flex flex-col">
                 <MusicPlayerComponent
                     :player-position="playerPosition"
@@ -63,11 +63,10 @@ import UserCard from './UserCard.vue'
 import PageTitle from './PageTitle.vue'
 import { mapWritableState } from 'pinia'
 import { useUserStore } from '@/stores/user'
-import SongCard from './SongCardComponent.vue'
 import MusicPlayerComponent from './MusicPlayerComponent.vue'
 
 export default {
-    components: { UserCard, PageTitle, SongCard, MusicPlayerComponent },
+    components: { UserCard, PageTitle, MusicPlayerComponent },
     props: {
         players: {
             type: Array,
@@ -313,6 +312,16 @@ export default {
 </script>
 <style>
 .fixed-music-player {
+    left: 50% !important;
+    transform: translate(-50%, 0) !important;
+    width: calc(100vw - 3em) !important;
+    max-width: 800px !important;
+    position: fixed !important;
+    bottom: 10px !important;
+    animation: none !important;
+    transition: none !important;
+}
+.fixed-music-player-host {
     left: 50% !important;
     transform: translate(-50%, 0) !important;
     width: calc(100vw - 3em) !important;

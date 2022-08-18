@@ -1,18 +1,17 @@
 import 'dotenv/config'
 import express from 'express'
 import cors from 'cors'
-import queryString from 'query-string'
-import fetch from 'node-fetch'
 import { createServer } from 'http'
 import { Server } from 'socket.io'
 
 import { Room, roomStatus } from './room.js'
-import { User } from './user.js'
 import { Song } from './song.js'
 import { loginStep2 } from './auth.js'
 import { createLoginUrl } from './auth.js'
 import { Notification, Invite } from './Notification.js'
 import { Message } from './Message.js'
+
+import loki from 'lokijs'
 
 const app = express()
 const httpServer = createServer()
@@ -33,103 +32,139 @@ console.log(`CLIENT_SECRET: ${process.env.CLIENT_SECRET}`)
 
 app.use(cors())
 
-var USERS = []
-var ROOMS = []
-var ACTIVE_USERS = 0
+var users = null
+var rooms = null
 
-function findAllRoomsForUser(userId) {
-	return ROOMS.filter((room) => room.users.find((user) => user.id === userId))
+var db = new loki('soundcheck.db', {
+	autoload: true,
+	autoloadCallback: databaseInitialize,
+	autosave: true,
+	autosaveInterval: 4000,
+})
+
+// Implement the autoloadback referenced in loki constructor
+function databaseInitialize() {
+	users = db.getCollection('users')
+	rooms = db.getCollection('rooms')
+
+	if (users === null) {
+		users = db.addCollection('users')
+	}
+	if (rooms === null) {
+		rooms = db.addCollection('rooms')
+	}
 }
 
 const broadcastRoomUpdates = (room) => {
 	io.to(room.code).emit('roomStatus', room)
 }
 
+const getActiveUsers = () => {
+	return users.where((user) => user.online).length
+}
+
+const getActiveGames = () => {
+	return rooms.where((room) => {
+		if (room.status == roomStatus[0] || room.status == roomStatus[1])
+			return true
+	}).length
+}
+
 io.on('connection', (socket) => {
-	ACTIVE_USERS++
 	socket.emit('connected', socket.id)
 
-	socket.on('getPlayerGames', (user) => {
-		console.log(user)
-		console.log(user.userId)
-		console.log('find games for this id: ', user.userId)
-		let games = findAllRoomsForUser(user.userId)
-		console.log(games)
-		socket.emit('playerGames', games)
+	socket.on('getPlayerGames', ({ userId }) => {
+		var db_rooms = rooms.where(function (room) {
+			if (room.status == roomStatus[2]) {
+				for (let u of room.users) {
+					if (u.id == userId) {
+						return true
+					}
+				}
+			}
+		})
+
+		socket.emit('playerGames', db_rooms)
 	})
 
 	socket.on('updateUser', ({ id, name, img }) => {
 		if (id && name && img) {
-			let user = USERS.find((user) => user.id === id)
-			if (user) {
-				user.socketid = socket.id
-				user.online = true
+			var db_user = users.findOne({ id: id })
+
+			if (db_user) {
+				db_user.socketid = socket.id
+				db_user.online = true
+				users.update(db_user)
 			} else {
-				let new_user = new User(id, img, name, socket.id)
-				USERS.push(new_user)
+				let new_user = {
+					id: id,
+					img: img,
+					name: name,
+					socketid: socket.id,
+					online: true,
+					topTracks: [],
+					topItems: [],
+				}
+				users.insert(new_user)
 			}
 		}
 	})
 
 	socket.on('newMessage', (message, roomCode) => {
-		let user = USERS.find((user) => user.socketid === socket.id)
-		let room = ROOMS.find((room) => room.code === roomCode)
+		var db_user = users.findOne({ socketid: socket.id })
+		var db_room = rooms.findOne({ code: roomCode })
 
-		if (user && room) {
-			if (room.users.find((u) => u.id === user.id)) {
-				let newMessage = new Message(message, user)
-				room.messages.push(newMessage)
-				io.to(room.code).emit('newMessage', newMessage)
+		if (db_user && db_room) {
+			if (db_room.users.find((u) => u.id === db_user.id)) {
+				let newMessage = new Message(message, db_user)
+				db_room.messages.push(newMessage)
+				rooms.update(db_room)
+				io.to(db_room.code).emit('newMessage', newMessage)
 			} else {
 				socket.emit('warning', {
 					msg: 'You are not permitted to send messages in this room',
 				})
 			}
 		} else {
-			console.log('[message error]', user, room)
+			console.log('[message error]')
 		}
 	})
 
 	socket.on('getInvitablePlayers', () => {
-		let invitablePlayers = USERS.filter(
-			(user) => user.socketid !== socket.id && user.online
-		)
+		const invitablePlayers = users.where((u) => {
+			return u.socketid !== socket.id && u.online
+		})
 		socket.emit('invitablePlayers', invitablePlayers)
 	})
 
 	socket.on('disconnect', () => {
-		let user = USERS.find((user) => user.socketid === socket.id)
-		if (user) user.online = false
-		ACTIVE_USERS--
+		var db_user = users.findOne({ socketid: socket.id })
+
+		if (db_user) {
+			db_user.online = false
+			users.update(db_user)
+		}
 	})
 
 	socket.on('getStats', () => {
-		let activeGames = 0
-		for (let r in ROOMS) {
-			if (r.status == 'active') {
-				activeGames++
-			}
-		}
 		socket.emit('stats', {
-			activeUsers: ACTIVE_USERS,
-			activeGames: activeGames,
+			activeUsers: getActiveUsers(),
+			activeGames: getActiveGames(),
 		})
 	})
 
 	socket.on('invite', ({ from, to, roomCode }) => {
-		let room = ROOMS.find((r) => r.code == roomCode)
-		// if (room) {
+		var db_user = users.findOne({ id: to })
+
 		let invite = new Invite(from, to, roomCode)
-		let user = USERS.find((u) => u.id == to)
-		if (user) {
+		if (db_user) {
 			// TODO: implement storing of notifications
 			// user.notifications.push(invite)
 
-			io.to(user.socketid).emit('invite', invite)
+			io.to(db_user.socketid).emit('invite', invite)
 		} else {
 			console.log('[Error] User was not found...')
 		}
-		// }
 	})
 
 	socket.on(
@@ -149,10 +184,10 @@ io.on('connection', (socket) => {
 				timeRange !== undefined &&
 				allowSongSeeking !== undefined
 			) {
-				let user = USERS.find((user) => user.id === userId)
-				let room = ROOMS.find((room) => room.code === roomCode)
+				var db_user = users.findOne({ id: userId })
+				var db_room = rooms.findOne({ code: roomCode })
 
-				if (!user) {
+				if (!db_user) {
 					socket.emit('logout', {
 						status: 500,
 						msg: 'Could not find your user, plase log in again.',
@@ -160,34 +195,41 @@ io.on('connection', (socket) => {
 					return
 				}
 
-				if (room) {
-					if (room.status === roomStatus[0]) {
+				console.log(db_user)
+
+				if (db_user.room) {
+					socket.emit('redirect', {
+						status: 303,
+						msg: 'You already have a room in progress, if you want to create a new room, please leave the current room first.',
+						route: `/room/${db_user.room}`,
+					})
+					return
+				}
+
+				if (db_room) {
+					if (db_room.status === roomStatus[0]) {
 						socket.emit('redirect', {
 							status: 303,
 							msg: 'The room already exists and was not created by you. Redirecting you to the active room',
-							route: `/room/${room.code}`,
+							route: `/room/${db_room.code}`,
 						})
-					} else if (room.status === roomStatus[1]) {
+						return
+					} else if (db_room.status === roomStatus[1]) {
 						socket.emit('error', {
 							status: 401,
 							msg: 'The room already exists and is in progress. Try creating a new room!',
 						})
-					} else if (room.status === roomStatus[2]) {
+						return
+					} else if (db_room.status === roomStatus[2]) {
 						// socket redirect to result page
 						socket.emit('redirect', {
 							status: 303,
 							msg: 'Game has ended. Check out the results!',
-							route: `/room/${room.code}`,
+							route: `/room/${db_room.code}`,
 						})
+						return
 					}
 				} else {
-					// create new room
-					let room = new Room(roomCode)
-					room.settings.timeRange = timeRange
-					room.settings.nrOfSongs = nrOfSongs
-					room.settings.showCorrectGuesses = showCorrectGuesses
-					room.settings.allowSongSeeking = allowSongSeeking
-
 					const today = new Date()
 					const yyyy = today.getFullYear()
 					let mm = today.getMonth() + 1 // Months start at 0!
@@ -198,16 +240,33 @@ io.on('connection', (socket) => {
 
 					const formattedToday = `${yyyy}/${mm}/${dd}`
 
-					room.date = formattedToday
+					// create new room
+					let new_room = {
+						status: roomStatus[0],
+						host: null,
+						songs: [],
+						currentQuestion: 0,
+						messages: [],
+						usersGuessedOnCurrentQuestion: [],
+						users: [],
+						code: roomCode,
+						guesses: [],
+						date: formattedToday,
+						settings: {
+							timeRange: timeRange,
+							nrOfSongs: nrOfSongs,
+							showCorrectGuesses: showCorrectGuesses,
+							allowSongSeeking: allowSongSeeking,
+						},
+					}
 
-					// add room to rooms
-					ROOMS.push(room)
+					rooms.insert(new_room)
 
 					// redirect user to room
 					socket.emit('redirect', {
 						status: 303,
 						msg: '',
-						route: `/room/${room.code}`,
+						route: `/room/${new_room.code}`,
 					})
 				}
 			} else {
@@ -221,63 +280,102 @@ io.on('connection', (socket) => {
 
 	socket.on('login', ({ id, img, name }) => {
 		// Check if user is alredy logged in
-		let user = USERS.find((user) => user.id === id)
+		var db_user = users.findOne({ id: id })
 
-		if (user) {
-			if (user.socketid != socket.id) {
-				io.to(user.socketid).emit('logout', {
+		if (db_user) {
+			// User exists and might have switched client
+			if (db_user.socketid != socket.id) {
+				io.to(db_user.socketid).emit('logout', {
 					status: 303,
 					msg: 'You have switched to another client',
 				})
 			}
 
-			user.id = id
-			user.img = img
-			user.name = name
-			user.socketid = socket.id
-			user.online = true
+			db_user.id = id
+			db_user.img = img
+			db_user.name = name
+			db_user.socketid = socket.id
+			db_user.online = true
+			db_user.guesses = []
+
+			users.update(db_user)
 		} else {
-			user = new User(id, img, name, socket.id)
-			user.online = true
-			USERS.push(user)
+			// Create user and save in database
+			let new_user = {
+				id: id,
+				img: img,
+				name: name,
+				socketid: socket.id,
+				online: true,
+				guesses: [],
+				topTracks: [],
+				topItems: [],
+			}
+			users.insert(new_user)
 		}
 
 		if (
-			user.room &&
-			(user.room.status === roomStatus[0] ||
-				user.room.status === roomStatus[1])
+			db_user.room &&
+			(db_user.room.status === roomStatus[0] ||
+				db_user.room.status === roomStatus[1])
 		) {
 			socket.emit('redirect', {
 				status: 303,
 				msg: 'You have an active game, redirecting you now.',
-				route: `/room/${user.room}`,
+				route: `/room/${db_user.room}`,
 			})
 		}
 		return
 	})
 
 	socket.on('makePlayerGuess', ({ roomId, userId, songId, guess }) => {
-		let room = ROOMS.find((room) => room.code === roomId)
-		let user = USERS.find((user) => user.id === userId)
+		var db_user = users.findOne({ id: userId })
+		var db_room = rooms.findOne({ code: roomId })
 
-		if (room && user) {
-			if (room.status === roomStatus[1]) {
-				user.makeGuess(songId, guess)
-				// add user.id to room.usersGuessedOnCurrentQuestion if they don't exist
-				if (!room.usersGuessedOnCurrentQuestion.includes(user.id)) {
-					room.usersGuessedOnCurrentQuestion.push(user.id)
+		if (db_user && db_room) {
+			if (db_room.status === roomStatus[1]) {
+				console.log(
+					`[${db_room.code}] ${db_user.name} guessed ${userId}'s song`
+				)
+
+				const userGuesses = db_room.users.find(
+					(user) => user.id === userId
+				).guesses
+
+				// Check if user has already guessed on this question
+				let guess = userGuesses.find((guess) => guess.songId === songId)
+
+				if (guess) {
+					guess.userId = userId
+				} else {
+					db_user.guesses.push({
+						songId,
+						userId,
+						correct: null,
+					})
 				}
 
-				io.to(room.code).emit('playerGuessed', user.id)
+				users.update(db_user)
+
+				// add user.id to room.usersGuessedOnCurrentQuestion if they don't exist
+				if (
+					!db_room.usersGuessedOnCurrentQuestion.includes(db_user.id)
+				) {
+					db_room.usersGuessedOnCurrentQuestion.push(db_user.id)
+				}
+
+				rooms.update(db_room)
+
+				io.to(db_room.code).emit('playerGuessed', db_user.id)
 			}
 		}
 	})
 
 	socket.on('joinRoom', ({ userId, roomCode }, callback) => {
-		let user = USERS.find((user) => user.id === userId)
-		let room = ROOMS.find((room) => room.code === roomCode)
+		var db_user = users.findOne({ id: userId })
+		var db_room = rooms.findOne({ code: roomCode })
 
-		if (!user) {
+		if (!db_user) {
 			socket.emit('error', {
 				status: 404,
 				msg: 'Could not find this user. Please log in again.',
@@ -285,7 +383,7 @@ io.on('connection', (socket) => {
 			return
 		}
 
-		if (!room) {
+		if (!db_room) {
 			socket.emit('redirect', {
 				status: 303,
 				msg: 'This room does not exist',
@@ -294,13 +392,20 @@ io.on('connection', (socket) => {
 			return
 		}
 
-		// Make sure the user object has nothing left from old games
-		// TODO: Implement database later
-		if (room.status === roomStatus[0]) {
-			user.clearUser()
+		console.log(`[${roomCode}] ${userId} is trying to join room`)
+
+		if (db_room.status === roomStatus[0]) {
+			// clearUser
+			db_user.guesses = []
+			db_user.points = 0
+			db_user.host = false
+			db_user.songs = []
+			db_user.room = null
+
+			users.update(db_user)
 		}
 
-		if (room.status === roomStatus[1] && user.room != room.code) {
+		if (db_room.status === roomStatus[1] && db_user.room != db_room.code) {
 			socket.emit('error', {
 				status: 303,
 				msg: 'Game has already started',
@@ -309,28 +414,57 @@ io.on('connection', (socket) => {
 		}
 
 		// Add room to user object
-		if (room.status !== roomStatus[2]) {
-			user.room = room.code
+		if (db_room.status !== roomStatus[2]) {
+			db_user.room = db_room.code
 		}
 
-		// Add user in list of users in the room
-		room.addUserToRoom(user, socket)
+		// Add the user socket to the room
+		socket.join(db_room.code)
+
+		// Set host status
+		if (db_room.users.length == 0) {
+			db_room.host = db_user
+			db_user.host = true
+			users.update(db_user)
+		}
+
+		// Check if user is already in room
+		let userReconnected = false
+		for (let u of db_room.users) {
+			if (u.id === db_user.id || u.socketid === socket.id) {
+				// Update the socketid of the user in case the user joined from another client
+				userReconnected = true
+				u.socketid = socket.id
+				rooms.update(db_room)
+				break
+			}
+		}
+
+		if (!userReconnected) {
+			db_room.users.push(db_user)
+			console.log(`[${db_room.code}] ${db_user.name} joined`)
+		}
+
+		rooms.update(db_room)
+		users.update(db_user)
+
+		console.log(`[${db_room.code}] ${db_user.name} re-connected`)
 
 		// Update everyone in the room that a new user has joined
-		broadcastRoomUpdates(room)
+		broadcastRoomUpdates(db_room)
 
 		// Send a callback to the client with the room object, telling the client that they have joined the room
 		callback({
 			status: 200,
-			room: room,
+			room: db_room,
 		})
 	})
 
 	socket.on('leaveRoom', ({ userId, roomCode }) => {
-		let user = USERS.find((user) => user.id === userId)
-		let room = ROOMS.find((room) => room.code === roomCode)
+		var db_user = users.findOne({ id: userId })
+		var db_room = rooms.findOne({ code: roomCode })
 
-		if (!user) {
+		if (!db_user) {
 			socket.emit('error', {
 				status: 404,
 				msg: 'The user does not exist',
@@ -338,7 +472,7 @@ io.on('connection', (socket) => {
 			return
 		}
 
-		if (!room) {
+		if (!db_room) {
 			socket.emit('redirect', {
 				status: 404,
 				msg: 'This room does not exist',
@@ -347,10 +481,52 @@ io.on('connection', (socket) => {
 			return
 		}
 
-		room.removeUserFromRoom(user)
-		socket.leave(room.code)
-		user.room = null
-		broadcastRoomUpdates(room)
+		// Remove the user from the room
+		for (let i = 0; i < db_room.users.length; i++) {
+			if (db_room.users[i].id == db_user.id) {
+				db_room.users.splice(i, 1)
+				rooms.update(db_room)
+			}
+		}
+
+		socket.leave(db_room.code)
+
+		// Clear user
+		db_user.guesses = []
+		db_user.points = 0
+		db_user.host = false
+		db_user.songs = []
+		db_user.guesses = []
+		db_user.points = 0
+		db_user.room = null
+
+		// find another user in the room and assign host to that user
+		console.log(`[${db_room.code}] ${db_user.name} left the room`)
+
+		io.to(db_room.code).emit('notification', {
+			status: 'success',
+			msg: `${db_user.name} left the room. Make sure they re-join before you start the game!`,
+		})
+
+		// If the room is empty, end the game
+		if (db_room.users.length == 0) {
+			rooms.remove(db_room)
+			// Else if the host left, choose a new host
+		} else if (db_user.id == db_room.host.id) {
+			var db_user = users.findOne({ id: db_room.users[0].id })
+			db_room.host = db_user
+			db_user.host = true
+
+			rooms.update(db_room)
+			users.update(db_user)
+
+			io.to(db_user.socketid).emit('warning', {
+				status: 'warning',
+				msg: 'You are now host',
+			})
+		}
+
+		broadcastRoomUpdates(db_room)
 
 		return
 	})
@@ -401,11 +577,16 @@ io.on('connection', (socket) => {
 	// })
 
 	socket.on('startGame', ({ roomCode }) => {
-		let room = ROOMS.find((room) => room.code === roomCode)
-		room.compileSongList()
-		room.status = roomStatus[1]
+		var db_room = rooms.findOne({ code: roomCode })
 
-		broadcastRoomUpdates(room)
+		const songs = compileSongList(db_room)
+
+		db_room.songs = songs
+		db_room.status = roomStatus[1]
+
+		rooms.update(db_room)
+
+		broadcastRoomUpdates(db_room)
 	})
 
 	socket.on('typing', ({ userId, roomCode }) => {
@@ -413,39 +594,294 @@ io.on('connection', (socket) => {
 	})
 
 	socket.on('topSongs', ({ userId, songs }) => {
-		let user = USERS.find((user) => user.id === userId)
-		let room = ROOMS.find((room) => room.code === user.room)
+		var db_user = users.findOne({ id: userId })
 
-		if (user && room) {
-			user.songs = songs
-			broadcastRoomUpdates(room)
-		} else {
-			console.log('[top songs] user or room not found', user, room)
+		if (!db_user) {
+			console.log('[error] user not found')
+			return
 		}
+
+		var db_room = rooms.findOne({ code: db_user.room })
+
+		if (!db_room) {
+			console.log('[error] room not found', db_room)
+			return
+		}
+
+		db_user.songs = songs
+		users.update(db_user)
+
+		for (let i = 0; i < db_room.users.length; i++) {
+			if (db_room.users[i].id == db_user.id) {
+				db_room.users[i] = db_user
+				rooms.update(db_room)
+				break
+			}
+		}
+
+		broadcastRoomUpdates(db_room)
 	})
 
 	socket.on('nextQuestion', ({ roomCode }) => {
-		let room = ROOMS.find((room) => room.code === roomCode)
-		room.nextQuestion()
+		var db_room = rooms.findOne({ code: roomCode })
 
-		if (room.status === roomStatus[2]) {
-			room.endGame()
+		db_room.usersGuessedOnCurrentQuestion = []
+		db_room.nrOfGuesses = 0
+		db_room.currentQuestion++
+		if (db_room.currentQuestion >= db_room.songs.length) {
+			db_room.status = roomStatus[2]
 		}
 
-		broadcastRoomUpdates(room)
+		// End game
+		if (db_room.status === roomStatus[2]) {
+			console.log(`[${roomCode}] compiling results...`)
+			db_room = compileResults(db_room)
+		}
+
+		rooms.update(db_room)
+
+		broadcastRoomUpdates(db_room)
 	})
 
 	socket.on('previousQuestion', ({ roomCode }) => {
-		let room = ROOMS.find((room) => room.code === roomCode)
-		room.previousQuestion()
+		var db_room = rooms.findOne({ code: roomCode })
 
-		broadcastRoomUpdates(room)
+		db_room.usersGuessedOnCurrentQuestion = []
+		db_room.nrOfGuesses = 0
+		if (db_room.currentQuestion != 0) {
+			db_room.currentQuestion--
+		}
+
+		rooms.update(db_room)
+
+		broadcastRoomUpdates(db_room)
 	})
 
 	socket.on('login-step-2', async (code) => {
 		let result = await loginStep2(socket, code)
 		socket.emit('loginData', result)
 	})
+
+	socket.on('getStoredSongInformation', ({ uuid }) => {
+		var db_user = users.findOne({ socketid: socket.id })
+
+		if (!db_user) {
+			socket.emit('logout', {
+				status: 500,
+				msg: 'Could not find your user, plase log in again.',
+			})
+			console.log('[error] user not found')
+			return
+		}
+
+		if (!uuid) {
+			return
+		}
+
+		for (let item of db_user.topItems) {
+			if (item.uuid === uuid) {
+				socket.emit('getStoredSongInformation', {
+					uuid: uuid,
+					item: item,
+				})
+				return
+			}
+		}
+	})
+
+	socket.on('getOldestSavedSong', ({ timeRange, itemType }) => {
+		var db_user = users.findOne({ socketid: socket.id })
+
+		let oldestSongUUID = null
+		let oldestDate = null
+
+		for (let item of db_user.topItems) {
+			if (item.itemType !== itemType || item.timeRange !== timeRange) {
+				continue
+			}
+
+			if (oldestSongUUID === null) {
+				oldestSongUUID = item.uuid
+				oldestDate = item.dateAdded
+			} else if (item.dateAdded < oldestDate) {
+				oldestSongUUID = item.uuid
+				oldestDate = item.dateAdded
+			}
+		}
+
+		socket.emit('getOldestSavedSong', {
+			uuid: oldestSongUUID,
+		})
+	})
+
+	socket.on(
+		'topItemsMapFromClient',
+		({ topItemsMap, timeRange, itemType, limit }, callback) => {
+			var db_user = users.findOne({ socketid: socket.id })
+
+			if (!db_user) {
+				socket.emit('logout', {
+					status: 500,
+					msg: 'Could not find your user, plase log in again.',
+				})
+				console.log('[error] user not found')
+				return
+			}
+
+			for (let i = 0; i < db_user.topItems.length; i++) {
+				const storedItem = db_user.topItems[i]
+
+				// Ignore songs with incorrect itemType and timeRange
+				if (
+					storedItem.itemType != itemType ||
+					storedItem.timeRange != timeRange
+				) {
+					continue
+				}
+
+				// Don't remove songs that are not in scope (i.e. under the limit of items)
+				// i.e. don't remove song with index 26 just because it's not included in this
+				// request with 25 songs
+				if (storedItem.index >= limit) {
+					continue
+				}
+
+				let found = false
+				for (let j = 0; j < topItemsMap.length; j++) {
+					const newItem = topItemsMap[j]
+					if (newItem.uuid == storedItem.uuid) {
+						found = true
+					}
+				}
+
+				if (!found) {
+					db_user.topItems.splice(i, 1)
+				}
+			}
+
+			for (let newItem of topItemsMap) {
+				let found = false
+				// if item is not in db_user.topItems, add it to the list
+				for (let oldItem of db_user.topItems) {
+					if (oldItem.uuid === newItem.uuid) {
+						found = true
+						// update the index of olditem
+						if (oldItem.index != newItem.index) {
+							console.log(
+								`[info] ${db_user.name} is updating index`
+							)
+							oldItem.previousIndex.push(oldItem.index)
+							oldItem.index = newItem.index
+						}
+						break
+					}
+				}
+				if (!found) {
+					db_user.topItems.push(newItem)
+				}
+			}
+
+			// Remove double items based on uuid
+			// db_user.topItems = db_user.topItems.filter(
+			// 	(item, index) =>
+			// 		db_user.topItems.findIndex(
+			// 			(item2) => item2.uuid === item.uuid
+			// 		) === index
+			// )
+
+			users.update(db_user)
+
+			callback({
+				status: 200,
+			})
+		}
+	)
+	socket.on('searchForUser', ({ name }) => {
+		console.log(`[info] searching for user ${name}`)
+		var res = users.find((user) => {
+			// loose match
+			return user.name.toLowerCase().includes(name.toLowerCase())
+		})
+
+		if (res.length == 0) {
+			socket.emit('searchForUser', {
+				status: 404,
+				msg: 'Could not find user',
+			})
+			return
+		}
+
+		socket.emit('searchForUser', {
+			status: 200,
+			searchResults: res,
+		})
+	})
 })
+
+const compileResults = (room) => {
+	/*
+	@input a room
+	@output a room with compiled results for each user
+	*/
+
+	const songs = room.songs
+	let users = room.users
+
+	const getBelongingUsersBySongId = (id) => {
+		/* 
+		@input: song id
+		@output list of users
+		*/
+		for (let song of songs) {
+			if (song.id == id) return song.users
+		}
+
+		return []
+	}
+
+	for (let user of users) {
+		let guesses = user.guesses
+		for (let guess of guesses) {
+			if (
+				getBelongingUsersBySongId(guess.songId).includes(guess.userId)
+			) {
+				user.points += 1
+				guess.correct = true
+			}
+		}
+	}
+
+	return room
+}
+
+const compileSongList = (room) => {
+	let songs = []
+
+	// For all users in a room
+	for (let u of room.users) {
+		// Check all their songs
+		for (let s of u.songs) {
+			// If a user song is already in the list of songs
+			let song = songs.find((song) => song.id === s.id)
+			if (song) {
+				// Add the user to that song
+				song.users.push(u.id)
+			} else {
+				// Create the song and add the user to it
+				let song = new Song(
+					s.id,
+					s.data.name,
+					s.data.artists[0].name,
+					s.data.album.images[0].url
+				)
+				song.users.push(u.id)
+				songs.push(song)
+			}
+		}
+	}
+
+	// Randomize song order
+	return songs.sort(() => Math.random() - 0.5)
+}
 
 httpServer.listen(PORT, '0.0.0.0')

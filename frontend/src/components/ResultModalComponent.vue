@@ -1,18 +1,21 @@
 <template>
-    <transition appear name="fade">
-        <div
-            id="result-modal"
-            class="fixed top-0 left-0 w-screen h-screen backdrop-brightness-50 backdrop-blur-md px-4 z-100 flex flex-col items-center overflow-scroll pb-24 pt-12"
-        >
-            <h1 class="text-white mt-4 text-2xl font-bold">Points: {{ player.points * 10 }}</h1>
-            <p class="text-white opacity-70">Per song answers for {{ player.name }}</p>
-            <div v-for="(song, index) in room.songs" :key="song.id" class="mt-6">
-                <SongCard :index="index" :title="song.name" :img="song.img" :artist="song.artist" />
-                <p class="text-white -mt-3 ml-3 opacity-70">Guess: {{ getGuessName(player.guesses, song.id) }}</p>
-                <p class="text-white ml-3 opacity-70">Correct answer: {{ getCorrectAnswerName(song.id) }}</p>
-            </div>
+    <div
+        id="result-modal"
+        class="fixed top-0 left-0 w-screen h-screen backdrop-brightness-50 backdrop-blur-md px-4 z-100 flex flex-col items-center overflow-scroll pb-24 pt-12"
+    >
+        <h1 class="text-white mt-4 text-2xl font-bold">Points: {{ player.points * 10 }}</h1>
+        <p class="text-white opacity-70">Per song answers for {{ player.name }}</p>
+        <div v-for="(song, index) in room.songs" :key="song.id" class="mt-6">
+            <SongResultCard :index="index" :song="song" />
+            <p class="text-white -mt-3 ml-3 opacity-70">Guess: {{ getGuessName(player.guesses, song.id) }}</p>
+            <p
+                class="text-white ml-3 opacity-70"
+                :style="`color: ${getGuessName(player.guesses, song.id) == getCorrectAnswerName(song.id) ? '#1DB753' : '#D72827'}`"
+            >
+                Correct answer: {{ getCorrectAnswerName(song.id) }}
+            </p>
         </div>
-    </transition>
+    </div>
     <div class="chat-close-button fixed top-8 right-8">
         <button class="btn btn-circle bg-red-600 border-0 shadow-xl" @click="close">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="white">
@@ -23,10 +26,10 @@
 </template>
 
 <script>
-import SongCard from './SongCardComponent.vue'
+import SongResultCard from './SongResultCardComponent.vue'
 
 export default {
-    components: { SongCard },
+    components: { SongResultCard },
     props: {
         room: {
             type: Object,
