@@ -63,11 +63,10 @@ import UserCard from './UserCard.vue'
 import PageTitle from './PageTitle.vue'
 import { mapWritableState } from 'pinia'
 import { useUserStore } from '@/stores/user'
-import SongCard from './SongCardComponent.vue'
 import MusicPlayerComponent from './MusicPlayerComponent.vue'
 
 export default {
-    components: { UserCard, PageTitle, SongCard, MusicPlayerComponent },
+    components: { UserCard, PageTitle, MusicPlayerComponent },
     props: {
         players: {
             type: Array,
