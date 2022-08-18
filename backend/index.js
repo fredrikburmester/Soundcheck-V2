@@ -167,6 +167,17 @@ io.on('connection', (socket) => {
 		}
 	})
 
+	socket.on('deleteRoom', ({ roomCode }) => {
+		console.log('[deleteRoom]', roomCode)
+		var db_room = rooms.findOne({ code: roomCode })
+
+		if (db_room) {
+			rooms.remove(db_room)
+		}
+
+		io.emit('roomDeleted', roomCode)
+	})
+
 	socket.on(
 		'createRoom',
 		({

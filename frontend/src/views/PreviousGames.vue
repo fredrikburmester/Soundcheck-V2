@@ -49,6 +49,9 @@ export default {
             this.games = games
             this.loading = false
         },
+        roomDeleted(code) {
+            this.games = this.games.filter((game) => game.code != code)
+        },
     },
 }
 </script>
