@@ -135,4 +135,14 @@ input {
     -webkit-text-fill-color: transparent;
     font: bold;
 }
+
+.fade-enter-active,
+.fade-leave-active {
+    transition: all 0.5s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+}
 </style>
