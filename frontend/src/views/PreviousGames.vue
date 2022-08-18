@@ -46,7 +46,6 @@ export default {
     },
     sockets: {
         playerGames(games) {
-            console.log(games)
             this.games = games
             this.loading = false
         },
