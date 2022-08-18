@@ -195,6 +195,17 @@ io.on('connection', (socket) => {
 					return
 				}
 
+				console.log(db_user)
+
+				if (db_user.room) {
+					socket.emit('redirect', {
+						status: 303,
+						msg: 'You already have a room in progress, if you want to create a new room, please leave the current room first.',
+						route: `/room/${db_user.room}`,
+					})
+					return
+				}
+
 				if (db_room) {
 					if (db_room.status === roomStatus[0]) {
 						socket.emit('redirect', {
@@ -202,11 +213,13 @@ io.on('connection', (socket) => {
 							msg: 'The room already exists and was not created by you. Redirecting you to the active room',
 							route: `/room/${db_room.code}`,
 						})
+						return
 					} else if (db_room.status === roomStatus[1]) {
 						socket.emit('error', {
 							status: 401,
 							msg: 'The room already exists and is in progress. Try creating a new room!',
 						})
+						return
 					} else if (db_room.status === roomStatus[2]) {
 						// socket redirect to result page
 						socket.emit('redirect', {
@@ -214,6 +227,7 @@ io.on('connection', (socket) => {
 							msg: 'Game has ended. Check out the results!',
 							route: `/room/${db_room.code}`,
 						})
+						return
 					}
 				} else {
 					const today = new Date()
@@ -648,15 +662,7 @@ io.on('connection', (socket) => {
 		socket.emit('loginData', result)
 	})
 
-	socket.on('getTopItemsFromBackend', ({ topItems, itemType, timeRange }) => {
-		/* 
-		Take a list of new top items (directly from spotify) sent from the frontend
-		and check if the new items are already stored, and if so, update the stored item
-
-		Go through the stored items and check if there are old items that should be removed
-
-		Go through the new list and if the item is not stored, add it to the list
-		*/
+	socket.on('getStoredSongInformation', ({ uuid }) => {
 		var db_user = users.findOne({ socketid: socket.id })
 
 		if (!db_user) {
@@ -668,64 +674,147 @@ io.on('connection', (socket) => {
 			return
 		}
 
-		console.log(
-			`[${db_user.name}] requesting top items from backend, type: ${itemType}, time range: ${timeRange}`
-		)
-		console.log(`[${db_user.name}] top items: ${db_user.topItems.length}`)
+		if (!uuid) {
+			return
+		}
 
-		// Go though and remove all stored songs that are no longer a top song
-		for (let i = 0; i < db_user.topItems.length; i++) {
-			const storedItem = db_user.topItems[i]
-
-			// Don't remove other songs
-			if (itemType == 'tracks') {
-				if (storedItem.type != 'track') continue
+		for (let item of db_user.topItems) {
+			if (item.uuid === uuid) {
+				socket.emit('getStoredSongInformation', {
+					uuid: uuid,
+					item: item,
+				})
+				return
 			}
+		}
+	})
 
-			if (storedItem.timeRange != timeRange) {
+	socket.on('getOldestSavedSong', ({ timeRange, itemType }) => {
+		var db_user = users.findOne({ socketid: socket.id })
+
+		let oldestSongUUID = null
+		let oldestDate = null
+
+		for (let item of db_user.topItems) {
+			if (item.itemType !== itemType || item.timeRange !== timeRange) {
 				continue
 			}
 
-			let found = false
-			for (let j = 0; j < topItems.length; j++) {
-				const newItem = topItems[j]
-				if (newItem.uuid == storedItem.uuid) {
-					found = true
-				}
-			}
-
-			if (!found) {
-				db_user.topItems.splice(i, 1)
+			if (oldestSongUUID === null) {
+				oldestSongUUID = item.uuid
+				oldestDate = item.dateAdded
+			} else if (item.dateAdded < oldestDate) {
+				oldestSongUUID = item.uuid
+				oldestDate = item.dateAdded
 			}
 		}
 
-		users.update(db_user)
+		socket.emit('getOldestSavedSong', {
+			uuid: oldestSongUUID,
+		})
+	})
 
-		for (let newItem of topItems) {
-			// if item is not in db_user.topItems, add it to the list
-			for (let oldItem of db_user.topItems) {
-				if (oldItem.uuid === newItem.uuid) {
-					// update the index of olditem
-					if (oldItem.index != newItem.index) {
-						oldItem.previousIndex = oldItem.index
-						oldItem.index = newItem.index
+	socket.on(
+		'topItemsMapFromClient',
+		({ topItemsMap, timeRange, itemType, limit }, callback) => {
+			var db_user = users.findOne({ socketid: socket.id })
+
+			if (!db_user) {
+				socket.emit('logout', {
+					status: 500,
+					msg: 'Could not find your user, plase log in again.',
+				})
+				console.log('[error] user not found')
+				return
+			}
+
+			for (let i = 0; i < db_user.topItems.length; i++) {
+				const storedItem = db_user.topItems[i]
+
+				// Ignore songs with incorrect itemType and timeRange
+				if (
+					storedItem.itemType != itemType ||
+					storedItem.timeRange != timeRange
+				) {
+					continue
+				}
+
+				// Don't remove songs that are not in scope (i.e. under the limit of items)
+				// i.e. don't remove song with index 26 just because it's not included in this
+				// request with 25 songs
+				if (storedItem.index >= limit) {
+					continue
+				}
+
+				let found = false
+				for (let j = 0; j < topItemsMap.length; j++) {
+					const newItem = topItemsMap[j]
+					if (newItem.uuid == storedItem.uuid) {
+						found = true
 					}
-					break
+				}
+
+				if (!found) {
+					db_user.topItems.splice(i, 1)
 				}
 			}
-			db_user.topItems.push(newItem)
+
+			for (let newItem of topItemsMap) {
+				let found = false
+				// if item is not in db_user.topItems, add it to the list
+				for (let oldItem of db_user.topItems) {
+					if (oldItem.uuid === newItem.uuid) {
+						found = true
+						// update the index of olditem
+						if (oldItem.index != newItem.index) {
+							console.log(
+								`[info] ${db_user.name} is updating index`
+							)
+							oldItem.previousIndex.push(oldItem.index)
+							oldItem.index = newItem.index
+						}
+						break
+					}
+				}
+				if (!found) {
+					db_user.topItems.push(newItem)
+				}
+			}
+
+			// Remove double items based on uuid
+			// db_user.topItems = db_user.topItems.filter(
+			// 	(item, index) =>
+			// 		db_user.topItems.findIndex(
+			// 			(item2) => item2.uuid === item.uuid
+			// 		) === index
+			// )
+
+			users.update(db_user)
+
+			callback({
+				status: 200,
+			})
+		}
+	)
+	socket.on('searchForUser', ({ name }) => {
+		console.log(`[info] searching for user ${name}`)
+		var res = users.find((user) => {
+			// loose match
+			return user.name.toLowerCase().includes(name.toLowerCase())
+		})
+
+		if (res.length == 0) {
+			socket.emit('searchForUser', {
+				status: 404,
+				msg: 'Could not find user',
+			})
+			return
 		}
 
-		// Remove double items based on uuid
-		db_user.topItems = db_user.topItems.filter(
-			(item, index) =>
-				db_user.topItems.findIndex(
-					(item2) => item2.uuid === item.uuid
-				) === index
-		)
-
-		users.update(db_user)
-		socket.emit('sendTopItemsFromBackend', db_user.topItems)
+		socket.emit('searchForUser', {
+			status: 200,
+			searchResults: res,
+		})
 	})
 })
 
