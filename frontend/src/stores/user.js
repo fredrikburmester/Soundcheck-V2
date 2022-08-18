@@ -15,6 +15,7 @@ export const useUserStore = defineStore({
         notification: useLocalStorage('notification', ''),
         notificationType: useLocalStorage('notificationType', 'error'),
         notifications: useLocalStorage('notifications', []),
+        features: useLocalStorage('features', []),
         socketid: useLocalStorage('socketid', ''),
         topItems: [],
         activeUsers: 0,
@@ -31,6 +32,7 @@ export const useUserStore = defineStore({
         storeState.notification = useLocalStorage('notification', '')
         storeState.notificationType = useLocalStorage('notificationType', 'error')
         storeState.notifications = useLocalStorage('notifications', [])
+        storeState.features = useLocalStorage('features', [])
         storeState.socketid = useLocalStorage('socketid', '')
         storeState.activeUsers = 0
     },
@@ -116,20 +118,28 @@ export const useUserStore = defineStore({
                 })
             return result
         },
-        async getTopSongs(time_range, limit, type) {
-            if (!time_range) {
-                time_range = 'medium_term'
+        async getMoreTopSongs(timeRange, itemType, limit, offset) {
+            if (!timeRange) {
+                console.error('time_range is required')
+                return
             }
 
             if (!limit) {
-                limit = 25
+                console.error('No limit specified')
+                return
             }
 
-            if (!type) {
-                type = 'tracks'
+            if (itemType != 'tracks' && itemType != 'artists') {
+                console.error('type must be either tracks or artists')
+                return
             }
 
-            const url = `https://api.spotify.com/v1/me/top/${type}?time_range=${time_range}&limit=${limit}`
+            if (!offset) {
+                console.error('no offset specified')
+                return
+            }
+
+            const url = `https://api.spotify.com/v1/me/top/${itemType}?time_range=${timeRange}&limit=${limit}&offset=${offset}`
             await fetch(url, {
                 headers: {
                     Accept: 'application/json',
@@ -151,11 +161,11 @@ export const useUserStore = defineStore({
                         let trackItem = {
                             data: track,
                             id: track.id,
-                            uuid: `${track.id}-${type}-${time_range}`,
-                            type: type === 'tracks' ? 'track' : 'artist',
-                            timeRange: time_range,
-                            index: i,
-                            previousIndex: null,
+                            uuid: `${track.id}-${itemType}-${timeRange}`,
+                            itemType: itemType,
+                            timeRange: timeRange,
+                            index: offset + i,
+                            previousIndex: [],
                             dateAdded: new Date(),
                         }
 
@@ -170,12 +180,103 @@ export const useUserStore = defineStore({
                             this.topItems.push(trackItem)
                         }
                     }
-                    console.log('[from spotify]', this.topItems)
+                })
+            return this.topItems
+        },
+        async getTopSongs(timeRange, limit, itemType) {
+            if (!timeRange) {
+                console.error('timeRange is required')
+                return
+            }
+
+            if (!limit) {
+                console.error('No limit specified')
+                return
+            }
+
+            if (itemType != 'tracks' && itemType != 'artists') {
+                console.error('itemType must be either tracks or artists')
+                return
+            }
+
+            this.topItems = []
+
+            const url = `https://api.spotify.com/v1/me/top/${itemType}?time_range=${timeRange}&limit=${limit}`
+            await fetch(url, {
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer ' + this.token,
+                },
+            })
+                .then((response) => {
+                    return response.json()
+                })
+                .then((data) => {
+                    if (data.error) {
+                        this.logout()
+                        return
+                    }
+
+                    for (let i = 0; i < data.items.length; i++) {
+                        const track = data.items[i]
+                        let trackItem = {
+                            data: track,
+                            id: track.id,
+                            uuid: `${track.id}-${itemType}-${timeRange}`,
+                            itemType: itemType,
+                            timeRange: timeRange,
+                            index: i,
+                            previousIndex: [],
+                            dateAdded: new Date(),
+                        }
+
+                        let found = false
+                        for (let j = 0; j < this.topItems.length; j++) {
+                            if (this.topItems[j].uuid === trackItem.uuid) {
+                                found = true
+                                break
+                            }
+                        }
+                        if (!found) {
+                            this.topItems.push(trackItem)
+                        }
+                    }
                     return this.topItems
                 })
-            console.log('[from spotify]', this.topItems)
-
             return this.topItems
+        },
+        async getSongFeatures(ids) {
+            let idString = ''
+            for (let i = 0; i < ids.length; i++) {
+                idString += ids[i]
+                if (i !== ids.length - 1) {
+                    idString += ','
+                }
+            }
+
+            const url = `https://api.spotify.com/v1/audio-features?ids=${idString}`
+            let res = null
+            await fetch(url, {
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer ' + this.token,
+                },
+            })
+                .then((response) => {
+                    return response.json()
+                })
+                .then((data) => {
+                    if (data.error) {
+                        this.logout()
+                        return
+                    }
+                    res = data.audio_features
+                })
+
+            this.features = res
+            return this.features
         },
         async getUser() {
             let user = null
