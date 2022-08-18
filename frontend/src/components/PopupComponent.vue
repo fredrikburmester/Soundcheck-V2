@@ -64,7 +64,7 @@ export default {
     mounted() {
         setTimeout(() => {
             this.notification = ''
-        }, 3000)
+        }, 5000)
     },
     sockets: {},
     methods: {},
