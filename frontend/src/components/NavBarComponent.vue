@@ -11,7 +11,6 @@ const router = useRouter()
 let notificationPanelOpen = ref(false)
 let navbarOpen = ref(false)
 let profileOpen = ref(false)
-let roomCode = ref(route.params.id)
 
 watch(route, () => {
     navbarOpen.value = false
@@ -161,7 +160,7 @@ const logout = () => {
 <template>
     <div>
         <a href="/" class="z-101">
-            <img src="/public/favicon.png" alt="logo" class="w-6 h-6 mt-5 ml-6 z-100 fixed top-0 left-0" />
+            <img src="/favicon.png" alt="logo" class="w-6 h-6 mt-5 ml-6 z-100 fixed top-0 left-0" />
         </a>
     </div>
     <div class="w-screen h-16 bg-base-100 fixed top-0 z-100"></div>
