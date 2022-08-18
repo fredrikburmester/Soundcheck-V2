@@ -1,22 +1,22 @@
 <template>
     <div class="indicator" :style="style">
-        <span v-if="newArtist()" class="indicator-item indicator-top indicator-start badge badge-info mt-36">New</span>
+        <!-- <span v-if="newArtist()" class="indicator-item indicator-top indicator-start badge badge-info mt-36">New</span>
         <span v-if="unique && !(!newArtist() && oldest)" class="indicator-item badge badge-error z-100">Rare</span>
         <span v-if="!newArtist() && oldest && !unique" class="indicator-item badge badge-secondary z-100">Old</span>
         <span v-if="artist.previousIndex != null && artist.previousIndex < artist.index" class="indicator-item indicator-start badge badge-success"></span>
-        <span v-if="artist.previousIndex != null && artist.previousIndex > artist.index" class="indicator-item indicator-start badge badge-error"></span>
+        <span v-if="artist.previousIndex != null && artist.previousIndex > artist.index" class="indicator-item indicator-start badge badge-error"></span> -->
 
-        <template v-if="unique && !newArtist() && oldest">
+        <!-- <template v-if="unique && !newArtist() && oldest">
             <span v-if="unique" class="indicator-item indicator-end badge badge-error z-100">Rare</span>
             <span v-if="!newArtist() && oldest" class="indicator-item badge badge-secondary z-100 -translate-x-8">Old</span>
-        </template>
+        </template> -->
 
         <div v-show="loaded" class="card max-w-2xl bg-base-100 shadow-xl image-full mb-4" :style="style" @click="expand">
             <img :src="artist.data.images[0].url" class="w-100" alt="album cover" @load="loaded = true" />
             <div class="card-body py-2 px-4 flex flex-row pt-6" :style="style">
                 <div class="flex flex-col w-full">
                     <div class="flex flex-row items-center">
-                        <p class="text-3xl opacity-50">#{{ artist.index + 1 }}</p>
+                        <p class="text-3xl opacity-70">#{{ artist.index + 1 }}</p>
                         <div class="text-right flex flex-col items-end">
                             <h2 :key="expanded" class="card-title ml-4 text-sm overflow-hidden">
                                 {{ shortText(artist.data.name, 23) }}
@@ -29,8 +29,8 @@
                         <div>
                             Top artist since: <span class="opacity-50">{{ dateString(artist.dateAdded) }}</span>
                         </div>
-                        <div v-if="unique" class="text-error font-bold">Rare top artist!</div>
-                        <div v-if="!newArtist() && oldest" class="text-secondary font-bold">Long time favuorite!</div>
+                        <!-- <div v-if="unique" class="text-error font-bold">Rare top artist!</div> -->
+                        <!-- <div v-if="!newArtist() && oldest" class="text-secondary font-bold">Long time favuorite!</div> -->
                     </div>
                     <button class="btn btn-sm btn-success w-44 mt-2" @click="openInSpotify">Open in spotify</button>
                 </div>
