@@ -166,6 +166,8 @@ export default {
             this.makePlayerGuessId = id
         },
         guess(id) {
+            this.makePlayerGuessId = id
+
             const guess = {
                 songID: this.room_.songs[this.currentQuestion].id,
                 questionNumber: this.currentQuestion,
