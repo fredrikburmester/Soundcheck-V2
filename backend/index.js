@@ -44,7 +44,7 @@ var db = new loki('soundcheck.db', {
 	autosaveInterval: 4000,
 })
 
-cron.schedule('*/1 * * * *', () => {
+cron.schedule('0 * * * *', () => {
 	console.log('[info] Running scheduled tasks')
 	clearOldRooms()
 	console.log('[info] Done with scheduled tasks')
