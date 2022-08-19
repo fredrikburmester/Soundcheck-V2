@@ -27,12 +27,6 @@ const socket = io(socket_url, {
     autoConnect: true,
 })
 
-import { registerSW } from 'virtual:pwa-register'
-
-if ('serviceWorker' in navigator) {
-    registerSW()
-}
-
 app.use(VueSocketIOExt, socket)
 app.use(router)
 app.component(VueFeather.name, VueFeather)
