@@ -13,6 +13,8 @@ import { Message } from './Message.js'
 
 import loki from 'lokijs'
 
+import * as cron from 'node-cron'
+
 const app = express()
 const httpServer = createServer()
 const io = new Server(httpServer, {
@@ -41,6 +43,34 @@ var db = new loki('soundcheck.db', {
 	autosave: true,
 	autosaveInterval: 4000,
 })
+
+cron.schedule('*/1 * * * *', () => {
+	console.log('[info] Running scheduled tasks')
+	clearOldRooms()
+	console.log('[info] Done with scheduled tasks')
+})
+
+const clearOldRooms = () => {
+	try {
+		let db_rooms = rooms.where(
+			(room) =>
+				room.status != roomStatus[2] &&
+				new Date(room.date).getTime() < Date.now() - 1000 * 60 * 60 * 24
+		)
+
+		for (let room of db_rooms) {
+			io.to(room.code).emit('redirect', {
+				status: 303,
+				msg: 'This room has been removed due to inactivity.',
+				route: `/`,
+			})
+			console.log(`[info] Removed room ${room.code}. Reason: Old`)
+			rooms.remove(room)
+		}
+	} catch (error) {
+		console.log(error)
+	}
+}
 
 // Implement the autoloadback referenced in loki constructor
 function databaseInitialize() {
@@ -175,7 +205,7 @@ io.on('connection', (socket) => {
 			rooms.remove(db_room)
 		}
 
-		io.emit('roomDeleted', roomCode)
+		socket.emit('roomDeleted', roomCode)
 	})
 
 	socket.on(
@@ -262,7 +292,8 @@ io.on('connection', (socket) => {
 						users: [],
 						code: roomCode,
 						guesses: [],
-						date: formattedToday,
+						date: Date.now(),
+						prettyDate: formattedToday,
 						settings: {
 							timeRange: timeRange,
 							nrOfSongs: nrOfSongs,
