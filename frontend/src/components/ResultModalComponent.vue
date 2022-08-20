@@ -15,7 +15,7 @@
                 Correct answer: {{ getCorrectAnswerName(song.id) }}
             </p>
         </div> -->
-        <div v-for="(guess, index) in room.guesses.filter((guess) => guess.playerWhoGuessed == id)" :key="guess" class="mt-6">
+        <div v-for="(guess, index) in room.guesses.filter((guess) => guess.playerWhoGuessed == player.id)" :key="guess" class="mt-6">
             <SongResultCard :index="index" :song="getSongById(guess.songID)" />
             <p class="text-white -mt-3 ml-3 opacity-70">Guess: {{ guess.playerGuessedOn }}</p>
             <p class="text-white ml-3 opacity-70" :style="`color: ${guess.correct.includes(guess.playerGuessedOn) ? '#1DB753' : '#D72827'}`">
