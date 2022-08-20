@@ -97,9 +97,9 @@ export default {
                     newHeight += 22.5
                 }
 
-                if (this.artist.previousIndex != null && this.oldest) {
-                    newHeight += 22.5
-                }
+                // if (this.artist.previousIndex != null && this.oldest) {
+                //     newHeight += 22.5
+                // }
 
                 this.height = newHeight + 'px'
             } else {

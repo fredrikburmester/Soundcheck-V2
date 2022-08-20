@@ -2,11 +2,11 @@
     <div>
         <transition name="fade" mode="out-in">
             <div v-show="loaded" class="indicator">
-                <span v-if="previousIndex == null && newSong()" class="indicator-item indicator-top indicator-start badge badge-info mt-36">New</span>
+                <!-- <span v-if="previousIndex == null && newSong()" class="indicator-item indicator-top indicator-start badge badge-info mt-36">New</span> -->
                 <span v-if="previousIndex != null && previousIndex > index" class="indicator-item indicator-start badge badge-success">↑</span>
                 <span v-if="previousIndex != null && previousIndex < index" class="indicator-item indicator-start badge badge-error">↓</span>
                 <span v-if="unique" class="indicator-item badge badge-error z-100">Rare</span>
-                <span v-if="oldest == song.uuid" class="indicator-item badge badge-warning z-100">Old</span>
+                <!-- <span v-if="oldest == song.uuid" class="indicator-item badge badge-warning z-100">Old</span> -->
 
                 <div class="card max-w-2xl bg-base-100 shadow-xl image-full mb-4" @click="expand">
                     <img :src="song.data.album.images[0].url" class="w-100" alt="album cover" @load="loaded = true" />
@@ -31,11 +31,11 @@
                                 </div>
                             </div>
                             <div v-if="dateAdded != null">
-                                Top song since: <span class="opacity-50">{{ dateString(song.dateAdded) }}</span>
+                                Top song (here) since: <span class="opacity-50">{{ dateString(song.dateAdded) }}</span>
                             </div>
                             <div v-if="unique" class="text-error font-bold">Unpopular song!</div>
-                            <div v-if="newSong()" class="text-info font-bold">This is a new top song!</div>
-                            <div v-if="oldest == song.uuid" class="text-secondary font-bold">Long time favuorite!</div>
+                            <!-- <div v-if="newSong()" class="text-info font-bold">This is a new top song!</div> -->
+                            <!-- <div v-if="oldest == song.uuid" class="text-secondary font-bold">Long time favuorite!</div> -->
 
                             <button class="btn btn-sm btn-success w-44 mt-2" @click="openInSpotify">Open in spotify</button>
                         </div>
@@ -118,13 +118,13 @@ export default {
                     newHeight += 22.5
                 }
 
-                if (this.newSong()) {
-                    newHeight += 22.5
-                }
+                // if (this.newSong()) {
+                //     newHeight += 22.5
+                // }
 
-                if (this.oldest == this.song.uuid) {
-                    newHeight += 22.5
-                }
+                // if (this.oldest == this.song.uuid) {
+                //     newHeight += 22.5
+                // }
 
                 this.height = newHeight
             } else {
