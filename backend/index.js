@@ -891,6 +891,17 @@ io.on('connection', (socket) => {
 			})
 		}
 	)
+
+	socket.on('getActiveGames', () => {
+		let activeGames = rooms.find({
+			status: roomStatus[0],
+		})
+
+		socket.emit('getActiveGames', {
+			activeGames: activeGames,
+		})
+	})
+
 	socket.on('searchForUser', ({ name }) => {
 		console.log(`[info] searching for user ${name}`)
 		var res = users.find((user) => {
