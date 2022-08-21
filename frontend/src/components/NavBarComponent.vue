@@ -267,8 +267,8 @@ const logout = () => {
                     "
                 >
                     <transition name="slide-from-right">
-                        <ul v-if="profileOpen" class="mt-3 p-2 shadow menu menu-compact fixed top-14 right-2 bg-base-300 rounded-box w-64">
-                            <li class="mb-2">
+                        <ul v-if="profileOpen" class="mt-3 shadow menu menu-compact fixed top-14 right-2 bg-base-300 rounded-box w-64 p-4">
+                            <li class="rounded-none">
                                 <p>
                                     Logged in as:
                                     <br />
@@ -277,7 +277,7 @@ const logout = () => {
                                     {{ userStore.id }}
                                 </p>
                             </li>
-                            <li><a class="bg-red-600 text-black font-bold" @click="logout">Logout</a></li>
+                            <li class="rounded-none"><a class="bg-red-600 text-white rounded-none mx-2" @click="logout">Log out</a></li>
                         </ul>
                     </transition>
                 </on-click-outside>
@@ -313,5 +313,8 @@ const logout = () => {
 }
 .indicator {
     overflow: visible !important;
+}
+.rounded-none {
+    border-radius: 10px !important;
 }
 </style>
