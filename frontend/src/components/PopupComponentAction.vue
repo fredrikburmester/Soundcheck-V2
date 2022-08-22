@@ -75,14 +75,12 @@ export default {
             this.countdownValue--
             if (this.countdownValue === 0) {
                 this.notificationAction = false
-                this.notificationActionStop = true
             }
         }, 1000)
     },
     methods: {
         run() {
             this.notificationAction = false
-            this.notificationActionStop = true
             this.notificationActionFunction()
         },
     },
