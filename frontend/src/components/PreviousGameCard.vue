@@ -5,7 +5,7 @@
                 <div class="flex flex-row items-center">
                     <div class="flex flex-col items-start">
                         <h2 class="card-title">{{ room.code }}</h2>
-                        <p class="italic text-slate-400">{{ room.date }}</p>
+                        <p class="italic text-slate-400">{{ timeStampToDate(room.date) }}</p>
 
                         <ul>
                             <li v-for="player in room.users" :key="player">{{ player.name }}</li>
@@ -31,6 +31,10 @@ export default {
         },
         deleteRoom() {
             this.$socket.client.emit('deleteRoom', { roomCode: this.room.code })
+        },
+        timeStampToDate(timestamp) {
+            const date = new Date(timestamp)
+            return date.toLocaleString()
         },
     },
 }
