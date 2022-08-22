@@ -19,6 +19,12 @@ export const useUserStore = defineStore({
         socketid: useLocalStorage('socketid', ''),
         topItems: [],
         activeUsers: 0,
+        notificationAction: false,
+        notificationActionType: '',
+        notificationActionButtonText: '',
+        notificationActionMessage: '',
+        notificationActionFunction: () => {},
+        notificationActionStop: useLocalStorage('notificationActionStop', false),
     }),
     hydrate(storeState) {
         storeState.authenticated = useLocalStorage('authenticated', false)
@@ -35,6 +41,7 @@ export const useUserStore = defineStore({
         storeState.features = useLocalStorage('features', [])
         storeState.socketid = useLocalStorage('socketid', '')
         storeState.activeUsers = 0
+        storeState.notificationActionStop = useLocalStorage('notificationActionStop', false)
     },
     getters: {
         isAuthenticated: (state) => state.authenticated,

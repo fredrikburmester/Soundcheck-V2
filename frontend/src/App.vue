@@ -7,6 +7,7 @@ import { mapWritableState, mapActions } from 'pinia'
 import PopupComponent from './components/PopupComponent.vue'
 
 import { useWebNotification } from '@vueuse/core'
+import PopupComponentAction from './components/PopupComponentAction.vue'
 
 // import { useVibrate } from '@vueuse/core'
 // import { watch } from 'vue'
@@ -18,11 +19,13 @@ export default {
         NavBar,
         RouterView,
         PopupComponent,
+        PopupComponentAction,
     },
     setup() {},
     data() {
         return {
             route: this.$route,
+            version: '1.0.0',
         }
     },
     computed: {
@@ -37,6 +40,12 @@ export default {
             'socketid',
             'display_name',
             'avatar',
+            'notificationActionType',
+            'notificationActionMessage',
+            'notificationActionButtonText',
+            'notificationActionFunction',
+            'notificationAction',
+            'notificationActionStop',
         ]),
     },
     methods: {
@@ -110,6 +119,19 @@ export default {
                 show()
             }
         },
+        currentVersion({ version }) {
+            console.log('currentVersion', version)
+            if (version > this.version && this.notificationActionStop == false) {
+                this.notificationActionType = 'success'
+                this.notificationActionMessage = 'New version available'
+                this.notificationActionButtonText = 'Update'
+                this.notificationActionFunction = () => {
+                    location.reload(true)
+                }
+                this.notificationAction = true
+            }
+            // reload window in 5 seconds
+        },
     },
 }
 </script>
@@ -128,6 +150,7 @@ export default {
     <div id="chat-target"></div>
     <div id="modal-target"></div>
     <PopupComponent class="z-100" />
+    <PopupComponentAction class="z-100" />
 </template>
 
 <style>

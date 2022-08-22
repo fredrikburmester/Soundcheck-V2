@@ -32,6 +32,8 @@ console.log(`Callback URL: ${process.env.CALLBACK_URL}`)
 console.log(`CLIENT_ID: ${process.env.CLIENT_ID}`)
 console.log(`CLIENT_SECRET: ${process.env.CLIENT_SECRET}`)
 
+const currentVersion = '1.1.0'
+
 app.use(cors())
 
 var users = null
@@ -102,6 +104,10 @@ const getActiveGames = () => {
 
 io.on('connection', (socket) => {
 	socket.emit('connected', socket.id)
+
+	socket.emit('currentVersion', {
+		version: currentVersion,
+	})
 
 	socket.on('getPlayerGames', ({ userId }) => {
 		var db_rooms = rooms.where(function (room) {
