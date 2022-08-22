@@ -187,14 +187,14 @@ const logout = () => {
                     <transition name="slide-from-left">
                         <ul v-if="navbarOpen" class="menu menu-dropdown mt-3 p-2 bg-base-300 shadow rounded-box w-72">
                             <li><router-link class="font-bold" to="/">Home</router-link></li>
+                            <hr class="opacity-10 mx-4 my-2" />
                             <li><router-link class="font-bold" to="/play">Play</router-link></li>
+                            <hr class="opacity-10 mx-4 my-2" />
                             <li><router-link class="font-bold" to="/previous-games">Previous Games</router-link></li>
-                            <li><router-link class="font-bold" to="/my-top/tracks">My top tracks</router-link></li>
+                            <hr class="opacity-10 mx-4 my-2" />
+                            <li><router-link class="font-bold" to="/my-top/tracks">My Top Tracks</router-link></li>
                             <li>
-                                <router-link class="font-bold justify-between" to="/my-top/artists">
-                                    My top artists
-                                    <span class="badge badge-success">New</span>
-                                </router-link>
+                                <router-link class="font-bold justify-between" to="/my-top/artists"> My Top Artists </router-link>
                             </li>
                             <hr v-if="userStore.roomCode" class="opacity-10 my-4 mx-4" />
                             <p v-if="userStore.roomCode" class="font-bold text-md ml-4 mb-2">{{ userStore.roomCode }}</p>
