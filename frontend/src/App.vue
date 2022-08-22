@@ -121,7 +121,7 @@ export default {
         },
         currentVersion({ version }) {
             console.log('currentVersion', version)
-            if (version > this.version && this.notificationActionStop == false) {
+            if (version > this.version) {
                 this.notificationActionType = 'success'
                 this.notificationActionMessage = 'New version available'
                 this.notificationActionButtonText = 'Update'
