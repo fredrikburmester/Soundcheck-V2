@@ -7,7 +7,7 @@
                     <span class="text-primary">Soundcheck</span>
                     is a game to play with your friends! Create a room, invite your friends, and guess each others favorite songs.
                     <span class="font-bold"> Listen to music, chat and have fun together!</span> <br /><br />
-                    After the game you can create a mix-tape of all your favorite songs, perfect for a party.
+                    After the game you can create a mix-tape of all your favorite songs, perfect for a party!
                 </p>
             </div>
             <div class="card flex-shrink-0 w-full max-w-sm shadow-2xl bg-base-300">

@@ -32,7 +32,7 @@ console.log(`Callback URL: ${process.env.CALLBACK_URL}`)
 console.log(`CLIENT_ID: ${process.env.CLIENT_ID}`)
 console.log(`CLIENT_SECRET: ${process.env.CLIENT_SECRET}`)
 
-const currentVersion = 3
+const currentVersion = 4
 
 app.use(cors())
 
