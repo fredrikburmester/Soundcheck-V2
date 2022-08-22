@@ -25,7 +25,7 @@ export default {
     data() {
         return {
             route: this.$route,
-            version: 4,
+            version: 5,
         }
     },
     computed: {

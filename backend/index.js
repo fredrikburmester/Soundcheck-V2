@@ -32,7 +32,7 @@ console.log(`Callback URL: ${process.env.CALLBACK_URL}`)
 console.log(`CLIENT_ID: ${process.env.CLIENT_ID}`)
 console.log(`CLIENT_SECRET: ${process.env.CLIENT_SECRET}`)
 
-const currentVersion = 4
+const currentVersion = 5
 
 app.use(cors())
 
@@ -908,11 +908,11 @@ io.on('connection', (socket) => {
 		})
 	})
 
-	socket.on('searchForUser', ({ name }) => {
-		console.log(`[info] searching for user ${name}`)
-		var res = users.find((user) => {
+	socket.on('searchForUser', ({ searchText }) => {
+		console.log(`[info] searching for user ${searchText}`)
+		var res = users.where((user) => {
 			// loose match
-			return user.name.toLowerCase().includes(name.toLowerCase())
+			return user.name.toLowerCase().includes(searchText.toLowerCase())
 		})
 
 		if (res.length == 0) {
@@ -926,6 +926,22 @@ io.on('connection', (socket) => {
 		socket.emit('searchForUser', {
 			status: 200,
 			searchResults: res,
+		})
+	})
+
+	socket.on('getUserById', ({ id }) => {
+		var res = users.findOne({ id: id })
+		if (!res) {
+			socket.emit('getUserById', {
+				status: 404,
+				msg: 'Could not find user',
+			})
+			return
+		}
+
+		socket.emit('getUserById', {
+			status: 200,
+			user: res,
 		})
 	})
 })

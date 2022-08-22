@@ -1,6 +1,6 @@
 {
 	"name": "soundcheck-v2-backend",
-	"version": "4",
+	"version": "5",
 	"description": "",
 	"main": "index.js",
 	"type": "module",
