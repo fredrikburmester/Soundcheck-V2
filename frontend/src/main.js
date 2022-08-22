@@ -27,6 +27,16 @@ const socket = io(socket_url, {
     autoConnect: true,
 })
 
+if ('serviceWorker' in navigator) {
+    console.log('Clearing service worker...')
+    caches.keys().then(function (cacheNames) {
+        cacheNames.forEach(function (cacheName) {
+            console.log(cacheName, 'cacheName')
+            caches.delete(cacheName)
+        })
+    })
+}
+
 app.use(VueSocketIOExt, socket)
 app.use(router)
 app.component(VueFeather.name, VueFeather)
