@@ -61,15 +61,6 @@ export default {
         },
     },
     mounted() {
-        console.log('mounted')
-        console.log(
-            this.notificationAction,
-            this.notificationActionFunction,
-            this.notificationActionMessage,
-            this.notificationActionType,
-            this.notificationActionButtonText,
-            this.notificationActionStop
-        )
         // decrease countdown value 1 every second
         setInterval(() => {
             this.countdownValue--

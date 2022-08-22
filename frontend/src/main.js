@@ -28,7 +28,7 @@ const socket = io(socket_url, {
 })
 
 if ('serviceWorker' in navigator) {
-    console.log('Clearing service worker...')
+    console.log('[info] Clearing service worker cache...')
     caches.keys().then(function (cacheNames) {
         cacheNames.forEach(function (cacheName) {
             console.log(cacheName, 'cacheName')

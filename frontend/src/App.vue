@@ -102,8 +102,6 @@ export default {
         invite(data) {
             this.notifications.push(data)
 
-            console.log('notification', data)
-
             const options = {
                 title: 'New invite',
                 body: data.message,
@@ -120,7 +118,8 @@ export default {
             }
         },
         currentVersion({ version }) {
-            console.log('currentVersion', version, this.version)
+            console.log(`[info] Current version of frontend: ${this.version}`)
+            console.log(`[info] Current version of backend: ${version}`)
             if (version > this.version) {
                 this.notificationActionType = 'success'
                 this.notificationActionMessage = 'New version available'
