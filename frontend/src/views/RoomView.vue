@@ -1,5 +1,5 @@
 <template>
-    <div v-if="!loading" id="room">
+    <div v-if="!loading" id="room" class="w-full max-w-3xl">
         <LobbyComponent v-if="gameState == 'lobby'" :players="players" :room="room" @leave-room="leaveRoom" @start-game="startGame" />
         <GameComponent
             v-if="gameState == 'playing'"

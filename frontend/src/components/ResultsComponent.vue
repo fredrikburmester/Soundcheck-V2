@@ -1,5 +1,5 @@
 <template>
-    <div id="results" class="px-4">
+    <div id="results" class="px-4 w-full">
         <PageTitle>
             <template #header>
                 <p class="text-xs opacity-50">Room code:</p>
