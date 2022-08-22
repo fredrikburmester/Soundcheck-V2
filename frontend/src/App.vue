@@ -25,7 +25,7 @@ export default {
     data() {
         return {
             route: this.$route,
-            version: 2,
+            version: 3,
         }
     },
     computed: {
@@ -120,7 +120,7 @@ export default {
             }
         },
         currentVersion({ version }) {
-            console.log('currentVersion', version)
+            console.log('currentVersion', version, this.version)
             if (version > this.version) {
                 this.notificationActionType = 'success'
                 this.notificationActionMessage = 'New version available'
