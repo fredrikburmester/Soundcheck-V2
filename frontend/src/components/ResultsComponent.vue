@@ -7,7 +7,7 @@
                     {{ $route.params.id }}
                 </p>
             </template>
-            <template #main> Check out the results by pressing a user below! </template>
+            <template #main> You finished! Check out your score below!</template>
         </PageTitle>
         <label for="my-modal-6" class="btn btn-sm btn-success modal-button mb-4">Create playlist</label>
         <input id="my-modal-6" type="checkbox" class="modal-toggle" />
@@ -27,11 +27,25 @@
                 </div>
             </div>
         </div>
-        <div v-for="(p, i) in sortedUsers" :key="p.id">
-            <p v-if="i == 0" class="text-xl font-bold mb-2 text-orange-500 italic">Winner</p>
-            <p v-else-if="i > 0 && p.points == sortedUsers[i - 1].points"></p>
-            <hr v-else class="opacity-10 mt-2 mb-4" />
-            <UserCard :user="p" class="collapse-title w-full" @click="openResultModal(p)" />
+        <div
+            v-for="u in sortedUsers"
+            :key="u.id"
+            :class="u.points == highestScore ? 'fancy-card' : ''"
+            class="flex flex-row items-center px-3 mt-4 border-zinc-800 shadow-xl rounded-2xl py-2"
+        >
+            <div class="avatar mr-4">
+                <div class="w-14 rounded-full">
+                    <img :src="u.img" />
+                </div>
+            </div>
+            <div>
+                <h1 class="font-bold">{{ u.name }}</h1>
+                <p class="opacity-75 text-xs">{{ u.id }}</p>
+                <p>
+                    Points: <span class="text-success">{{ u.points * 10 }}</span>
+                </p>
+            </div>
+            <button class="btn btn-sm btn-ghost shadow-xl ml-auto" @click="openResultModal(u)">DETAILS</button>
         </div>
         <div v-if="sortedUsers.length == 0">
             <hr class="my-4 opacity-20" />
@@ -44,14 +58,13 @@
 </template>
 
 <script>
-import UserCard from './UserCard.vue'
 import PageTitle from './PageTitle.vue'
 import ResultModalComponent from './ResultModalComponent.vue'
 
 import { useUserStore } from '@/stores/user'
 import { mapActions } from 'pinia'
 export default {
-    components: { UserCard, PageTitle, ResultModalComponent },
+    components: { PageTitle, ResultModalComponent },
     props: {
         room: {
             type: Object,
@@ -73,13 +86,51 @@ export default {
             let users = this.room_.users.slice()
             return users.sort((a, b) => b.points - a.points)
         },
+        highestScore() {
+            return this.sortedUsers[0].points
+        },
         cssVars() {
             return {
                 '--max-card-height': 150 + this.room.songs.length * 180 + 'px',
             }
         },
+        style() {
+            return {
+                'background-color': this.linearGradient(),
+            }
+        },
+        color1() {
+            var color = '#'
+            for (var i = 0; i < 6; i++) {
+                color += Math.floor(Math.random() * 10)
+            }
+            return color
+        },
+        color2() {
+            var color = '#'
+            for (var i = 0; i < 6; i++) {
+                color += Math.floor(Math.random() * 10)
+            }
+            return color
+        },
+        color3() {
+            var color = '#'
+            for (var i = 0; i < 6; i++) {
+                color += Math.floor(Math.random() * 10)
+            }
+            return color
+        },
+        color4() {
+            var color = '#'
+            for (var i = 0; i < 6; i++) {
+                color += Math.floor(Math.random() * 10)
+            }
+            return color
+        },
     },
-    mounted() {},
+    mounted() {
+        console.log(this.sortedUsers)
+    },
     methods: {
         ...mapActions(useUserStore, ['createPlaylist']),
         compileAndCreatePlaylist() {
@@ -144,5 +195,23 @@ input {
 .fade-enter-from,
 .fade-leave-to {
     opacity: 0;
+}
+
+.fancy-card {
+    background: linear-gradient(-45deg, v-bind('color1'), v-bind('color2'), v-bind('color3'), v-bind('color4'));
+    background-size: 400% 400%;
+    animation: gradient 10s ease infinite;
+}
+
+@keyframes gradient {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
 }
 </style>
