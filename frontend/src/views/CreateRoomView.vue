@@ -41,7 +41,14 @@
                         <div class="form-control">
                             <label class="label cursor-pointer">
                                 <span class="label-text text-opacity-50">Show correct guesses?</span>
-                                <input v-model="showCorrectGuesses" disabled type="checkbox" class="toggle toggle-primary" checked />
+                                <input
+                                    v-model="showCorrectGuesses"
+                                    disabled
+                                    type="checkbox"
+                                    class="toggle toggle-primary tooltip tooltip-accent tooltip-left"
+                                    data-tip="coming soon"
+                                    checked
+                                />
                             </label>
                         </div>
                     </div>
@@ -66,7 +73,7 @@
                             @focus="generateRoomCodeActive = false"
                         />
                         <label class="label cursor-pointer">
-                            <span class="label-text label-text-alt text-opacity-50">Click to change it</span>
+                            <span class="label-text-alt text-opacity-50">Click to change it</span>
                         </label>
                     </div>
                     <div class="form-control mt-6">
