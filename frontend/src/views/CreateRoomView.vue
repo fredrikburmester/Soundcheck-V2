@@ -70,7 +70,7 @@
                             placeholder="Enter room code"
                             class="input input-bordered w-full max-w-xs"
                             style="text-transform: uppercase"
-                            @focus="generateRoomCodeActive = false"
+                            @focus="stopGeneratingRoomCode"
                         />
                         <label class="label cursor-pointer">
                             <span class="label-text-alt text-opacity-50">Click to change it</span>
@@ -93,9 +93,9 @@ export default {
         const roomCode = ref('')
         const nrOfSongs = ref(2)
         const showCorrectGuesses = ref(false)
-        const generateRoomCodeActive = ref(true)
         const time_range = ref('medium_term')
         const allowSongSeeking = ref(true)
+        let timeout = null
 
         // generate random 4 letter room code
         const generateRoomCode = () => {
@@ -110,9 +110,11 @@ export default {
         // update roomCode every second
         const updateRoomCode = () => {
             roomCode.value = generateRoomCode()
-            if (generateRoomCodeActive.value) {
-                setTimeout(updateRoomCode, 1000)
-            }
+            timeout = setTimeout(updateRoomCode, 1000)
+        }
+
+        const stopGeneratingRoomCode = () => {
+            clearTimeout(timeout)
         }
 
         updateRoomCode()
@@ -121,11 +123,12 @@ export default {
             roomCode,
             nrOfSongs,
             showCorrectGuesses,
-            generateRoomCodeActive,
             generateRoomCode,
             updateRoomCode,
             time_range,
             allowSongSeeking,
+            timeout,
+            stopGeneratingRoomCode,
         }
     },
     computed: {
@@ -140,7 +143,7 @@ export default {
         createRoom() {
             this.$socket.client.emit('createRoom', {
                 userId: this.id,
-                roomCode: this.roomCode,
+                roomCode: this.roomCode.toUpperCase(),
                 nrOfSongs: this.nrOfSongs,
                 showCorrectGuesses: this.showCorrectGuesses,
                 timeRange: this.time_range,
